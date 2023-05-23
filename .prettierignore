@@ -1,0 +1,15 @@
+# prettier ignore exemple for node js project
+
+# Ignore artifacts:
+dist
+build
+node_modules
+
+# Ignore JSON, YAML and Markdown files
+*.json
+*.yml
+*.yaml
+
+# Ignore all dotfiles
+.*
+
