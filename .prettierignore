@@ -5,11 +5,18 @@ dist
 build
 node_modules
 
-# Ignore JSON, YAML and Markdown files
+# Ignore JSON, YAML, Markdown files
 *.json
 *.yml
 *.yaml
+*.md
+
 
 # Ignore all dotfiles
 .*
+
+# Ignore all files in the .git directory
+.git/*
+
+
 
