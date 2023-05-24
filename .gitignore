@@ -1,5 +1,6 @@
 ### Node template
 .DS_Store
+.env
 # Logs
 logs
 *.log
@@ -51,8 +52,3 @@ test/**/*.js.map
 # Project
 /public
 /dist
-
-#env
-.env
-.env.local
-.env.development
