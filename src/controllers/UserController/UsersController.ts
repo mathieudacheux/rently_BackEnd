@@ -13,7 +13,7 @@ class UserModel {
 	mail: string
 }
 
-@Controller('/users')
+@Controller('/')
 export class UsersController {
 	@Inject()
 	protected prisma: PrismaService
