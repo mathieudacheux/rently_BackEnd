@@ -1,4 +1,4 @@
-import { $log, Redirect } from '@tsed/common'
+import { $log } from '@tsed/common'
 import { PlatformExpress } from '@tsed/platform-express'
 import { Server } from './Server'
 

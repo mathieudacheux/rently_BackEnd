@@ -14,11 +14,24 @@
    "es6": true
   },
   "rules": {
-    "@typescript-eslint/no-inferrable-types": "warning",
+    "@typescript-eslint/adjacent-overload-signatures": "error",
+    "@typescript-eslint/ban-ts-comment": "error",
+    "no-duplicate-imports": "warn",
+    "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": "error",
+    "no-unused-expressions": "error",
+    "no-useless-return":"error",
+    "no-alert": "error",
+    "no-inline-comments": "error",
+    "no-console": "warn",
+    "no-empty-function": "off",
+    "@typescript-eslint/no-empty-function": "error",
+    "no-extra-semi": "off",
+    "@typescript-eslint/no-extra-semi": "error",
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-this-alias": "error",
+    "@typescript-eslint/no-unsafe-return": "error",
     "@typescript-eslint/no-var-requires": "error",
-    "@typescript-eslint/no-explicit-any": "warning",
-    "@typescript-eslint/explicit-function-return-type": "warning",
-    "@typescript-eslint/no-empty-function": "error"
+    "@typescript-eslint/prefer-as-const": "error"
   }
 }
