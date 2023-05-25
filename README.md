@@ -4,7 +4,6 @@
 
 <div align="center">
   <h1>Ts.ED - Rently BackEnd</h1>
-  <hr />
 </div>
 
 > An awesome project based on Ts.ED framework
