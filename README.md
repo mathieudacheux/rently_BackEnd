@@ -4,16 +4,6 @@
 
 <div align="center">
   <h1>Ts.ED - Rently BackEnd</h1>
-  <br />
-  <div align="center">
-    <a href="https://cli.tsed.io/">Website</a>
-    <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-    <a href="https://cli.tsed.io/getting-started.html">Getting started</a>
-    <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-    <a href="https://api.tsed.io/rest/slack/tsedio/tsed">Slack</a>
-    <span>&nbsp;&nbsp;•&nbsp;&nbsp;</span>
-    <a href="https://twitter.com/TsED_io">Twitter</a>
-  </div>
   <hr />
 </div>
 
