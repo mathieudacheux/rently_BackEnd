@@ -4,7 +4,7 @@ import { PrismaService } from '../../services/PrismaService'
 import { Required, Email, Returns, Summary, Groups } from '@tsed/schema'
 import { User } from '@prisma/client'
 
-class UserModel implements User {
+export default class UserModel implements User {
 	@Groups('!creation')
 	user_id: number
 	@Required()
@@ -14,6 +14,8 @@ class UserModel implements User {
 	password: string
 	@Required()
 	newsletter: boolean
+	token: string | null
+	token_expiration: Date | null
 	created_at: Date | null
 	validated_at: Date | null
 	updated_at: Date | null
@@ -48,6 +50,7 @@ export class Users {
 	@Get('/')
 	@Summary('Return a list of all users')
 	@Returns(200, Array).Of(UserModel)
+	@Returns(404, String).Description('Not found')
 	async getAllUsers(): Promise<UserModel[]> {
 		return this.prisma.user.findMany()
 	}
@@ -55,12 +58,14 @@ export class Users {
 	@Get('/:id')
 	@Summary('Return a user by his id')
 	@Returns(200, UserModel)
-	async getUserById(@PathParams('id') user_id: number) {
+	@Returns(404, String).Description('Not found')
+	async getUserById(@PathParams('id') user_id: number): Promise<UserModel | null> {
 		return this.prisma.user.findUnique({ where: { user_id } })
 	}
 
 	@Post('/')
 	@Summary('Create a new user')
+	@Returns(201, UserModel)
 	@Returns(201, UserModel)
 	async signupUser(@BodyParams() @Groups('creation') user: UserModel) {
 		return this.prisma.user.create({ data: user })
@@ -69,7 +74,7 @@ export class Users {
 	@Put('/:id')
 	@Summary('Update a user by its id')
 	@Returns(200, UserModel)
-	async publishPost(@PathParams('id') id: number, user: UserModel): Promise<UserModel> {
+	async UpdateUser(@PathParams('id') id: number, user: UserModel): Promise<UserModel> {
 		return this.prisma.user.update({
 			where: { user_id: id },
 			data: user,
@@ -79,7 +84,7 @@ export class Users {
 	@Delete('/:id')
 	@Summary('Delete a user by its id')
 	@Returns(204)
-	async deletePost(@PathParams('id') user_id: number): Promise<UserModel> {
+	async deleteUser(@PathParams('id') user_id: number): Promise<UserModel> {
 		return this.prisma.user.delete({ where: { user_id } })
 	}
 }
