@@ -15,7 +15,7 @@ model Address {
   additionnal_info String?      @db.VarChar(100)
   longitude        Decimal      @db.Decimal(15, 13)
   latitude         Decimal      @db.Decimal(15, 13)
-  created_at       DateTime     @db.DateTime(0)
+  created_at       DateTime?    @default(now()) @db.DateTime(0)
   updated_at       DateTime?    @db.DateTime(0)
   deleted_at       DateTime?    @db.DateTime(0)
   agency           Agency[]
@@ -28,7 +28,7 @@ model Address {
 model Agency {
   agency_id    Int          @id @default(autoincrement())
   name         String       @db.VarChar(250)
-  created_at   DateTime     @db.DateTime(0)
+  created_at   DateTime?    @default(now()) @db.DateTime(0)
   updated_at   DateTime?    @db.DateTime(0)
   deleted_at   DateTime?    @db.DateTime(0)
   fee_id       Int
@@ -52,7 +52,7 @@ model Appointment {
   date_end        DateTime   @db.DateTime(0)
   note            String?    @db.Text
   reminder        DateTime   @db.DateTime(0)
-  created_at      DateTime   @db.DateTime(0)
+  created_at      DateTime?  @default(now()) @db.DateTime(0)
   updated_at      DateTime?  @db.DateTime(0)
   deleted_at      DateTime?  @db.DateTime(0)
   property_id     Int
@@ -70,7 +70,7 @@ model Article {
   article_id  Int       @id @default(autoincrement())
   name        String    @db.VarChar(250)
   content     String    @db.Text
-  created_at  DateTime  @db.DateTime(0)
+  created_at  DateTime? @default(now()) @db.DateTime(0)
   updated_at  DateTime? @db.DateTime(0)
   deleted_at  DateTime? @db.DateTime(0)
   tag_id      Int
@@ -86,7 +86,7 @@ model Article {
 
 model Bookmark {
   bookmark_id   Int        @id @default(autoincrement())
-  created_at    DateTime   @db.DateTime(0)
+  created_at    DateTime?  @default(now()) @db.DateTime(0)
   updated_at    DateTime?  @db.DateTime(0)
   deleted_at    DateTime?  @db.DateTime(0)
   user_id       Int
@@ -103,7 +103,7 @@ model Bookmark {
 model Country {
   country_id   Int       @id @default(autoincrement())
   name         String    @db.VarChar(75)
-  created_at   DateTime  @db.DateTime(0)
+  created_at   DateTime? @default(now()) @db.DateTime(0)
   updated_at   DateTime? @db.DateTime(0)
   deleted_at   DateTime? @db.DateTime(0)
   user         User[]
@@ -117,7 +117,7 @@ model Fee {
   sell_fee     Decimal    @db.Decimal(4, 2)
   square_fee   Decimal    @db.Decimal(5, 2)
   gestion_fee  Decimal    @db.Decimal(5, 2)
-  created_at   DateTime   @db.DateTime(0)
+  created_at   DateTime?  @default(now()) @db.DateTime(0)
   updated_at   DateTime?  @db.DateTime(0)
   deleted_at   DateTime?  @db.DateTime(0)
   agency       Agency[]
@@ -128,7 +128,7 @@ model Fee {
 model Message {
   message_id                      Int       @id @default(autoincrement())
   content                         String    @db.Text
-  created_at                      DateTime  @db.DateTime(0)
+  created_at                      DateTime? @default(now()) @db.DateTime(0)
   updated_at                      DateTime? @db.DateTime(0)
   deleted_at                      DateTime? @db.DateTime(0)
   user_id_1                       Int
@@ -145,7 +145,7 @@ model Message {
 model Permission {
   permission_id  Int       @id @default(autoincrement())
   name           String    @db.VarChar(50)
-  created_at     DateTime  @db.DateTime(0)
+  created_at     DateTime? @default(now()) @db.DateTime(0)
   updated_at     DateTime? @db.DateTime(0)
   deleted_at     DateTime? @db.DateTime(0)
   role           Role[]
@@ -183,7 +183,7 @@ model Property {
   ground_floor                      Boolean
   land_size_1                       Decimal        @db.Decimal(7, 2)
   garden                            Boolean
-  created_at                        DateTime       @db.DateTime(0)
+  created_at                        DateTime?      @default(now()) @db.DateTime(0)
   updated_at                        DateTime?      @db.DateTime(0)
   deleted_at                        DateTime?      @db.DateTime(0)
   owner_id                          Int
@@ -211,7 +211,7 @@ model Property {
 model Role {
   role_id        Int         @id @default(autoincrement())
   name           String      @db.VarChar(25)
-  created_at     DateTime    @db.DateTime(0)
+  created_at     DateTime?   @default(now()) @db.DateTime(0)
   updated_at     DateTime?   @db.DateTime(0)
   deleted_at     DateTime?   @db.DateTime(0)
   permission_id Int
@@ -229,7 +229,7 @@ model Sector {
   updated_at  DateTime? @db.DateTime(0)
   deleted_at  DateTime? @db.DateTime(0)
   polygon     String    @db.Text
-  created_at  DateTime  @db.DateTime(0)
+  created_at  DateTime? @default(now()) @db.DateTime(0)
   agency_id Int
   agency    Agency      @relation(fields: [agency_id], references: [agency_id], onUpdate: Restrict, map: "sector_ibfk_1")
 
@@ -241,18 +241,18 @@ model Sector {
 model Status {
   status_id  Int          @id @default(autoincrement())
   name       String       @db.VarChar(50)
-  created_at DateTime     @db.DateTime(0)
+  created_at DateTime?    @default(now()) @db.DateTime(0)
   updated_at DateTime?    @db.DateTime(0)
   deleted_at DateTime?    @db.DateTime(0)
   property Property[]
 
-  @@map(name: "status")
+  @@map(name: "statuses")
 }
 
 model Tag {
   tag_id     Int        @id @default(autoincrement())
   name       String     @db.VarChar(250)
-  created_at DateTime   @db.DateTime(0)
+  created_at DateTime?  @default(now()) @db.DateTime(0)
   updated_at DateTime?  @db.DateTime(0)
   deleted_at DateTime?  @db.DateTime(0)
   article   Article[]
