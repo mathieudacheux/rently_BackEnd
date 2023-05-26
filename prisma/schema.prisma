@@ -7,8 +7,8 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model addresses {
-  id_addresses     Int          @id @default(autoincrement())
+model Address {
+  address_id       Int          @id @default(autoincrement())
   address          String       @db.VarChar(250)
   city             String       @db.VarChar(75)
   zipcode          String       @db.Char(5)
@@ -18,26 +18,35 @@ model addresses {
   created_at       DateTime     @db.DateTime(0)
   updated_at       DateTime?    @db.DateTime(0)
   deleted_at       DateTime?    @db.DateTime(0)
-  properties       properties[]
-  users            users[]
+  agency           Agency[]
+  property         Property[]
+  user             User[]
+  
+  @@map(name: "addresses")
 }
 
-model agencies {
-  id_agencies Int       @id @default(autoincrement())
-  name        String    @db.VarChar(250)
-  created_at  DateTime  @db.DateTime(0)
-  updated_at  DateTime? @db.DateTime(0)
-  deleted_at  DateTime? @db.DateTime(0)
-  id_fees     Int
-  fees        fees      @relation(fields: [id_fees], references: [id_fees], onUpdate: Restrict, map: "agencies_ibfk_1")
-  sectors     sectors[]
-  users       users[]
+model Agency {
+  agency_id    Int          @id @default(autoincrement())
+  name         String       @db.VarChar(250)
+  created_at   DateTime     @db.DateTime(0)
+  updated_at   DateTime?    @db.DateTime(0)
+  deleted_at   DateTime?    @db.DateTime(0)
+  fee_id       Int
+  address_id   Int
+  fee          Fee          @relation(fields: [fee_id], references: [fee_id], onUpdate: Restrict, map: "agency_ibfk_1")
+  address      Address      @relation(fields: [address_id], references: [address_id], onUpdate: Restrict, map: "agency_ibfk_2")
+  property     Property[]
+  sector       Sector[]
+  user         User[]
 
-  @@index([id_fees], map: "id_fees")
+  @@index([address_id], map: "agency_ibfk_2")
+  @@index([fee_id], map: "fee_id")
+
+  @@map(name: "agencies")
 }
 
-model appointments {
-  id_appointments Int        @id @default(autoincrement())
+model Appointment {
+  appointment_id  Int        @id @default(autoincrement())
   tag             Int        @db.TinyInt
   date_start      DateTime   @db.DateTime(0)
   date_end        DateTime   @db.DateTime(0)
@@ -46,89 +55,106 @@ model appointments {
   created_at      DateTime   @db.DateTime(0)
   updated_at      DateTime?  @db.DateTime(0)
   deleted_at      DateTime?  @db.DateTime(0)
-  id_properties   Int
-  id_users        Int
-  properties      properties @relation(fields: [id_properties], references: [id_properties], onUpdate: Restrict, map: "appointments_ibfk_1")
-  users           users      @relation(fields: [id_users], references: [id_users], onUpdate: Restrict, map: "appointments_ibfk_2")
+  property_id     Int
+  user_id         Int
+  property        Property   @relation(fields: [property_id], references: [property_id], onUpdate: Restrict, map: "appointment_ibfk_1")
+  user            User       @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "appointment_ibfk_2")
 
-  @@index([id_properties], map: "id_properties")
-  @@index([id_users], map: "id_users")
+  @@index([property_id], map: "property_id")
+  @@index([user_id], map: "user_id")
+
+  @@map(name: "appointments")
 }
 
-model articles {
-  id_articles Int       @id @default(autoincrement())
+model Article {
+  article_id  Int       @id @default(autoincrement())
   name        String    @db.VarChar(250)
   content     String    @db.Text
   created_at  DateTime  @db.DateTime(0)
   updated_at  DateTime? @db.DateTime(0)
   deleted_at  DateTime? @db.DateTime(0)
-  id_tags     Int
-  id_users    Int
-  tags        tags      @relation(fields: [id_tags], references: [id_tags], onUpdate: Restrict, map: "articles_ibfk_1")
-  users       users     @relation(fields: [id_users], references: [id_users], onUpdate: Restrict, map: "articles_ibfk_2")
+  tag_id      Int
+  user_id     Int
+  tag         Tag       @relation(fields: [tag_id], references: [tag_id], onUpdate: Restrict, map: "article_ibfk_1")
+  user        User      @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "article_ibfk_2")
 
-  @@index([id_tags], map: "id_tags")
-  @@index([id_users], map: "id_users")
+  @@index([tag_id], map: "tag_id")
+  @@index([user_id], map: "user_id")
+
+  @@map(name: "articles")
 }
 
-model bookmarks {
-  id_bookmarks Int       @id @default(autoincrement())
-  created_at   DateTime  @db.DateTime(0)
-  updated_at   DateTime? @db.DateTime(0)
-  deleted_at   DateTime? @db.DateTime(0)
-  id_users     Int
-  users        users     @relation(fields: [id_users], references: [id_users], onUpdate: Restrict, map: "bookmarks_ibfk_1")
+model Bookmark {
+  bookmark_id   Int        @id @default(autoincrement())
+  created_at    DateTime   @db.DateTime(0)
+  updated_at    DateTime?  @db.DateTime(0)
+  deleted_at    DateTime?  @db.DateTime(0)
+  user_id       Int
+  property_id   Int
+  user          User       @relation(fields: [user_id], references: [user_id], onUpdate: Restrict, map: "bookmark_ibfk_1")
+  property      Property   @relation(fields: [property_id], references: [property_id], onUpdate: Restrict, map: "bookmark_ibfk_2")
 
-  @@index([id_users], map: "id_users")
+  @@index([property_id], map: "bookmark_ibfk_2")
+  @@index([user_id], map: "user_id")
+
+  @@map(name: "bookmarks")
 }
 
-model countries {
-  id_countries Int       @id @default(autoincrement())
+model Country {
+  country_id   Int       @id @default(autoincrement())
   name         String    @db.VarChar(75)
   created_at   DateTime  @db.DateTime(0)
   updated_at   DateTime? @db.DateTime(0)
   deleted_at   DateTime? @db.DateTime(0)
-  users        users[]
+  user         User[]
+
+  @@map(name: "countries")
 }
 
-model fees {
-  id_fees      Int        @id @default(autoincrement())
-  rent_fees    Decimal    @db.Decimal(4, 2)
-  sell_fees    Decimal    @db.Decimal(4, 2)
-  square_fees  Decimal    @db.Decimal(5, 2)
-  gestion_fees Decimal    @db.Decimal(5, 2)
+model Fee {
+  fee_id       Int        @id @default(autoincrement())
+  rent_fee     Decimal    @db.Decimal(4, 2)
+  sell_fee     Decimal    @db.Decimal(4, 2)
+  square_fee   Decimal    @db.Decimal(5, 2)
+  gestion_fee  Decimal    @db.Decimal(5, 2)
   created_at   DateTime   @db.DateTime(0)
   updated_at   DateTime?  @db.DateTime(0)
   deleted_at   DateTime?  @db.DateTime(0)
-  agencies     agencies[]
+  agency       Agency[]
+
+  @@map(name: "fees")
 }
 
-model messages {
-  id_messages                     Int       @id @default(autoincrement())
+model Message {
+  message_id                      Int       @id @default(autoincrement())
   content                         String    @db.Text
   created_at                      DateTime  @db.DateTime(0)
   updated_at                      DateTime? @db.DateTime(0)
   deleted_at                      DateTime? @db.DateTime(0)
-  id_user_1                       Int
-  id_user_2                       Int
-  users_messages_id_user_1Tousers users     @relation("messages_id_user_1Tousers", fields: [id_user_1], references: [id_users], onUpdate: Restrict, map: "messages_ibfk_1")
-  users_messages_id_user_2Tousers users     @relation("messages_id_user_2Tousers", fields: [id_user_2], references: [id_users], onUpdate: Restrict, map: "messages_ibfk_2")
+  user_id_1                       Int
+  user_id_2                       Int
+  user_message_user_id_1Touser    User      @relation("message_user_id_1Touser", fields: [user_id_1], references: [user_id], onUpdate: Restrict, map: "message_ibfk_1")
+  user_message_user_id_2Touser    User      @relation("message_user_id_2Touser", fields: [user_id_2], references: [user_id], onUpdate: Restrict, map: "message_ibfk_2")
 
-  @@index([id_user_1], map: "id_user_1")
-  @@index([id_user_2], map: "id_user_2")
+  @@index([user_id_1], map: "user_id_1")
+  @@index([user_id_2], map: "user_id_2")
+
+  @@map(name: "messages")
 }
 
-model permissions {
-  id_permissions Int       @id @default(autoincrement())
-  name           String?   @db.VarChar(50)
+model Permission {
+  permission_id  Int       @id @default(autoincrement())
+  name           String    @db.VarChar(50)
   created_at     DateTime  @db.DateTime(0)
   updated_at     DateTime? @db.DateTime(0)
   deleted_at     DateTime? @db.DateTime(0)
-  roles          roles[]
+  role           Role[]
+
+  @@map(name: "permissions")
 }
 
-model properties {
-  id_properties                     Int            @id @default(autoincrement())
+model Property {
+  property_id                       Int            @id @default(autoincrement())
   name                              String         @db.VarChar(150)
   description                       String         @db.Text
   signature_date                    DateTime?      @db.DateTime(0)
@@ -140,114 +166,134 @@ model properties {
   kitchen                           Int            @db.TinyInt
   toilet                            Int            @db.TinyInt
   bedroom                           Int            @db.TinyInt
-  elevator                          Boolean
-  balcony                           Boolean
-  terrace                           Boolean
-  cellar                            Boolean
-  parking                           Boolean
+  elevator                          Boolean        @default(false)
+  balcony                           Boolean        @default(false)
+  terrace                           Boolean        @default(false)
+  cellar                            Boolean        @default(false)
+  parking                           Boolean        @default(false)
   number_room                       Int            @db.TinyInt
-  pool                              Boolean
-  caretaker                         Boolean
-  fiber_deployed                    Boolean
-  duplex                            Boolean
-  top_floor                         Boolean
-  garage                            Boolean
-  work_done                         Boolean
-  life_annuity                      Int?           @db.TinyInt
+  pool                              Boolean        @default(false)
+  caretaker                         Boolean        @default(false)
+  fiber_deployed                    Boolean        @default(false)
+  duplex                            Boolean        @default(false)
+  top_floor                         Boolean        @default(false)
+  garage                            Boolean        @default(false)
+  work_done                         Boolean        @default(false)
+  life_annuity                      Boolean        @default(false)
   ground_floor                      Boolean
   land_size_1                       Decimal        @db.Decimal(7, 2)
   garden                            Boolean
   created_at                        DateTime       @db.DateTime(0)
   updated_at                        DateTime?      @db.DateTime(0)
   deleted_at                        DateTime?      @db.DateTime(0)
-  id_owner                          Int?
-  id_status                         Int
-  id_tenant                         Int
-  id_addresses                      Int
-  appointments                      appointments[]
-  users_properties_id_ownerTousers  users?         @relation("properties_id_ownerTousers", fields: [id_owner], references: [id_users], onDelete: Restrict, onUpdate: Restrict, map: "properties_ibfk_1")
-  status                            status         @relation(fields: [id_status], references: [id_status], onUpdate: Restrict, map: "properties_ibfk_2")
-  users_properties_id_tenantTousers users          @relation("properties_id_tenantTousers", fields: [id_tenant], references: [id_users], onUpdate: Restrict, map: "properties_ibfk_3")
-  addresses                         addresses      @relation(fields: [id_addresses], references: [id_addresses], onUpdate: Restrict, map: "properties_ibfk_4")
+  owner_id                          Int
+  status_id                         Int
+  tenant_id                         Int?
+  address_id                        Int
+  dpe                               Int            @db.TinyInt
+  agency_id                         Int
+  appointment                       Appointment[]
+  bookmark                          Bookmark[]
+  user_property_owner_idTouser      User           @relation("property_owner_idTouser", fields: [owner_id], references: [user_id], onUpdate: Restrict, map: "property_ibfk_1")
+  status                            Status         @relation(fields: [status_id], references: [status_id], onUpdate: Restrict, map: "property_ibfk_2")
+  user_property_tenant_idTouser     User?          @relation("property_tenant_idTouser", fields: [tenant_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "property_ibfk_3")
+  address                           Address        @relation(fields: [address_id], references: [address_id], onUpdate: Restrict, map: "property_ibfk_4")
+  agency                            Agency         @relation(fields: [agency_id], references: [agency_id], onUpdate: Restrict, map: "property_ibfk_5")
 
-  @@index([id_addresses], map: "id_addresses")
-  @@index([id_owner], map: "id_owner")
-  @@index([id_status], map: "id_status")
-  @@index([id_tenant], map: "id_tenant")
+  @@index([address_id], map: "address_id")
+  @@index([owner_id], map: "owner_id")
+  @@index([status_id], map: "status_id")
+  @@index([tenant_id], map: "tenant_id")
+  @@index([agency_id], map: "property_ibfk_5")
+  @@map(name: "properties")
 }
 
-model roles {
-  id_roles       Int         @id @default(autoincrement())
+model Role {
+  role_id        Int         @id @default(autoincrement())
   name           String      @db.VarChar(25)
   created_at     DateTime    @db.DateTime(0)
   updated_at     DateTime?   @db.DateTime(0)
   deleted_at     DateTime?   @db.DateTime(0)
-  id_permissions Int
-  permissions    permissions @relation(fields: [id_permissions], references: [id_permissions], onUpdate: Restrict, map: "roles_ibfk_1")
-  users          users[]
+  permission_id Int
+  permission    Permission   @relation(fields: [permission_id], references: [permission_id], onUpdate: Restrict, map: "role_ibfk_1")
+  user          User[]
 
-  @@index([id_permissions], map: "id_permissions")
+  @@index([permission_id], map: "permission_id")
+
+  @@map(name: "roles")
 }
 
-model sectors {
-  id_sectors  Int       @id @default(autoincrement())
+model Sector {
+  sector_id   Int       @id @default(autoincrement())
   name        String    @db.VarChar(250)
   updated_at  DateTime? @db.DateTime(0)
   deleted_at  DateTime? @db.DateTime(0)
   polygon     String    @db.Text
   created_at  DateTime  @db.DateTime(0)
-  id_agencies Int
-  agencies    agencies  @relation(fields: [id_agencies], references: [id_agencies], onUpdate: Restrict, map: "sectors_ibfk_1")
+  agency_id Int
+  agency    Agency      @relation(fields: [agency_id], references: [agency_id], onUpdate: Restrict, map: "sector_ibfk_1")
 
-  @@index([id_agencies], map: "id_agencies")
+  @@index([agency_id], map: "agency_id")
+
+  @@map(name: "sectors")
 }
 
-model status {
-  id_status  Int          @id @default(autoincrement())
+model Status {
+  status_id  Int          @id @default(autoincrement())
   name       String       @db.VarChar(50)
   created_at DateTime     @db.DateTime(0)
   updated_at DateTime?    @db.DateTime(0)
   deleted_at DateTime?    @db.DateTime(0)
-  properties properties[]
+  property Property[]
+
+  @@map(name: "status")
 }
 
-model tags {
-  id_tags    Int        @id @default(autoincrement())
+model Tag {
+  tag_id     Int        @id @default(autoincrement())
   name       String     @db.VarChar(250)
   created_at DateTime   @db.DateTime(0)
   updated_at DateTime?  @db.DateTime(0)
   deleted_at DateTime?  @db.DateTime(0)
-  articles   articles[]
+  article   Article[]
+
+  @@map(name: "tags")
 }
 
-model users {
-  id_users                               Int            @id @default(autoincrement())
+model User {
+  user_id                                Int            @id @default(autoincrement())
   mail                                   String         @db.VarChar(250)
   password                               String         @db.VarChar(250)
   phone                                  String?        @db.VarChar(13)
+  name                                   String?        @db.VarChar(250)
+  firstname                              String?        @db.VarChar(250)
   newsletter                             Boolean
-  created_at                             DateTime       @db.DateTime(0)
+  token                                  String?        @db.VarChar(250)  @unique
+  token_expiration                       DateTime?      @db.DateTime(0)
+  created_at                             DateTime?      @default(now()) @db.DateTime(0)
   validated_at                           DateTime?      @db.DateTime(0)
   updated_at                             DateTime?      @db.DateTime(0)
   deleted_at                             DateTime?      @db.DateTime(0)
-  id_addresses                           Int
-  id_countries                           Int
-  id_roles                               Int
-  id_agencies                            Int
-  appointments                           appointments[]
-  articles                               articles[]
-  bookmarks                              bookmarks[]
-  messages_messages_id_user_1Tousers     messages[]     @relation("messages_id_user_1Tousers")
-  messages_messages_id_user_2Tousers     messages[]     @relation("messages_id_user_2Tousers")
-  properties_properties_id_ownerTousers  properties[]   @relation("properties_id_ownerTousers")
-  properties_properties_id_tenantTousers properties[]   @relation("properties_id_tenantTousers")
-  addresses                              addresses      @relation(fields: [id_addresses], references: [id_addresses], onUpdate: Restrict, map: "users_ibfk_1")
-  countries                              countries      @relation(fields: [id_countries], references: [id_countries], onUpdate: Restrict, map: "users_ibfk_2")
-  roles                                  roles          @relation(fields: [id_roles], references: [id_roles], onUpdate: Restrict, map: "users_ibfk_3")
-  agencies                               agencies       @relation(fields: [id_agencies], references: [id_agencies], onUpdate: Restrict, map: "users_ibfk_4")
+  address_id                             Int?
+  country_id                             Int
+  role_id                                Int
+  agency_id                              Int?
+  appointment                            Appointment[]
+  article                                Article[]
+  bookmark                               Bookmark[]
+  message_message_user_id_1Touser        Message[]      @relation("message_user_id_1Touser")
+  message_message_user_id_2Touser        Message[]      @relation("message_user_id_2Touser")
+  property_property_owner_idTouser       Property[]     @relation("property_owner_idTouser")
+  property_property_tenant_idTouser      Property[]     @relation("property_tenant_idTouser")
+  address                                Address?       @relation(fields: [address_id], references: [address_id], onUpdate: Restrict, map: "user_ibfk_1")
+  country                                Country        @relation(fields: [country_id], references: [country_id], onUpdate: Restrict, map: "user_ibfk_2")
+  role                                   Role           @relation(fields: [role_id], references: [role_id], onUpdate: Restrict, map: "user_ibfk_3")
+  agency                                 Agency?        @relation(fields: [agency_id], references: [agency_id], onUpdate: Restrict, map: "user_ibfk_4")
 
-  @@index([id_addresses], map: "id_addresses")
-  @@index([id_agencies], map: "id_agencies")
-  @@index([id_countries], map: "id_countries")
-  @@index([id_roles], map: "id_roles")
+  @@index([address_id], map: "address_id")
+  @@index([agency_id], map: "agency_id")
+  @@index([country_id], map: "country_id")
+  @@index([role_id], map: "role_id")
+
+  @@map(name: "users")
 }
