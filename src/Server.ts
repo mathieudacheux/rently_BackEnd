@@ -1,21 +1,23 @@
 import { join } from 'path'
 import { Configuration, Inject } from '@tsed/di'
 import { PlatformApplication } from '@tsed/common'
-import '@tsed/platform-express' // /!\ keep this import
+import '@tsed/platform-express'
 import '@tsed/ajv'
 import '@tsed/swagger'
 import { config } from './config/index'
-import * as users from './controllers/UserController/index'
+import * as users from './controllers/User/UsersController'
+import * as appointments from './controllers/Appointment/AppointmentsController'
 import * as pages from './controllers/pages/index'
 
 @Configuration({
 	...config,
 	acceptMimes: ['application/json'],
 	httpPort: process.env.PORT || 8083,
-	httpsPort: false, // CHANGE
+	httpsPort: false,
 	disableComponentsScan: true,
 	mount: {
 		'/users': [...Object.values(users)],
+		'/appointments': [...Object.values(appointments)],
 		'/': [...Object.values(pages)],
 	},
 	swagger: [
