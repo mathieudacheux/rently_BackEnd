@@ -64,7 +64,11 @@ import * as authentifications from './controllers/AuthentificationUser/Authentif
 						},
 					},
 				},
-				security: [{ bearerAuth: [] }],
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
 			},
 		},
 	],

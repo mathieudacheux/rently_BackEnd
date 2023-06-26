@@ -7,7 +7,7 @@ import { JWT_SECRET } from '../constants'
 @Middleware()
 export default class AuthentificationMiddleware implements MiddlewareMethods {
 	async use(@Req() req: Req, @Res() res: Res, @Next() next: Next): Promise<void> {
-		const token = req.headers['authorization']
+		const token = req.headers['Authorization'] as string
 
 		if (!token) {
 			throw new Unauthorized('Unauthorized')
