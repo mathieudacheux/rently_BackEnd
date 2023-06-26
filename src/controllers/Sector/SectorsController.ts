@@ -37,7 +37,7 @@ export class Sectors {
 	@Post('/')
 	@Summary('Create a new sector')
 	@Returns(201, SectorModel)
-	async createSector(@BodyParams() @Groups('creation') sector: SectorModel) {
+	async createSector(@BodyParams('sector') sector: SectorModel): Promise<SectorModel> {
 		return this.prisma.sector.create({ data: sector })
 	}
 

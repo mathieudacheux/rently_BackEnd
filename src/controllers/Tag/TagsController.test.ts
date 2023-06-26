@@ -4,7 +4,7 @@ const baseURL = 'http://localhost:8083'
 
 describe('GET /tags', () => {
 	const newTag = {
-		name: 'test',
+		name: `${Math.random().toString(36).substring(7)}@test.com`,
 	}
 
 	let tag_id: number
