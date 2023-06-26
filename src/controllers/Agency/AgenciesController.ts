@@ -8,7 +8,7 @@ class AgencyModel implements Agency {
 	@Groups('!creation')
 	agency_id: number
 	name: string
-	created_at: Date
+	created_at: Date | null
 	updated_at: Date | null
 	deleted_at: Date | null
 	fee_id: number

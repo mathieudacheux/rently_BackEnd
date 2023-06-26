@@ -7,7 +7,7 @@ import { Bookmark } from '@prisma/client'
 class BookmarkModel implements Bookmark {
 	@Groups('!creation')
 	bookmark_id: number
-	created_at: Date
+	created_at: Date | null
 	updated_at: Date | null
 	deleted_at: Date | null
 	user_id: number
@@ -22,8 +22,8 @@ export class Bookmarks {
 	@Get('/')
 	@Summary('Return a list of all bookmarks')
 	@Returns(200, Array).Of(BookmarkModel)
-	async getAllBookmarks(): Promise<BookmarkModel[]> {
-		return this.prisma.bookmark.findMany()
+	async getAllBookmarks(@PathParams('offset') offset: number): Promise<BookmarkModel[]> {
+		return this.prisma.bookmark.findMany({ take: 15, skip: offset })
 	}
 
 	@Get('/:id')

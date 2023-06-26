@@ -8,7 +8,7 @@ class StatusModel implements Status {
 	@Groups('!creation')
 	status_id: number
 	name: string
-	created_at: Date
+	created_at: Date | null
 	updated_at: Date | null
 	deleted_at: Date | null
 }

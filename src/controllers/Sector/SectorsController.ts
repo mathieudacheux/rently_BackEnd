@@ -8,7 +8,7 @@ class SectorModel implements Sector {
 	@Groups('!creation')
 	sector_id: number
 	name: string
-	created_at: Date
+	created_at: Date | null
 	updated_at: Date | null
 	deleted_at: Date | null
 	polygon: string

@@ -9,7 +9,7 @@ class CountryModel implements Country {
 	country_id: number
 	@Required()
 	name: string
-	created_at: Date
+	created_at: Date | null
 	updated_at: Date | null
 	deleted_at: Date | null
 }
