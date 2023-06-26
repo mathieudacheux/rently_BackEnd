@@ -9,7 +9,7 @@ class ArticleModel implements Article {
 	article_id: number
 	name: string
 	content: string
-	created_at: Date
+	created_at: Date | null
 	updated_at: Date | null
 	deleted_at: Date | null
 	tag_id: number
@@ -45,7 +45,10 @@ export class Articles {
 	@Put('/:id')
 	@Summary('Update a article by its id')
 	@Returns(200, ArticleModel)
-	async updateArticle(@PathParams('id') id: number, article: ArticleModel): Promise<ArticleModel> {
+	async updateArticle(
+		@PathParams('id') id: number,
+		article: ArticleModel
+	): Promise<ArticleModel> {
 		return this.prisma.article.update({
 			where: { article_id: id },
 			data: article,

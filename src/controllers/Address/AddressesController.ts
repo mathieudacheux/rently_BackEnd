@@ -47,7 +47,10 @@ export class Addresses {
 	@Put('/:id')
 	@Summary('Update a address by its id')
 	@Returns(200, AddressModel)
-	async updateAddress(@PathParams('id') id: number, address: AddressModel): Promise<AddressModel> {
+	async updateAddress(
+		@PathParams('id') id: number,
+		address: AddressModel
+	): Promise<AddressModel> {
 		return this.prisma.address.update({
 			where: { address_id: id },
 			data: address,

@@ -43,7 +43,10 @@ export class Countries {
 	@Put('/:id')
 	@Summary('Update a country by its id')
 	@Returns(200, CountryModel)
-	async updateCountry(@PathParams('id') id: number, country: CountryModel): Promise<CountryModel> {
+	async updateCountry(
+		@PathParams('id') id: number,
+		country: CountryModel
+	): Promise<CountryModel> {
 		return this.prisma.country.update({
 			where: { country_id: id },
 			data: country,

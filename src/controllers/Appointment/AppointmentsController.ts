@@ -41,7 +41,9 @@ export class Appointments {
 	@Post('/')
 	@Summary('Create a new appointment')
 	@Returns(201, AppointmentModel)
-	async createAppointment(@BodyParams() @Groups('creation') appointment: AppointmentModel) {
+	async createAppointment(
+		@BodyParams() @Groups('creation') appointment: AppointmentModel
+	) {
 		return this.prisma.appointment.create({ data: appointment })
 	}
 
@@ -61,7 +63,9 @@ export class Appointments {
 	@Delete('/:id')
 	@Summary('Delete a appointment by its id')
 	@Returns(204)
-	async deleteAppointment(@PathParams('id') appointment_id: number): Promise<AppointmentModel> {
+	async deleteAppointment(
+		@PathParams('id') appointment_id: number
+	): Promise<AppointmentModel> {
 		return this.prisma.appointment.delete({ where: { appointment_id } })
 	}
 }
