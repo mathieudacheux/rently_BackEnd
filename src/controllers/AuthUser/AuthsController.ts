@@ -9,9 +9,6 @@ import { sign, verify } from 'jsonwebtoken'
 import { JWT_SECRET } from '../../constants'
 
 class UserAuth implements Partial<User> {
-	user_id: number
-	mail: string
-	password: string
 	token: string | null
 }
 
@@ -41,30 +38,41 @@ export class Auths {
 			throw new BadRequest('Wrong password')
 		}
 
+		// Insert inside token the user role
+		const tokenGeneration = sign(
+			{ role_id: user.role_id, user_id: user.user_id },
+			JWT_SECRET,
+			{
+				expiresIn: '12h',
+			}
+		)
+
 		if (!user.token) {
 			await this.prisma.user.update({
 				where: { user_id: user.user_id },
-				data: { token: sign({ user_id: user.user_id }, JWT_SECRET) },
+				data: { token: tokenGeneration },
 			})
-			return user
+			return {
+				token: user.token,
+			}
 		}
 
 		const decoded = verify(user.token, JWT_SECRET)
 		const { exp } = decoded as { exp: number }
 
 		if (!(exp < Date.now())) {
-			const token = sign({ user_id: user.user_id }, JWT_SECRET, {
-				expiresIn: '12h',
-			})
-
 			await this.prisma.user.update({
 				where: { user_id: user.user_id },
 				data: {
-					token,
+					token: tokenGeneration,
 				},
 			})
-			return user
+			return {
+				token: user.token,
+			}
 		}
-		return user
+		return {
+			token: user.token,
+		}
 	}
 }
