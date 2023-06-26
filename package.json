@@ -11,7 +11,6 @@
     "prisma:generate": "npx prisma generate",
     "test:lint": "eslint '**/*.{ts,js}'",
     "test:lint:fix": "eslint '**/*.{ts,js}' --fix",
-    "prepare": "husky install",
     "test": "npx jest"
   },
   "dependencies": {
