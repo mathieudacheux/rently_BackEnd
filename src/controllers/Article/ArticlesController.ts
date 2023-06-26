@@ -1,4 +1,12 @@
-import { Controller, Get, PathParams, Post, BodyParams, Put, Delete } from '@tsed/common'
+import {
+	Controller,
+	Get,
+	PathParams,
+	Post,
+	BodyParams,
+	Put,
+	Delete,
+} from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
 import { Returns, Summary, Groups } from '@tsed/schema'
@@ -45,7 +53,10 @@ export class Articles {
 	@Put('/:id')
 	@Summary('Update a article by its id')
 	@Returns(200, ArticleModel)
-	async updateArticle(@PathParams('id') id: number, article: ArticleModel): Promise<ArticleModel> {
+	async updateArticle(
+		@PathParams('id') id: number,
+		article: ArticleModel
+	): Promise<ArticleModel> {
 		return this.prisma.article.update({
 			where: { article_id: id },
 			data: article,
@@ -55,7 +66,9 @@ export class Articles {
 	@Delete('/:id')
 	@Summary('Delete a article by its id')
 	@Returns(204)
-	async deleteArticle(@PathParams('id') article_id: number): Promise<ArticleModel> {
+	async deleteArticle(
+		@PathParams('id') article_id: number
+	): Promise<ArticleModel> {
 		return this.prisma.article.delete({ where: { article_id } })
 	}
 }
