@@ -13,7 +13,7 @@ class AddressModel implements Address {
 	additionnal_info: string | null
 	longitude: Prisma.Decimal
 	latitude: Prisma.Decimal
-	created_at: Date | null
+	created_at: Date
 	updated_at: Date | null
 	deleted_at: Date | null
 }

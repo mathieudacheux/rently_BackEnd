@@ -35,7 +35,7 @@ class PropertyModel implements Property {
 	ground_floor: boolean
 	land_size_1: Prisma.Decimal
 	garden: boolean
-	created_at: Date | null
+	created_at: Date
 	updated_at: Date | null
 	deleted_at: Date | null
 	owner_id: number

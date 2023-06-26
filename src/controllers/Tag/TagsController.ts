@@ -8,7 +8,7 @@ class TagModel implements Tag {
 	@Groups('!creation')
 	tag_id: number
 	name: string
-	created_at: Date | null
+	created_at: Date
 	updated_at: Date | null
 	deleted_at: Date | null
 }
