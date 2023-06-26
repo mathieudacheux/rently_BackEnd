@@ -29,6 +29,7 @@ import * as authentifications from './controllers/AuthentificationUser/Authentif
 	httpPort: process.env.PORT || 8083,
 	httpsPort: false,
 	disableComponentsScan: true,
+
 	mount: {
 		'/users': [...Object.values(users)],
 		'/authentifications': [...Object.values(authentifications)],
@@ -48,10 +49,23 @@ import * as authentifications from './controllers/AuthentificationUser/Authentif
 		'/tags': [...Object.values(tags)],
 		'/': [...Object.values(pages)],
 	},
+	// swagger with jwt auth
 	swagger: [
 		{
 			path: '/doc',
 			specVersion: '3.0.1',
+			spec: {
+				components: {
+					securitySchemes: {
+						bearerAuth: {
+							type: 'http',
+							scheme: 'bearer',
+							bearerFormat: 'JWT',
+						},
+					},
+				},
+				security: [{ bearerAuth: [] }],
+			},
 		},
 	],
 	middlewares: [
