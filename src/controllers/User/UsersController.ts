@@ -1,3 +1,4 @@
+import { hash } from 'bcrypt'
 import { Controller, Get, PathParams, Post, BodyParams, Put, Delete } from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
@@ -15,7 +16,6 @@ export default class UserModel implements User {
 	@Required()
 	newsletter: boolean
 	token: string | null
-	token_expiration: Date | null
 	created_at: Date | null
 	validated_at: Date | null
 	updated_at: Date | null
@@ -36,17 +36,6 @@ export class Users {
 	@Inject()
 	protected prisma: PrismaService
 
-	// @Get('/')
-	// @Summary('Return a list of all users')
-	// @Returns(200, Array).Of(UserModel)
-	// async getUsers(@PathParams('searchString') searchString: string): Promise<UserModel[]> {
-	// 	return this.prisma.users.findMany({
-	// 		where: {
-	// 			OR: [{ id_users: { equals: Number(searchString) } }, { mail: { contains: searchString } }],
-	// 		},
-	// 	})
-	// }
-
 	@Get('/')
 	@Summary('Return a list of all users')
 	@Returns(200, Array).Of(UserModel)
@@ -63,12 +52,31 @@ export class Users {
 		return this.prisma.user.findUnique({ where: { user_id } })
 	}
 
+	@Get('/:mail')
+	@Summary('Return a user by his mail')
+	@Returns(200, UserModel)
+	@Returns(404, String).Description('Not found')
+	async getUserByMail(@PathParams('mail') mail: string): Promise<UserModel | null> {
+		return this.prisma.user.findUnique({ where: { mail } })
+	}
+
 	@Post('/')
 	@Summary('Create a new user')
 	@Returns(201, UserModel)
 	@Returns(201, UserModel)
 	async signupUser(@BodyParams() @Groups('creation') user: UserModel) {
-		return this.prisma.user.create({ data: user })
+		const userExists = await this.prisma.user.findUnique({
+			where: { mail: user.mail },
+		})
+		if (userExists) {
+			throw new Error('User already exists')
+		}
+		return this.prisma.user.create({
+			data: {
+				...user,
+				password: await hash(user.password, 10),
+			},
+		})
 	}
 
 	@Put('/:id')

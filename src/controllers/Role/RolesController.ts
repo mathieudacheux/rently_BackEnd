@@ -1,7 +1,7 @@
 import { Controller, Get, PathParams, Post, BodyParams, Put, Delete } from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
-import { Required, Returns, Summary, Groups } from '@tsed/schema'
+import { Required, Returns, Summary, Groups, In } from '@tsed/schema'
 import { Role } from '@prisma/client'
 
 class RoleModel implements Role {
@@ -9,7 +9,7 @@ class RoleModel implements Role {
 	role_id: number
 	@Required()
 	name: string
-	created_at: Date
+	created_at: Date | null
 	updated_at: Date | null
 	deleted_at: Date | null
 	@Required()
@@ -24,7 +24,7 @@ export class Roles {
 	@Get('/')
 	@Summary('Return a list of all roles')
 	@Returns(200, Array).Of(RoleModel)
-	async getAllAgencies(): Promise<RoleModel[]> {
+	async getAllRoles(): Promise<RoleModel[]> {
 		return this.prisma.role.findMany()
 	}
 
@@ -45,7 +45,10 @@ export class Roles {
 	@Put('/:id')
 	@Summary('Update a role by its id')
 	@Returns(200, RoleModel)
-	async updateRole(@PathParams('id') role_id: number, role: RoleModel): Promise<RoleModel> {
+	async updateRole(
+		@PathParams('id') role_id: number,
+		role: RoleModel
+	): Promise<RoleModel> {
 		return this.prisma.role.update({
 			where: { role_id },
 			data: role,
@@ -54,6 +57,7 @@ export class Roles {
 
 	@Delete('/:id')
 	@Summary('Delete a role by its id')
+	@In('authorization').Type(String).Description('Bearer token')
 	@Returns(204)
 	async deleteRole(@PathParams('id') role_id: number): Promise<RoleModel> {
 		return this.prisma.role.delete({ where: { role_id } })

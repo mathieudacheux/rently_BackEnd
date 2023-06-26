@@ -56,7 +56,9 @@ export class Permissions {
 	@Delete('/:id')
 	@Summary('Delete a permission by its id')
 	@Returns(204)
-	async deletePermission(@PathParams('id') permission_id: number): Promise<PermissionModel> {
+	async deletePermission(
+		@PathParams('id') permission_id: number
+	): Promise<PermissionModel> {
 		return this.prisma.permission.delete({ where: { permission_id } })
 	}
 }

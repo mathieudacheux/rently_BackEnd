@@ -44,7 +44,10 @@ export class Messages {
 	@Put('/:id')
 	@Summary('Update a message by its id')
 	@Returns(200, MessageModel)
-	async updateMessage(@PathParams('id') id: number, message: MessageModel): Promise<MessageModel> {
+	async updateMessage(
+		@PathParams('id') id: number,
+		message: MessageModel
+	): Promise<MessageModel> {
 		return this.prisma.message.update({
 			where: { message_id: id },
 			data: message,

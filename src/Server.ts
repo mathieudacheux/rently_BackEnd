@@ -21,6 +21,7 @@ import * as sectors from './controllers/Sector/SectorsController'
 import * as status from './controllers/Status/StatusController'
 import * as tags from './controllers/Tag/TagsController'
 import * as users from './controllers/User/UsersController'
+import * as authentifications from './controllers/AuthentificationUser/AuthentificationsController'
 
 @Configuration({
 	...config,
@@ -28,7 +29,10 @@ import * as users from './controllers/User/UsersController'
 	httpPort: process.env.PORT || 8083,
 	httpsPort: false,
 	disableComponentsScan: true,
+
 	mount: {
+		'/users': [...Object.values(users)],
+		'/authentifications': [...Object.values(authentifications)],
 		'/addresses': [...Object.values(addresses)],
 		'/agencies': [...Object.values(agencies)],
 		'/appointments': [...Object.values(appointments)],
@@ -43,13 +47,29 @@ import * as users from './controllers/User/UsersController'
 		'/sectors': [...Object.values(sectors)],
 		'/statuses': [...Object.values(status)],
 		'/tags': [...Object.values(tags)],
-		'/users': [...Object.values(users)],
 		'/': [...Object.values(pages)],
 	},
+	// swagger with jwt auth
 	swagger: [
 		{
 			path: '/doc',
 			specVersion: '3.0.1',
+			spec: {
+				components: {
+					securitySchemes: {
+						bearerAuth: {
+							type: 'http',
+							scheme: 'bearer',
+							bearerFormat: 'JWT',
+						},
+					},
+				},
+				security: [
+					{
+						bearerAuth: [],
+					},
+				],
+			},
 		},
 	],
 	middlewares: [
@@ -60,6 +80,7 @@ import * as users from './controllers/User/UsersController'
 		'json-parser',
 		{ use: 'urlencoded-parser', options: { extended: true } },
 	],
+
 	views: {
 		root: join(process.cwd(), '../views'),
 		extensions: {
