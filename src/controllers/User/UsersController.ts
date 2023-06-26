@@ -73,8 +73,11 @@ export class Users {
 		}
 		return this.prisma.user.create({
 			data: {
-				...user,
+				mail: user.mail,
 				password: await hash(user.password, 10),
+				country_id: user.country_id,
+				role_id: user.role_id,
+				newsletter: user.newsletter,
 			},
 		})
 	}

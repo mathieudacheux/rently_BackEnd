@@ -1,12 +1,13 @@
 import { Controller, Get, PathParams, Post, BodyParams, Put, Delete } from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
-import { Returns, Summary, Groups } from '@tsed/schema'
+import { Returns, Summary, Groups, Required } from '@tsed/schema'
 import { Tag } from '@prisma/client'
 
 class TagModel implements Tag {
 	@Groups('!creation')
 	tag_id: number
+	@Required()
 	name: string
 	created_at: Date | null
 	updated_at: Date | null
@@ -35,8 +36,8 @@ export class Tags {
 	@Post('/')
 	@Summary('Create a new tag')
 	@Returns(201, TagModel)
-	async createTag(@BodyParams() @Groups('creation') tag: TagModel) {
-		return this.prisma.tag.create({ data: tag })
+	async createTag(@BodyParams('name') name: string): Promise<TagModel> {
+		return this.prisma.tag.create({ data: { name } })
 	}
 
 	@Put('/:id')

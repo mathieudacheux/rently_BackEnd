@@ -4,20 +4,19 @@ const baseURL = 'http://localhost:8083'
 
 describe('GET /users', () => {
 	const newUser = {
-		mail: 'test@mail.fr',
+		mail: `${Math.random().toString(36).substring(7)}@test.com`,
 		password: 'string',
-		newsletter: false,
+		newsletter: true,
 		country_id: 1,
 		role_id: 1,
 	}
 
 	let user_id: number
 	beforeAll(async () => {
-		// set up the user
 		user_id = (await request(baseURL).post('/users').send(newUser)).body.user_id
 	})
 	afterAll(async () => {
-		await request(baseURL).delete(`/todo/${user_id}`)
+		await request(baseURL).delete(`/users/${user_id}`)
 	})
 	it('one user should return 200', async () => {
 		const response = await request(baseURL).get(`/users/${user_id}`)
