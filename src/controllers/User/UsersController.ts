@@ -1,13 +1,5 @@
 import { hash } from 'bcrypt'
-import {
-	Controller,
-	Get,
-	PathParams,
-	Post,
-	BodyParams,
-	Put,
-	Delete,
-} from '@tsed/common'
+import { Controller, Get, PathParams, Post, BodyParams, Put, Delete } from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
 import { Required, Email, Returns, Summary, Groups } from '@tsed/schema'
@@ -24,7 +16,6 @@ export default class UserModel implements User {
 	@Required()
 	newsletter: boolean
 	token: string | null
-	token_expiration: Date | null
 	created_at: Date | null
 	validated_at: Date | null
 	updated_at: Date | null
@@ -57,9 +48,7 @@ export class Users {
 	@Summary('Return a user by his id')
 	@Returns(200, UserModel)
 	@Returns(404, String).Description('Not found')
-	async getUserById(
-		@PathParams('id') user_id: number
-	): Promise<UserModel | null> {
+	async getUserById(@PathParams('id') user_id: number): Promise<UserModel | null> {
 		return this.prisma.user.findUnique({ where: { user_id } })
 	}
 
@@ -67,9 +56,7 @@ export class Users {
 	@Summary('Return a user by his mail')
 	@Returns(200, UserModel)
 	@Returns(404, String).Description('Not found')
-	async getUserByMail(
-		@PathParams('mail') mail: string
-	): Promise<UserModel | null> {
+	async getUserByMail(@PathParams('mail') mail: string): Promise<UserModel | null> {
 		return this.prisma.user.findUnique({ where: { mail } })
 	}
 
@@ -95,10 +82,7 @@ export class Users {
 	@Put('/:id')
 	@Summary('Update a user by its id')
 	@Returns(200, UserModel)
-	async UpdateUser(
-		@PathParams('id') id: number,
-		user: UserModel
-	): Promise<UserModel> {
+	async UpdateUser(@PathParams('id') id: number, user: UserModel): Promise<UserModel> {
 		return this.prisma.user.update({
 			where: { user_id: id },
 			data: user,

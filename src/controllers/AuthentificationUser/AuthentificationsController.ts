@@ -13,7 +13,7 @@ class UserAuth implements Partial<User> {
 }
 
 @Controller('/')
-export class Auths {
+export class Authentifications {
 	@Inject()
 	protected prisma: PrismaService
 

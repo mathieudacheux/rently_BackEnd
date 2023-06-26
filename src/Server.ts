@@ -21,7 +21,7 @@ import * as sectors from './controllers/Sector/SectorsController'
 import * as status from './controllers/Status/StatusController'
 import * as tags from './controllers/Tag/TagsController'
 import * as users from './controllers/User/UsersController'
-import * as auths from './controllers/AuthUser/AuthsController'
+import * as authentifications from './controllers/AuthentificationUser/AuthentificationsController'
 
 @Configuration({
 	...config,
@@ -31,7 +31,7 @@ import * as auths from './controllers/AuthUser/AuthsController'
 	disableComponentsScan: true,
 	mount: {
 		'/users': [...Object.values(users)],
-		'/auths': [...Object.values(auths)],
+		'/authentifications': [...Object.values(authentifications)],
 		'/addresses': [...Object.values(addresses)],
 		'/agencies': [...Object.values(agencies)],
 		'/appointments': [...Object.values(appointments)],
