@@ -6,22 +6,17 @@ import { Email, Returns, Summary, Groups, Required } from '@tsed/schema'
 import { User } from '@prisma/client'
 
 export default class UserModel implements User {
-	@Groups('!creation')
 	user_id: number
-
 	@Groups('creation')
 	@Required()
 	@Email()
 	mail: string
-
 	@Groups('creation')
 	@Required()
 	password: string
-
 	@Groups('creation')
 	@Required()
 	newsletter: boolean
-
 	token: string | null
 	created_at: Date | null
 	validated_at: Date | null
@@ -31,15 +26,12 @@ export default class UserModel implements User {
 	name: string | null
 	phone: string | null
 	address_id: number | null
-
 	@Groups('creation')
 	@Required()
 	country_id: number
-
 	@Groups('creation')
 	@Required()
 	role_id: number
-
 	agency_id: number | null
 }
 
@@ -76,7 +68,9 @@ export class Users {
 	@Summary('Create a new user')
 	@Returns(201, UserModel)
 	@Returns(201, UserModel)
-	async signupUser(@BodyParams() @Groups('creation') user: UserModel) {
+	async signupUser(
+		@BodyParams() @Groups('creation') user: UserModel
+	): Promise<UserModel> {
 		const userExists = await this.prisma.user.findUnique({
 			where: { mail: user.mail },
 		})
