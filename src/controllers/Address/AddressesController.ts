@@ -1,12 +1,4 @@
-import {
-	Controller,
-	Get,
-	PathParams,
-	Post,
-	BodyParams,
-	Put,
-	Delete,
-} from '@tsed/common'
+import { Controller, Get, PathParams, Post, BodyParams, Put, Delete } from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
 import { Returns, Summary, Groups } from '@tsed/schema'
@@ -68,9 +60,7 @@ export class Addresses {
 	@Delete('/:id')
 	@Summary('Delete a address by its id')
 	@Returns(204)
-	async deleteAddress(
-		@PathParams('id') address_id: number
-	): Promise<AddressModel> {
+	async deleteAddress(@PathParams('id') address_id: number): Promise<AddressModel> {
 		return this.prisma.address.delete({ where: { address_id } })
 	}
 }

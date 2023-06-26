@@ -62,12 +62,7 @@ import * as authentifications from './controllers/AuthentificationUser/Authentif
 		'json-parser',
 		{ use: 'urlencoded-parser', options: { extended: true } },
 	],
-	swaggerAuth: {
-		basic: {
-			username: 'admin',
-			password: 'admin',
-		},
-	},
+
 	views: {
 		root: join(process.cwd(), '../views'),
 		extensions: {
