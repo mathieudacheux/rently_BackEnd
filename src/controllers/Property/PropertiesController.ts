@@ -60,11 +60,15 @@ export class Properties {
 	@Inject()
 	protected prisma: PrismaService
 
-	@Get('/:offset')
+	@Get('/')
 	@Summary('Return a list of properties')
 	@Returns(200, Array).Of(PropertyModel)
-	async getProperties(@PathParams('offset') offset: number): Promise<PropertyModel[]> {
-		return this.prisma.property.findMany({ take: 50, skip: offset })
+	async getProperties(@QueryParams('offset') offset: number): Promise<PropertyModel[]> {
+		return this.prisma.property.findMany({
+			take: 50,
+			skip: offset,
+			orderBy: { property_id: 'asc' },
+		})
 	}
 
 	// get properties by filter
@@ -128,6 +132,7 @@ export class Properties {
 				garden,
 				dpe,
 			},
+			orderBy: price ? { price: 'asc' } : { property_id: 'asc' },
 		})
 	}
 
