@@ -4,6 +4,7 @@ import { PlatformApplication } from '@tsed/common'
 import '@tsed/platform-express'
 import '@tsed/ajv'
 import '@tsed/swagger'
+// import multer from 'multer'
 import { config } from './config/index'
 import * as pages from './controllers/pages/index'
 import * as addresses from './controllers/Address/AddressesController'
@@ -22,10 +23,11 @@ import * as status from './controllers/Status/StatusController'
 import * as tags from './controllers/Tag/TagsController'
 import * as users from './controllers/User/UsersController'
 import * as authentifications from './controllers/AuthentificationUser/AuthentificationsController'
+import * as attachment from './controllers/Attachment/AttachmentsController'
 
 @Configuration({
 	...config,
-	acceptMimes: ['application/json'],
+	acceptMimes: ['application/json', 'multipart/form-data'],
 	httpPort: process.env.PORT || 8083,
 	httpsPort: false,
 	disableComponentsScan: true,
@@ -47,6 +49,7 @@ import * as authentifications from './controllers/AuthentificationUser/Authentif
 		'/sectors': [...Object.values(sectors)],
 		'/statuses': [...Object.values(status)],
 		'/tags': [...Object.values(tags)],
+		'/file': [...Object.values(attachment)],
 		'/': [...Object.values(pages)],
 	},
 	// swagger with jwt auth
