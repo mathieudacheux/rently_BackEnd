@@ -1,4 +1,13 @@
-import { Controller, Get, PathParams, Post, BodyParams, Put, Delete } from '@tsed/common'
+import { hash } from 'bcrypt'
+import {
+	Controller,
+	Get,
+	PathParams,
+	Post,
+	BodyParams,
+	Put,
+	Delete,
+} from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
 import { Required, Email, Returns, Summary, Groups } from '@tsed/schema'
@@ -36,17 +45,6 @@ export class Users {
 	@Inject()
 	protected prisma: PrismaService
 
-	// @Get('/')
-	// @Summary('Return a list of all users')
-	// @Returns(200, Array).Of(UserModel)
-	// async getUsers(@PathParams('searchString') searchString: string): Promise<UserModel[]> {
-	// 	return this.prisma.users.findMany({
-	// 		where: {
-	// 			OR: [{ id_users: { equals: Number(searchString) } }, { mail: { contains: searchString } }],
-	// 		},
-	// 	})
-	// }
-
 	@Get('/')
 	@Summary('Return a list of all users')
 	@Returns(200, Array).Of(UserModel)
@@ -59,7 +57,9 @@ export class Users {
 	@Summary('Return a user by his id')
 	@Returns(200, UserModel)
 	@Returns(404, String).Description('Not found')
-	async getUserById(@PathParams('id') user_id: number): Promise<UserModel | null> {
+	async getUserById(
+		@PathParams('id') user_id: number
+	): Promise<UserModel | null> {
 		return this.prisma.user.findUnique({ where: { user_id } })
 	}
 
@@ -68,13 +68,23 @@ export class Users {
 	@Returns(201, UserModel)
 	@Returns(201, UserModel)
 	async signupUser(@BodyParams() @Groups('creation') user: UserModel) {
-		return this.prisma.user.create({ data: user })
+		const { password } = user
+		const hashedPassword = await hash(password, 10)
+		return this.prisma.user.create({
+			data: {
+				...user,
+				password: hashedPassword,
+			},
+		})
 	}
 
 	@Put('/:id')
 	@Summary('Update a user by its id')
 	@Returns(200, UserModel)
-	async UpdateUser(@PathParams('id') id: number, user: UserModel): Promise<UserModel> {
+	async UpdateUser(
+		@PathParams('id') id: number,
+		user: UserModel
+	): Promise<UserModel> {
 		return this.prisma.user.update({
 			where: { user_id: id },
 			data: user,
