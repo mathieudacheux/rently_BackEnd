@@ -262,14 +262,13 @@ model Tag {
 
 model User {
   user_id                                Int            @id @default(autoincrement())
-  mail                                   String         @db.VarChar(250)
+  mail                                   String         @db.VarChar(250)  @unique
   password                               String         @db.VarChar(250)
   phone                                  String?        @db.VarChar(13)
   name                                   String?        @db.VarChar(250)
   firstname                              String?        @db.VarChar(250)
   newsletter                             Boolean
   token                                  String?        @db.VarChar(250)  @unique
-  token_expiration                       DateTime?      @db.DateTime(0)
   created_at                             DateTime?      @default(now()) @db.DateTime(0)
   validated_at                           DateTime?      @db.DateTime(0)
   updated_at                             DateTime?      @db.DateTime(0)

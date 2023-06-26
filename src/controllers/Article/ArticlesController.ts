@@ -17,7 +17,7 @@ class ArticleModel implements Article {
 	article_id: number
 	name: string
 	content: string
-	created_at: Date
+	created_at: Date | null
 	updated_at: Date | null
 	deleted_at: Date | null
 	tag_id: number

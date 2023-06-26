@@ -63,17 +63,31 @@ export class Users {
 		return this.prisma.user.findUnique({ where: { user_id } })
 	}
 
+	@Get('/:mail')
+	@Summary('Return a user by his mail')
+	@Returns(200, UserModel)
+	@Returns(404, String).Description('Not found')
+	async getUserByMail(
+		@PathParams('mail') mail: string
+	): Promise<UserModel | null> {
+		return this.prisma.user.findUnique({ where: { mail } })
+	}
+
 	@Post('/')
 	@Summary('Create a new user')
 	@Returns(201, UserModel)
 	@Returns(201, UserModel)
 	async signupUser(@BodyParams() @Groups('creation') user: UserModel) {
-		const { password } = user
-		const hashedPassword = await hash(password, 10)
+		const userExists = await this.prisma.user.findUnique({
+			where: { mail: user.mail },
+		})
+		if (userExists) {
+			throw new Error('User already exists')
+		}
 		return this.prisma.user.create({
 			data: {
 				...user,
-				password: hashedPassword,
+				password: await hash(user.password, 10),
 			},
 		})
 	}
