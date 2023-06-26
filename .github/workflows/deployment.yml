@@ -21,11 +21,8 @@ jobs:
         run: |
           npm install
           npm update
-          if npm test; then
-            echo "Tests passed"
-          else
-            echo "Tests failed" && exit 1
-          fi
+          npm test --json > test-results.json || (echo "Tests failed" && exit 1)
+          echo "Tests passed"
           npm run build
 
       - name: 📂 Sync files
