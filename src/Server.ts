@@ -21,6 +21,7 @@ import * as sectors from './controllers/Sector/SectorsController'
 import * as status from './controllers/Status/StatusController'
 import * as tags from './controllers/Tag/TagsController'
 import * as users from './controllers/User/UsersController'
+import * as auths from './controllers/AuthUser/AuthsController'
 
 @Configuration({
 	...config,
@@ -29,6 +30,8 @@ import * as users from './controllers/User/UsersController'
 	httpsPort: false,
 	disableComponentsScan: true,
 	mount: {
+		'/users': [...Object.values(users)],
+		'/auths': [...Object.values(auths)],
 		'/addresses': [...Object.values(addresses)],
 		'/agencies': [...Object.values(agencies)],
 		'/appointments': [...Object.values(appointments)],
@@ -43,7 +46,6 @@ import * as users from './controllers/User/UsersController'
 		'/sectors': [...Object.values(sectors)],
 		'/statuses': [...Object.values(status)],
 		'/tags': [...Object.values(tags)],
-		'/users': [...Object.values(users)],
 		'/': [...Object.values(pages)],
 	},
 	swagger: [
@@ -60,6 +62,12 @@ import * as users from './controllers/User/UsersController'
 		'json-parser',
 		{ use: 'urlencoded-parser', options: { extended: true } },
 	],
+	swaggerAuth: {
+		basic: {
+			username: 'admin',
+			password: 'admin',
+		},
+	},
 	views: {
 		root: join(process.cwd(), '../views'),
 		extensions: {

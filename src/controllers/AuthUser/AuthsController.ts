@@ -1,12 +1,12 @@
 import { User } from '@prisma/client'
 import { Inject } from '@tsed/di'
 import { Controller, BodyParams } from '@tsed/common'
-import { PrismaService } from 'src/services/PrismaService'
+import { PrismaService } from '../../services/PrismaService'
 import { Post, Returns, Summary } from '@tsed/schema'
 import { NotFound, BadRequest } from '@tsed/exceptions'
 import { compare } from 'bcrypt'
 import { sign, verify } from 'jsonwebtoken'
-import { JWT_SECRET } from 'src/constants'
+import { JWT_SECRET } from '../../constants'
 
 class UserAuth implements Partial<User> {
 	user_id: number
