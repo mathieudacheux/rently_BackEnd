@@ -2,19 +2,26 @@ import { hash } from 'bcrypt'
 import { Controller, Get, PathParams, Post, BodyParams, Put, Delete } from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
-import { Required, Email, Returns, Summary, Groups } from '@tsed/schema'
+import { Email, Returns, Summary, Groups, Required } from '@tsed/schema'
 import { User } from '@prisma/client'
 
 export default class UserModel implements User {
 	@Groups('!creation')
 	user_id: number
+
+	@Groups('creation')
 	@Required()
 	@Email()
 	mail: string
+
+	@Groups('creation')
 	@Required()
 	password: string
+
+	@Groups('creation')
 	@Required()
 	newsletter: boolean
+
 	token: string | null
 	created_at: Date | null
 	validated_at: Date | null
@@ -24,10 +31,15 @@ export default class UserModel implements User {
 	name: string | null
 	phone: string | null
 	address_id: number | null
+
+	@Groups('creation')
 	@Required()
 	country_id: number
+
+	@Groups('creation')
 	@Required()
 	role_id: number
+
 	agency_id: number | null
 }
 
@@ -73,11 +85,8 @@ export class Users {
 		}
 		return this.prisma.user.create({
 			data: {
-				mail: user.mail,
+				...user,
 				password: await hash(user.password, 10),
-				country_id: user.country_id,
-				role_id: user.role_id,
-				newsletter: user.newsletter,
 			},
 		})
 	}
