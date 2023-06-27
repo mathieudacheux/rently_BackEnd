@@ -1,6 +1,5 @@
 import request from 'supertest'
-
-const baseURL = 'http://localhost:8083'
+import { BASE_URL } from '../../config/index'
 
 describe('Agencies controller endpoint', () => {
 	const newAgency = {
@@ -11,23 +10,23 @@ describe('Agencies controller endpoint', () => {
 
 	let agency_id: number
 	beforeAll(async () => {
-		agency_id = (await request(baseURL).post('/agencies').send(newAgency)).body.agency_id
+		agency_id = (await request(BASE_URL).post('/agencies').send(newAgency)).body.agency_id
 	})
 	afterAll(async () => {
-		await request(baseURL).delete(`/agencies/${agency_id}`)
+		await request(BASE_URL).delete(`/agencies/${agency_id}`)
 	})
 	it('one agency should return 200', async () => {
-		const response = await request(baseURL).get(`/agencies/${agency_id}`)
+		const response = await request(BASE_URL).get(`/agencies/${agency_id}`)
 		expect(response.statusCode).toBe(200)
 		expect(response.error).toBe(false)
 	})
 	it('all agencies should return 200', async () => {
-		const response = await request(baseURL).get('/agencies')
+		const response = await request(BASE_URL).get('/agencies')
 		expect(response.statusCode).toBe(200)
 		expect(response.error).toBe(false)
 	})
 	it('should return agencies', async () => {
-		const response = await request(baseURL).get('/agencies')
+		const response = await request(BASE_URL).get('/agencies')
 		expect(response.body.length >= 1).toBe(true)
 	})
 })

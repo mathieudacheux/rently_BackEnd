@@ -9,3 +9,7 @@ export const config: Partial<TsED.Configuration> = {
 	logger: loggerConfig,
 	// additional shared configuration
 }
+
+export const AUTHORIZED_PASSWORD = 'BlackOPS80*'
+export const AUTHORIZED_MAIL = 'mathieu@icloud.com'
+export const BASE_URL = 'http://localhost:8083'

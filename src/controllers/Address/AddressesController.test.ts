@@ -1,6 +1,5 @@
 import request from 'supertest'
-
-const baseURL = 'http://localhost:8083'
+import { BASE_URL } from '../../config/index'
 
 describe('Addresses controller endpoint', () => {
 	const newAddress = {
@@ -14,24 +13,24 @@ describe('Addresses controller endpoint', () => {
 
 	let address_id: number
 	beforeAll(async () => {
-		address_id = (await request(baseURL).post('/addresses').send(newAddress)).body
+		address_id = (await request(BASE_URL).post('/addresses').send(newAddress)).body
 			.address_id
 	})
 	afterAll(async () => {
-		await request(baseURL).delete(`/addresses/${address_id}`)
+		await request(BASE_URL).delete(`/addresses/${address_id}`)
 	})
 	it('one address should return 200', async () => {
-		const response = await request(baseURL).get(`/addresses/${address_id}`)
+		const response = await request(BASE_URL).get(`/addresses/${address_id}`)
 		expect(response.statusCode).toBe(200)
 		expect(response.error).toBe(false)
 	})
 	it('all addresses should return 200', async () => {
-		const response = await request(baseURL).get('/addresses')
+		const response = await request(BASE_URL).get('/addresses')
 		expect(response.statusCode).toBe(200)
 		expect(response.error).toBe(false)
 	})
 	it('should return addresses', async () => {
-		const response = await request(baseURL).get('/addresses')
+		const response = await request(BASE_URL).get('/addresses')
 		expect(response.body.length >= 1).toBe(true)
 	})
 })

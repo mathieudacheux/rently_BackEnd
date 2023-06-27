@@ -18,10 +18,12 @@ import AuthentificationMiddleware from '../../middlewares/AuthentificationMiddle
 export class Appointments {
 	@Inject()
 	protected prisma: PrismaService
+
 	@UseBeforeEach(AuthentificationMiddleware)
 	@Get('/')
 	@Summary('Return a list of all appointments')
 	@Returns(200, Array).Of(AppointmentSerializer).Groups('read')
+	@Returns(404, String).Description('Not found')
 	async getAllAppointments(): Promise<AppointmentSerializer[]> {
 		return this.prisma.appointment.findMany()
 	}

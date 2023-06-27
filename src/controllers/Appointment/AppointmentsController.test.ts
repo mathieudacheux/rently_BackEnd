@@ -1,6 +1,6 @@
 import request from 'supertest'
-
-const baseURL = 'http://localhost:8083'
+import { BASE_URL } from '../../config/index'
+import { getUserToken } from '../../helpers/helpersFunctions'
 
 describe('Appointments controller endpoint', () => {
 	const newAppointment = {
@@ -15,24 +15,39 @@ describe('Appointments controller endpoint', () => {
 
 	let appointment_id: number
 	beforeAll(async () => {
-		appointment_id = (await request(baseURL).post('/appointments').send(newAppointment))
-			.body.appointment_id
+		const response = await request(BASE_URL)
+			.post('/appointments')
+			.set('Authorization', `Bearer ${await getUserToken()}`)
+			.send(newAppointment)
+		appointment_id = response.body.appointment_id
 	})
 	afterAll(async () => {
-		await request(baseURL).delete(`/appointments/${appointment_id}`)
+		await request(BASE_URL)
+			.delete(`/appointments/${appointment_id}`)
+			.set('Authorization', `Bearer ${await getUserToken()}`)
+			.send()
 	})
 	it('one appointment should return 200', async () => {
-		const response = await request(baseURL).get(`/appointments/${appointment_id}`)
+		const response = await request(BASE_URL)
+			.get(`/appointments/${appointment_id}`)
+			.set('Authorization', `Bearer ${await getUserToken()}`)
+			.send()
 		expect(response.statusCode).toBe(200)
 		expect(response.error).toBe(false)
 	})
 	it('all appointments should return 200', async () => {
-		const response = await request(baseURL).get('/appointments')
+		const response = await request(BASE_URL)
+			.get('/appointments')
+			.set('Authorization', `Bearer ${await getUserToken()}`)
+			.send()
 		expect(response.statusCode).toBe(200)
 		expect(response.error).toBe(false)
 	})
 	it('should return appointments', async () => {
-		const response = await request(baseURL).get('/appointments')
+		const response = await request(BASE_URL)
+			.get('/appointments')
+			.set('Authorization', `Bearer ${await getUserToken()}`)
+			.send()
 		expect(response.body.length >= 1).toBe(true)
 	})
 })
