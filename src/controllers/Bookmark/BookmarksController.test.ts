@@ -5,7 +5,7 @@ import { BASE_URL } from '../../config/index'
 describe('Bookmarks controller endpoint', () => {
 	const newBookmark = {
 		user_id: 57,
-		property_id: 1,
+		property_id: 4,
 	}
 
 	let bookmark_id: number
