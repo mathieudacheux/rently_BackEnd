@@ -18,7 +18,7 @@ export class Authentifications {
 	protected prisma: PrismaService
 
 	@Post('/')
-	@Summary('Login an user')
+	@Summary('Login an user and return a token')
 	@Returns(200, UserAuth)
 	@Returns(404, String).Description('Not found')
 	@Returns(400, String).Description('Bad request')

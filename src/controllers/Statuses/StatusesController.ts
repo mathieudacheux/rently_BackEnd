@@ -8,7 +8,7 @@ class StatusModel implements Status {
 	@Groups('!creation')
 	status_id: number
 	name: string
-	created_at: Date
+	created_at: Date | null
 	updated_at: Date | null
 	deleted_at: Date | null
 }
@@ -35,8 +35,9 @@ export class Statuses {
 	@Post('/')
 	@Summary('Create a new status')
 	@Returns(201, StatusModel)
-	async createStatus(@BodyParams() @Groups('creation') status: StatusModel) {
-		return this.prisma.status.create({ data: status })
+	//name is requred in the body
+	async createStatus(@BodyParams('name') name: string): Promise<StatusModel> {
+		return this.prisma.status.create({ data: { name } })
 	}
 
 	@Put('/:id')

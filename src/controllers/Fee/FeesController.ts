@@ -11,7 +11,7 @@ class FeeModel implements Fee {
 	sell_fee: Prisma.Decimal
 	square_fee: Prisma.Decimal
 	gestion_fee: Prisma.Decimal
-	created_at: Date
+	created_at: Date | null
 	updated_at: Date | null
 	deleted_at: Date | null
 }

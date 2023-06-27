@@ -1,4 +1,9 @@
-import { MulterOptions, MultipartFile, PathParams, PlatformMulterFile } from '@tsed/common'
+import {
+	MulterOptions,
+	MultipartFile,
+	PathParams,
+	PlatformMulterFile,
+} from '@tsed/common'
 import { Post } from '@tsed/schema'
 import { Controller } from '@tsed/di'
 import multer from 'multer'
@@ -54,7 +59,6 @@ export class AttachmentController {
 				throw new Error('Error during file deletion')
 			}
 		})
-		// console.log('File : ', file, idUser)
 		return { file: file, id_user: idUser }
 	}
 }

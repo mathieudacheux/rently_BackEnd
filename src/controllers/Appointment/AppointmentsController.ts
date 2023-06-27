@@ -1,8 +1,18 @@
-import { Controller, Get, PathParams, Post, BodyParams, Put, Delete } from '@tsed/common'
+import {
+	Controller,
+	Get,
+	PathParams,
+	Post,
+	BodyParams,
+	Put,
+	Delete,
+	UseBeforeEach,
+} from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
 import { Returns, Summary, Groups } from '@tsed/schema'
 import { Appointment } from '@prisma/client'
+import AuthentificationMiddleware from '../../middlewares/AuthentificationMiddleware'
 
 class AppointmentModel implements Appointment {
 	@Groups('!creation')
@@ -12,7 +22,7 @@ class AppointmentModel implements Appointment {
 	date_end: Date
 	note: string | null
 	reminder: Date
-	created_at: Date
+	created_at: Date | null
 	updated_at: Date | null
 	deleted_at: Date | null
 	property_id: number
@@ -23,18 +33,20 @@ class AppointmentModel implements Appointment {
 export class Appointments {
 	@Inject()
 	protected prisma: PrismaService
-
+	@UseBeforeEach(AuthentificationMiddleware)
 	@Get('/')
 	@Summary('Return a list of all appointments')
 	@Returns(200, Array).Of(AppointmentModel)
-	async getAllAgencies(): Promise<AppointmentModel[]> {
+	async getAllAppointments(): Promise<AppointmentModel[]> {
 		return this.prisma.appointment.findMany()
 	}
 
 	@Get('/:id')
 	@Summary('Return a appointment by his id')
 	@Returns(200, AppointmentModel)
-	async getAppointmentById(@PathParams('id') appointment_id: number) {
+	async getAppointmentById(
+		@PathParams('id') appointment_id: number
+	): Promise<AppointmentModel | null> {
 		return this.prisma.appointment.findUnique({ where: { appointment_id } })
 	}
 

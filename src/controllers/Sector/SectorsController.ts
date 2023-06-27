@@ -5,13 +5,15 @@ import { Returns, Summary, Groups } from '@tsed/schema'
 import { Sector } from '@prisma/client'
 
 class SectorModel implements Sector {
-	@Groups('!creation')
 	sector_id: number
+	@Groups('!creation')
 	name: string
-	created_at: Date
+	created_at: Date | null
 	updated_at: Date | null
 	deleted_at: Date | null
+	@Groups('!creation')
 	polygon: string
+	@Groups('!creation')
 	agency_id: number
 }
 
@@ -37,7 +39,8 @@ export class Sectors {
 	@Post('/')
 	@Summary('Create a new sector')
 	@Returns(201, SectorModel)
-	async createSector(@BodyParams() @Groups('creation') sector: SectorModel) {
+	// required name, polygon, agency_id
+	async createSector(@BodyParams() sector: SectorModel): Promise<SectorModel> {
 		return this.prisma.sector.create({ data: sector })
 	}
 

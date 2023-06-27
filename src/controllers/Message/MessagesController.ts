@@ -8,7 +8,7 @@ class MessageModel implements Message {
 	@Groups('!creation')
 	message_id: number
 	content: string
-	created_at: Date
+	created_at: Date | null
 	updated_at: Date | null
 	deleted_at: Date | null
 	user_id_1: number
@@ -23,8 +23,12 @@ export class Messages {
 	@Get('/')
 	@Summary('Return a list of all messages')
 	@Returns(200, Array).Of(MessageModel)
-	async getAllMessages(): Promise<MessageModel[]> {
-		return this.prisma.message.findMany()
+	async getAllMessages(@PathParams('offset') offset: number): Promise<MessageModel[]> {
+		return this.prisma.message.findMany({
+			take: 50,
+			skip: offset,
+			orderBy: { created_at: 'desc' },
+		})
 	}
 
 	@Get('/:id')

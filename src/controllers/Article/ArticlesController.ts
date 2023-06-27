@@ -24,8 +24,8 @@ export class Articles {
 	@Get('/')
 	@Summary('Return a list of all articles')
 	@Returns(200, Array).Of(ArticleModel)
-	async getAllArticles(): Promise<ArticleModel[]> {
-		return this.prisma.article.findMany()
+	async getAllArticles(@PathParams('offset') offset: number): Promise<ArticleModel[]> {
+		return this.prisma.article.findMany({ take: 15, skip: offset })
 	}
 
 	@Get('/:id')

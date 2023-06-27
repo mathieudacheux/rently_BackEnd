@@ -2,34 +2,8 @@ import { hash } from 'bcrypt'
 import { Controller, Get, PathParams, Post, BodyParams, Put, Delete } from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
-import { Required, Email, Returns, Summary, Groups } from '@tsed/schema'
-import { User } from '@prisma/client'
-
-export default class UserModel implements User {
-	@Groups('!creation')
-	user_id: number
-	@Required()
-	@Email()
-	mail: string
-	@Required()
-	password: string
-	@Required()
-	newsletter: boolean
-	token: string | null
-	created_at: Date | null
-	validated_at: Date | null
-	updated_at: Date | null
-	deleted_at: Date | null
-	firstname: string | null
-	name: string | null
-	phone: string | null
-	address_id: number | null
-	@Required()
-	country_id: number
-	@Required()
-	role_id: number
-	agency_id: number | null
-}
+import { Returns, Summary, Groups } from '@tsed/schema'
+import { UserSerialiazer } from '../../models/UserModel'
 
 @Controller('/')
 export class Users {
@@ -38,33 +12,35 @@ export class Users {
 
 	@Get('/')
 	@Summary('Return a list of all users')
-	@Returns(200, Array).Of(UserModel)
+	@Returns(200, Array).Of(UserSerialiazer).Groups('read')
 	@Returns(404, String).Description('Not found')
-	async getAllUsers(): Promise<UserModel[]> {
+	async getAllUsers(): Promise<UserSerialiazer[]> {
 		return this.prisma.user.findMany()
 	}
 
 	@Get('/:id')
 	@Summary('Return a user by his id')
-	@Returns(200, UserModel)
+	@Returns(200, UserSerialiazer).Groups('read')
 	@Returns(404, String).Description('Not found')
-	async getUserById(@PathParams('id') user_id: number): Promise<UserModel | null> {
+	async getUserById(@PathParams('id') user_id: number): Promise<UserSerialiazer | null> {
 		return this.prisma.user.findUnique({ where: { user_id } })
 	}
 
 	@Get('/:mail')
 	@Summary('Return a user by his mail')
-	@Returns(200, UserModel)
+	@Returns(200, UserSerialiazer).Groups('read')
 	@Returns(404, String).Description('Not found')
-	async getUserByMail(@PathParams('mail') mail: string): Promise<UserModel | null> {
+	async getUserByMail(@PathParams('mail') mail: string): Promise<UserSerialiazer | null> {
 		return this.prisma.user.findUnique({ where: { mail } })
 	}
 
 	@Post('/')
 	@Summary('Create a new user')
-	@Returns(201, UserModel)
-	@Returns(201, UserModel)
-	async signupUser(@BodyParams() @Groups('creation') user: UserModel) {
+	@Returns(201, UserSerialiazer).Description('Created').Groups('read')
+	@Returns(400, String).Description('Bad request')
+	async signupUser(
+		@BodyParams() @Groups('post') user: UserSerialiazer
+	): Promise<UserSerialiazer> {
 		const userExists = await this.prisma.user.findUnique({
 			where: { mail: user.mail },
 		})
@@ -81,8 +57,12 @@ export class Users {
 
 	@Put('/:id')
 	@Summary('Update a user by its id')
-	@Returns(200, UserModel)
-	async UpdateUser(@PathParams('id') id: number, user: UserModel): Promise<UserModel> {
+	@Returns(200, UserSerialiazer).Description('Updated').Groups('read')
+	@Returns(404, String).Description('Not found')
+	async UpdateUser(
+		@PathParams('id') id: number,
+		@BodyParams() @Groups('put') user: UserSerialiazer
+	): Promise<UserSerialiazer> {
 		return this.prisma.user.update({
 			where: { user_id: id },
 			data: user,
@@ -92,7 +72,8 @@ export class Users {
 	@Delete('/:id')
 	@Summary('Delete a user by its id')
 	@Returns(204)
-	async deleteUser(@PathParams('id') user_id: number): Promise<UserModel> {
-		return this.prisma.user.delete({ where: { user_id } })
+	@Returns(404, String).Description('Not found')
+	async deleteUser(@PathParams('id') user_id: number): Promise<void> {
+		await this.prisma.user.delete({ where: { user_id } })
 	}
 }
