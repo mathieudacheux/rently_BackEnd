@@ -19,7 +19,7 @@ export class Addresses {
 
 	@Get('/:id')
 	@Summary('Return a address by his id')
-	@Returns(200, Array).Of(AddressSerialiazer).Groups('read')
+	@Returns(200, AddressSerialiazer).Groups('read')
 	@Returns(404, String).Description('Not found')
 	async getAddressById(@PathParams('id') address_id: number) {
 		return this.prisma.address.findUnique({ where: { address_id } })
@@ -27,7 +27,7 @@ export class Addresses {
 
 	@Post('/')
 	@Summary('Create a new address')
-	@Returns(200, Array).Of(AddressSerialiazer).Groups('read')
+	@Returns(200, AddressSerialiazer).Groups('read')
 	@Returns(400, String).Description('Bad request')
 	async createAddress(
 		@Required() @BodyParams() @Groups('post') address: AddressSerialiazer
@@ -37,7 +37,7 @@ export class Addresses {
 
 	@Put('/:id')
 	@Summary('Update a address by its id')
-	@Returns(200, Array).Of(AddressSerialiazer).Groups('read')
+	@Returns(200, AddressSerialiazer).Groups('read')
 	@Returns(404, String).Description('Not found')
 	async updateAddress(
 		@PathParams('id') id: number,

@@ -11,6 +11,7 @@ describe('Addresses controller endpoint', () => {
 		longitude: `${Math.random().toString(5).substring(7)}`,
 		latitude: `${Math.random().toString(5).substring(7)}`,
 	}
+
 	let address_id: number
 	beforeAll(async () => {
 		address_id = (await request(baseURL).post('/addresses').send(newAddress)).body
