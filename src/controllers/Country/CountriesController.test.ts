@@ -1,47 +1,45 @@
 import request from 'supertest'
-import { BASE_URL } from '../../config/index'
 import { getUserToken } from '../../helpers/helpersFunctions'
+import { BASE_URL } from '../../config'
 
-describe('Agencies controller endpoint', () => {
-	const newAgency = {
+describe('Countries controller endpoint', () => {
+	const newCountry = {
 		name: `${Math.random().toString(10).substring(7)}`,
-		fee_id: 1,
-		address_id: 5,
 	}
 
-	let agency_id: number
+	let country_id: number
 	beforeAll(async () => {
 		const response = await request(BASE_URL)
-			.post('/agencies')
+			.post('/countries')
 			.set('Authorization', `Bearer ${await getUserToken()}`)
-			.send(newAgency)
-		agency_id = response.body.agency_id
+			.send(newCountry)
+		country_id = response.body.country_id
 	})
 	afterAll(async () => {
 		await request(BASE_URL)
-			.delete(`/agencies/${agency_id}`)
+			.delete(`/countries/${country_id}`)
 			.set('Authorization', `Bearer ${await getUserToken()}`)
 			.send()
 	})
-	it('one agency should return 200', async () => {
+	it('one country should return 200', async () => {
 		const response = await request(BASE_URL)
-			.get(`/agencies/${agency_id}`)
-			.set('Authorization', `Bearer ${await getUserToken()}`)
-			.send()
-		expect(response.statusCode).toBe(200)
-		expect(response.error).toBe(false)
-	})
-	it('all agencies should return 200', async () => {
-		const response = await request(BASE_URL)
-			.get('/agencies')
+			.get(`/countries/${country_id}`)
 			.set('Authorization', `Bearer ${await getUserToken()}`)
 			.send()
 		expect(response.statusCode).toBe(200)
 		expect(response.error).toBe(false)
 	})
-	it('should return agencies', async () => {
+	it('all countries should return 200', async () => {
 		const response = await request(BASE_URL)
-			.get('/agencies')
+			.get('/countries')
+			.set('Authorization', `Bearer ${await getUserToken()}`)
+			.send()
+		expect(response.statusCode).toBe(200)
+		expect(response.error).toBe(false)
+	})
+	it('should return countries', async () => {
+		const response = await request(BASE_URL)
+			.get('/countries')
 			.set('Authorization', `Bearer ${await getUserToken()}`)
 			.send()
 		expect(response.body.length >= 1).toBe(true)

@@ -1,11 +1,10 @@
 import { User } from '@prisma/client'
-import { Groups, RequiredGroups } from '@tsed/schema'
+import { Groups } from '@tsed/schema'
 
 class UserSerialiazer implements User {
 	@Groups('read')
 	user_id: number
 	@Groups('read')
-	@RequiredGroups('patch')
 	firstname: string | null
 	@Groups('read', 'put')
 	name: string | null

@@ -1,47 +1,47 @@
 import request from 'supertest'
-import { BASE_URL } from '../../config/index'
 import { getUserToken } from '../../helpers/helpersFunctions'
+import { BASE_URL } from '../../config'
 
-describe('Agencies controller endpoint', () => {
-	const newAgency = {
-		name: `${Math.random().toString(10).substring(7)}`,
-		fee_id: 1,
-		address_id: 5,
+describe('Message controller endpoint', () => {
+	const newMessage = {
+		content: 'test',
+		user_id_1: 47,
+		user_id_2: 57,
 	}
 
-	let agency_id: number
+	let message_id: number
 	beforeAll(async () => {
 		const response = await request(BASE_URL)
-			.post('/agencies')
+			.post('/messages')
 			.set('Authorization', `Bearer ${await getUserToken()}`)
-			.send(newAgency)
-		agency_id = response.body.agency_id
+			.send(newMessage)
+		message_id = response.body.message_id
 	})
 	afterAll(async () => {
 		await request(BASE_URL)
-			.delete(`/agencies/${agency_id}`)
+			.delete(`/messages/${message_id}`)
 			.set('Authorization', `Bearer ${await getUserToken()}`)
 			.send()
 	})
-	it('one agency should return 200', async () => {
+	it('one message should return 200', async () => {
 		const response = await request(BASE_URL)
-			.get(`/agencies/${agency_id}`)
-			.set('Authorization', `Bearer ${await getUserToken()}`)
-			.send()
-		expect(response.statusCode).toBe(200)
-		expect(response.error).toBe(false)
-	})
-	it('all agencies should return 200', async () => {
-		const response = await request(BASE_URL)
-			.get('/agencies')
+			.get(`/messages/${message_id}`)
 			.set('Authorization', `Bearer ${await getUserToken()}`)
 			.send()
 		expect(response.statusCode).toBe(200)
 		expect(response.error).toBe(false)
 	})
-	it('should return agencies', async () => {
+	it('all messages should return 200', async () => {
 		const response = await request(BASE_URL)
-			.get('/agencies')
+			.get('/messages')
+			.set('Authorization', `Bearer ${await getUserToken()}`)
+			.send()
+		expect(response.statusCode).toBe(200)
+		expect(response.error).toBe(false)
+	})
+	it('should return messages', async () => {
+		const response = await request(BASE_URL)
+			.get('/messages')
 			.set('Authorization', `Bearer ${await getUserToken()}`)
 			.send()
 		expect(response.body.length >= 1).toBe(true)
