@@ -16,7 +16,7 @@ class AddressSerialiazer implements Address {
 	longitude: string
 	@Groups('read', 'put', 'post')
 	latitude: string
-	created_at: Date | null
+	created_at: Date
 	updated_at: Date | null
 	deleted_at: Date | null
 }

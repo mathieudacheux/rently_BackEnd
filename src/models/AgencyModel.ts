@@ -6,7 +6,7 @@ class AgencySerializer implements Agency {
 	agency_id: number
 	@Groups('read', 'put', 'post')
 	name: string
-	created_at: Date | null
+	created_at: Date
 	updated_at: Date | null
 	deleted_at: Date | null
 	@Groups('read', 'put', 'post')

@@ -14,7 +14,7 @@ class AppointmentSerializer implements Appointment {
 	note: string | null
 	@Groups('read', 'put', 'post')
 	reminder: Date
-	created_at: Date | null
+	created_at: Date
 	updated_at: Date | null
 	deleted_at: Date | null
 	@Groups('read', 'put', 'post')
