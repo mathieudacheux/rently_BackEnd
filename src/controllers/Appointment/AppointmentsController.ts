@@ -22,7 +22,7 @@ class AppointmentModel implements Appointment {
 	date_end: Date
 	note: string | null
 	reminder: Date
-	created_at: Date | null
+	created_at: Date
 	updated_at: Date | null
 	deleted_at: Date | null
 	property_id: number
