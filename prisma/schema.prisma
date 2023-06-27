@@ -109,10 +109,10 @@ model Country {
 
 model Fee {
   fee_id      Int       @id @default(autoincrement())
-  rent_fee    Decimal   @db.Decimal(4, 2)
-  sell_fee    Decimal   @db.Decimal(4, 2)
-  square_fee  Decimal   @db.Decimal(5, 2)
-  gestion_fee Decimal   @db.Decimal(5, 2)
+  rent_fee    String    @db.VarChar(5)
+  sell_fee    String    @db.VarChar(5)
+  square_fee  String    @db.VarChar(5)
+  gestion_fee String    @db.VarChar(5)
   created_at  DateTime  @default(now()) @db.DateTime(0)
   updated_at  DateTime? @db.DateTime(0)
   deleted_at  DateTime? @db.DateTime(0)

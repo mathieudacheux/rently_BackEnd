@@ -1,8 +1,18 @@
-import { Controller, Get, PathParams, Post, BodyParams, Put, Delete } from '@tsed/common'
+import {
+	Controller,
+	Get,
+	PathParams,
+	Post,
+	BodyParams,
+	Put,
+	Delete,
+	UseBefore,
+} from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
 import { Returns, Summary, Groups, Required } from '@tsed/schema'
 import { FeeSerializer } from '../../models/FeeModel'
+import AuthentificationMiddleware from '../../middlewares/AuthentificationMiddleware'
 
 @Controller('/')
 export class Fees {
@@ -25,6 +35,7 @@ export class Fees {
 		return this.prisma.fee.findUnique({ where: { fee_id } })
 	}
 
+	@UseBefore(AuthentificationMiddleware)
 	@Post('/')
 	@Summary('Create a new fee')
 	@Returns(201, FeeSerializer).Groups('read')
@@ -33,6 +44,7 @@ export class Fees {
 		return this.prisma.fee.create({ data: fee })
 	}
 
+	@UseBefore(AuthentificationMiddleware)
 	@Put('/:id')
 	@Summary('Update a fee by its id')
 	@Returns(200, FeeSerializer).Groups('read')
@@ -47,6 +59,7 @@ export class Fees {
 		})
 	}
 
+	@UseBefore(AuthentificationMiddleware)
 	@Delete('/:id')
 	@Summary('Delete a fee by its id')
 	@Returns(204)

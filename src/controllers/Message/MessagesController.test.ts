@@ -2,47 +2,46 @@ import request from 'supertest'
 import { getUserToken } from '../../helpers/helpersFunctions'
 import { BASE_URL } from '../../config'
 
-describe('Fees controller endpoint', () => {
-	const newFee = {
-		rent_fee: '10.1',
-		sell_fee: '11.1',
-		square_fee: '12.1',
-		gestion_fee: '13.12',
+describe('Message controller endpoint', () => {
+	const newMessage = {
+		content: 'test',
+		user_id_1: 47,
+		user_id_2: 57,
 	}
 
-	let fee_id: number
+	let message_id: number
 	beforeAll(async () => {
 		const response = await request(BASE_URL)
-			.post('/fees')
+			.post('/messages')
 			.set('Authorization', `Bearer ${await getUserToken()}`)
-			.send(newFee)
-		fee_id = response.body.fee_id
+			.send(newMessage)
+		message_id = response.body.message_id
 	})
 	afterAll(async () => {
 		await request(BASE_URL)
-			.delete(`/fees/${fee_id}`)
+			.delete(`/messages/${message_id}`)
 			.set('Authorization', `Bearer ${await getUserToken()}`)
 			.send()
 	})
-	it('one fee should return 200', async () => {
+	it('one message should return 200', async () => {
 		const response = await request(BASE_URL)
-			.get(`/fees/${fee_id}`)
-			.set('Authorization', `Bearer ${await getUserToken()}`)
-			.send()
-		expect(response.statusCode).toBe(200)
-		expect(response.error).toBe(false)
-	})
-	it('all fees should return 200', async () => {
-		const response = await request(BASE_URL)
-			.get('/fees')
+			.get(`/messages/${message_id}`)
 			.set('Authorization', `Bearer ${await getUserToken()}`)
 			.send()
 		expect(response.statusCode).toBe(200)
 		expect(response.error).toBe(false)
 	})
-	it('should return fees', async () => {
+	it('all messages should return 200', async () => {
 		const response = await request(BASE_URL)
-			.get('/fees')
+			.get('/messages')
+			.set('Authorization', `Bearer ${await getUserToken()}`)
+			.send()
+		expect(response.statusCode).toBe(200)
+		expect(response.error).toBe(false)
+	})
+	it('should return messages', async () => {
+		const response = await request(BASE_URL)
+			.get('/messages')
 			.set('Authorization', `Bearer ${await getUserToken()}`)
 			.send()
 		expect(response.body.length >= 1).toBe(true)
