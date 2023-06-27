@@ -38,7 +38,7 @@ export class Addresses {
 
 	@Post('/')
 	@Summary('Create a new address')
-	@Returns(200, AddressSerializer).Groups('read')
+	@Returns(201, AddressSerializer).Groups('read')
 	@Returns(400, String).Description('Bad request')
 	async createAddress(
 		@Required() @BodyParams() @Groups('post') address: AddressSerializer

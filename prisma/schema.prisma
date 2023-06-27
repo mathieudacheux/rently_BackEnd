@@ -163,57 +163,59 @@ model Permission {
 }
 
 model Property {
-  property_id                   Int           @id @default(autoincrement())
-  name                          String        @db.VarChar(150)
-  description                   String        @db.Text
-  signature_date                DateTime?     @db.DateTime(0)
-  property_type                 Int           @db.TinyInt
-  price                         Int           @db.SmallInt
-  surface                       Decimal       @db.Decimal(5, 2)
-  land_size                     Decimal       @db.Decimal(7, 2)
-  bathroom                      Int           @db.TinyInt
-  kitchen                       Int           @db.TinyInt
-  toilet                        Int           @db.TinyInt
-  bedroom                       Int           @db.TinyInt
-  elevator                      Boolean       @default(false)
-  balcony                       Boolean       @default(false)
-  terrace                       Boolean       @default(false)
-  cellar                        Boolean       @default(false)
-  parking                       Boolean       @default(false)
-  number_room                   Int           @db.TinyInt
-  pool                          Boolean       @default(false)
-  caretaker                     Boolean       @default(false)
-  fiber_deployed                Boolean       @default(false)
-  duplex                        Boolean       @default(false)
-  top_floor                     Boolean       @default(false)
-  garage                        Boolean       @default(false)
-  work_done                     Boolean       @default(false)
-  life_annuity                  Boolean       @default(false)
+  property_id                   Int            @id @default(autoincrement())
+  name                          String         @db.VarChar(150)
+  description                   String         @db.Text
+  signature_date                DateTime?      @db.DateTime(0)
+  property_type                 Int
+  price                         Int            @db.Int
+  surface                       String         @db.VarChar(50)
+  land_size                     String         @db.VarChar(50)
+  bathroom                      Int            @db.TinyInt
+  kitchen                       Int            @db.TinyInt
+  toilet                        Int            @db.TinyInt
+  bedroom                       Int            @db.TinyInt
+  elevator                      Boolean        @default(false)
+  balcony                       Boolean        @default(false)
+  terrace                       Boolean        @default(false)
+  cellar                        Boolean        @default(false)
+  parking                       Boolean        @default(false)
+  number_room                   Int            @db.TinyInt
+  pool                          Boolean        @default(false)
+  caretaker                     Boolean        @default(false)
+  fiber_deployed                Boolean        @default(false)
+  duplex                        Boolean        @default(false)
+  top_floor                     Boolean        @default(false)
+  garage                        Boolean        @default(false)
+  work_done                     Boolean        @default(false)
+  life_annuity                  Boolean        @default(false)
   ground_floor                  Boolean
-  land_size_1                   Decimal       @db.Decimal(7, 2)
+  land_size_1                   String         @db.VarChar(50)
   garden                        Boolean
-  created_at                    DateTime      @default(now()) @db.DateTime(0)
-  updated_at                    DateTime?     @db.DateTime(0)
-  deleted_at                    DateTime?     @db.DateTime(0)
+  created_at                    DateTime       @default(now()) @db.DateTime(0)
+  updated_at                    DateTime?      @db.DateTime(0)
+  deleted_at                    DateTime?      @db.DateTime(0)
   owner_id                      Int
   status_id                     Int
   tenant_id                     Int?
   address_id                    Int
-  dpe                           Int           @db.TinyInt
+  dpe                           Int            @db.TinyInt
   agency_id                     Int
   appointment                   Appointment[]
   bookmark                      Bookmark[]
-  user_property_owner_idTouser  User          @relation("property_owner_idTouser", fields: [owner_id], references: [user_id], onUpdate: Restrict, map: "property_ibfk_1")
-  status                        Status        @relation(fields: [status_id], references: [status_id], onUpdate: Restrict, map: "property_ibfk_2")
-  user_property_tenant_idTouser User?         @relation("property_tenant_idTouser", fields: [tenant_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "property_ibfk_3")
-  address                       Address       @relation(fields: [address_id], references: [address_id], onUpdate: Restrict, map: "property_ibfk_4")
-  agency                        Agency        @relation(fields: [agency_id], references: [agency_id], onUpdate: Restrict, map: "property_ibfk_5")
+  user_property_owner_idTouser  User           @relation("property_owner_idTouser", fields: [owner_id], references: [user_id], onUpdate: Restrict, map: "property_ibfk_1")
+  status                        Status         @relation(fields: [status_id], references: [status_id], onUpdate: Restrict, map: "property_ibfk_2")
+  user_property_tenant_idTouser User?          @relation("property_tenant_idTouser", fields: [tenant_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "property_ibfk_3")
+  address                       Address        @relation(fields: [address_id], references: [address_id], onUpdate: Restrict, map: "property_ibfk_4")
+  agency                        Agency         @relation(fields: [agency_id], references: [agency_id], onUpdate: Restrict, map: "property_ibfk_5")
+  property_types                property_types @relation(fields: [property_type], references: [property_type_id], onUpdate: Restrict, map: "property_ibfk_6")
 
   @@index([address_id], map: "address_id")
   @@index([owner_id], map: "owner_id")
   @@index([status_id], map: "status_id")
   @@index([tenant_id], map: "tenant_id")
   @@index([agency_id], map: "property_ibfk_5")
+  @@index([property_type], map: "property_ibfk_6")
   @@map("properties")
 }
 
@@ -301,4 +303,11 @@ model User {
   @@index([country_id], map: "country_id")
   @@index([role_id], map: "role_id")
   @@map("users")
+}
+
+model property_types {
+  property_type_id Int        @id @default(autoincrement())
+  label            String     @db.VarChar(50)
+  created_at       DateTime   @default(now()) @db.DateTime(0)
+  properties       Property[]
 }

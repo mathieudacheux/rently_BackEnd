@@ -10,50 +10,8 @@ import {
 } from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
-import { Returns, Summary, Groups } from '@tsed/schema'
-import { Property, Prisma } from '@prisma/client'
-
-class PropertyModel implements Property {
-	@Groups('!creation')
-	property_id: number
-	name: string
-	description: string
-	signature_date: Date | null
-	property_type: number
-	price: number
-	surface: Prisma.Decimal
-	land_size: Prisma.Decimal
-	bathroom: number
-	kitchen: number
-	toilet: number
-	bedroom: number
-	elevator: boolean
-	balcony: boolean
-	terrace: boolean
-	cellar: boolean
-	parking: boolean
-	number_room: number
-	pool: boolean
-	caretaker: boolean
-	fiber_deployed: boolean
-	duplex: boolean
-	top_floor: boolean
-	garage: boolean
-	work_done: boolean
-	life_annuity: boolean
-	ground_floor: boolean
-	land_size_1: Prisma.Decimal
-	garden: boolean
-	created_at: Date
-	updated_at: Date | null
-	deleted_at: Date | null
-	owner_id: number
-	status_id: number
-	tenant_id: number | null
-	address_id: number
-	dpe: number
-	agency_id: number
-}
+import { Returns, Summary, Groups, Required } from '@tsed/schema'
+import { PropertySerializer } from '../../models/PropertyModel'
 
 @Controller('/')
 export class Properties {
@@ -62,8 +20,11 @@ export class Properties {
 
 	@Get('/')
 	@Summary('Return a list of properties')
-	@Returns(200, Array).Of(PropertyModel)
-	async getProperties(@QueryParams('offset') offset: number): Promise<PropertyModel[]> {
+	@Returns(200, Array).Of(PropertySerializer).Groups('read')
+	@Returns(404, String).Description('Not found')
+	async getProperties(
+		@QueryParams('offset') offset: number
+	): Promise<PropertySerializer[]> {
 		return this.prisma.property.findMany({
 			take: 50,
 			skip: offset,
@@ -71,15 +32,15 @@ export class Properties {
 		})
 	}
 
-	// get properties by filter
 	@Get('/filter')
 	@Summary('Return a list of properties by filter')
-	@Returns(200, Array).Of(PropertyModel)
+	@Returns(200, Array).Of(PropertySerializer).Groups('read')
+	@Returns(404, String).Description('Not found')
 	async getPropertiesByFilter(
 		@QueryParams('property_type') property_type: number,
 		@QueryParams('price') price: number,
-		@QueryParams('surface') surface: number,
-		@QueryParams('land_size') land_size: number,
+		@QueryParams('surface') surface: string,
+		@QueryParams('land_size') land_size: string,
 		@QueryParams('bathroom') bathroom: number,
 		@QueryParams('kitchen') kitchen: number,
 		@QueryParams('toilet') toilet: number,
@@ -99,10 +60,10 @@ export class Properties {
 		@QueryParams('work_done') work_done: boolean,
 		@QueryParams('life_annuity') life_annuity: boolean,
 		@QueryParams('ground_floor') ground_floor: boolean,
-		@QueryParams('land_size_1') land_size_1: number,
+		@QueryParams('land_size_1') land_size_1: string,
 		@QueryParams('garden') garden: boolean,
 		@QueryParams('dpe') dpe: number
-	): Promise<PropertyModel[]> {
+	): Promise<PropertySerializer[]> {
 		return this.prisma.property.findMany({
 			where: {
 				property_type,
@@ -138,27 +99,34 @@ export class Properties {
 
 	@Get('/:id')
 	@Summary('Return a property by his id')
-	@Returns(200, PropertyModel)
+	@Returns(200, PropertySerializer).Groups('read')
+	@Returns(404, String).Description('Not found')
 	async getPropertyById(@PathParams('id') property_id: number) {
 		return this.prisma.property.findUnique({ where: { property_id } })
 	}
 
 	@Post('/')
 	@Summary('Create a new property')
-	@Returns(201, PropertyModel)
-	async createProperty(@BodyParams() @Groups('creation') requestBody: PropertyModel) {
-		return this.prisma.property.create({ data: requestBody })
+	@Returns(201, PropertySerializer).Groups('read')
+	@Returns(400, String).Description('Bad request')
+	async createProperty(
+		@Required() @BodyParams() @Groups('post') property: PropertySerializer
+	) {
+		return this.prisma.property.create({ data: property })
 	}
 
 	@Put('/:id')
 	@Summary('Update a property by its id')
-	@Returns(200, PropertyModel)
+	@Returns(200, PropertySerializer).Groups('read')
+	@Returns(404, String).Description('Not found')
 	async updateProperty(
-		@PathParams('id') property_id: number,
-		property: PropertyModel
-	): Promise<PropertyModel> {
+		@PathParams('id') id: number,
+		@BodyParams()
+		@Groups('put')
+		property: PropertySerializer
+	): Promise<PropertySerializer> {
 		return this.prisma.property.update({
-			where: { property_id },
+			where: { property_id: id },
 			data: property,
 		})
 	}
@@ -166,7 +134,8 @@ export class Properties {
 	@Delete('/:id')
 	@Summary('Delete a property by its id')
 	@Returns(204)
-	async deleteProperty(@PathParams('id') property_id: number): Promise<PropertyModel> {
-		return this.prisma.property.delete({ where: { property_id } })
+	@Returns(404, String).Description('Not found')
+	async deleteProperty(@PathParams('id') property_id: number): Promise<void> {
+		await this.prisma.property.delete({ where: { property_id } })
 	}
 }

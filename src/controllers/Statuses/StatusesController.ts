@@ -1,17 +1,8 @@
 import { Controller, Get, PathParams, Post, BodyParams, Put, Delete } from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
-import { Returns, Summary, Groups } from '@tsed/schema'
-import { Status } from '@prisma/client'
-
-class StatusModel implements Status {
-	@Groups('!creation')
-	status_id: number
-	name: string
-	created_at: Date
-	updated_at: Date | null
-	deleted_at: Date | null
-}
+import { Returns, Summary, Groups, Required } from '@tsed/schema'
+import { StatusSerializer } from '../../models/StatusModel'
 
 @Controller('/')
 export class Statuses {
@@ -20,35 +11,40 @@ export class Statuses {
 
 	@Get('/')
 	@Summary('Return a list of all statuses')
-	@Returns(200, Array).Of(StatusModel)
-	async getAllStatus(): Promise<StatusModel[]> {
+	@Returns(200, Array).Of(StatusSerializer).Groups('read')
+	@Returns(404, String).Description('Not found')
+	async getAllStatus(): Promise<StatusSerializer[]> {
 		return this.prisma.status.findMany()
 	}
 
 	@Get('/:id')
 	@Summary('Return a status by his id')
-	@Returns(200, StatusModel)
+	@Returns(200, StatusSerializer).Groups('read')
+	@Returns(404, String).Description('Not found')
 	async getStatusById(@PathParams('id') status_id: number) {
 		return this.prisma.status.findUnique({ where: { status_id } })
 	}
 
 	@Post('/')
 	@Summary('Create a new status')
-	@Returns(201, StatusModel)
-	//name is requred in the body
-	async createStatus(@BodyParams('name') name: string): Promise<StatusModel> {
-		return this.prisma.status.create({ data: { name } })
+	@Returns(201, StatusSerializer).Groups('read')
+	@Returns(400, String).Description('Bad request')
+	async createStatus(@Required() @BodyParams() @Groups('post') status: StatusSerializer) {
+		return this.prisma.status.create({ data: status })
 	}
 
 	@Put('/:id')
 	@Summary('Update a status by its id')
-	@Returns(200, StatusModel)
+	@Returns(200, StatusSerializer).Groups('read')
+	@Returns(404, String).Description('Not found')
 	async updateStatus(
-		@PathParams('id') status_id: number,
-		status: StatusModel
-	): Promise<StatusModel> {
+		@PathParams('id') id: number,
+		@BodyParams()
+		@Groups('put')
+		status: StatusSerializer
+	): Promise<StatusSerializer> {
 		return this.prisma.status.update({
-			where: { status_id },
+			where: { status_id: id },
 			data: status,
 		})
 	}
@@ -56,7 +52,8 @@ export class Statuses {
 	@Delete('/:id')
 	@Summary('Delete a status by its id')
 	@Returns(204)
-	async deleteStatus(@PathParams('id') status_id: number): Promise<StatusModel> {
-		return this.prisma.status.delete({ where: { status_id } })
+	@Returns(404, String).Description('Not found')
+	async deleteStatus(@PathParams('id') status_id: number): Promise<void> {
+		await this.prisma.status.delete({ where: { status_id } })
 	}
 }
