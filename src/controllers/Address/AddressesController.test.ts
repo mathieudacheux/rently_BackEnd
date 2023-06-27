@@ -2,7 +2,7 @@ import request from 'supertest'
 
 const baseURL = 'http://localhost:8083'
 
-describe('GET /addresses', () => {
+describe('Addresses controller endpoint', () => {
 	const newAddress = {
 		address: `${Math.random().toString(36).substring(7)}`,
 		city: `${Math.random().toString(36).substring(7)}`,

@@ -2,9 +2,9 @@ import request from 'supertest'
 
 const baseURL = 'http://localhost:8083'
 
-describe('GET /users', () => {
+describe('Users controller endpoint', () => {
 	const newUser = {
-		mail: `${Math.random().toString(36).substring(7)}@test.com`,
+		mail: `bibibi@test.com`,
 		password: 'string',
 		newsletter: true,
 		country_id: 1,
@@ -14,7 +14,6 @@ describe('GET /users', () => {
 	let user_id: number
 	beforeAll(async () => {
 		user_id = (await request(baseURL).post('/users').send(newUser)).body.user_id
-		console.log(user_id)
 	})
 	afterAll(async () => {
 		await request(baseURL).delete(`/users/${user_id}`)
