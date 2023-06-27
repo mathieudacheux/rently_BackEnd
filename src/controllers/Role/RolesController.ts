@@ -2,19 +2,7 @@ import { Controller, Get, PathParams, Post, BodyParams, Put, Delete } from '@tse
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
 import { Required, Returns, Summary, Groups, In } from '@tsed/schema'
-import { Role } from '@prisma/client'
-
-class RoleModel implements Role {
-	@Groups('!creation')
-	role_id: number
-	@Required()
-	name: string
-	created_at: Date
-	updated_at: Date | null
-	deleted_at: Date | null
-	@Required()
-	permission_id: number
-}
+import { RoleSerializer } from '../../models/RoleModel'
 
 @Controller('/')
 export class Roles {
@@ -23,34 +11,40 @@ export class Roles {
 
 	@Get('/')
 	@Summary('Return a list of all roles')
-	@Returns(200, Array).Of(RoleModel)
-	async getAllRoles(): Promise<RoleModel[]> {
+	@Returns(200, Array).Of(RoleSerializer)
+	@Returns(404, String).Description('Not found')
+	async getAllRoles(): Promise<RoleSerializer[]> {
 		return this.prisma.role.findMany()
 	}
 
 	@Get('/:id')
 	@Summary('Return a role by his id')
-	@Returns(200, RoleModel)
+	@Returns(200, RoleSerializer).Groups('read')
+	@Returns(404, String).Description('Not found')
 	async getRoleById(@PathParams('id') role_id: number) {
 		return this.prisma.role.findUnique({ where: { role_id } })
 	}
 
 	@Post('/')
 	@Summary('Create a new role')
-	@Returns(201, RoleModel)
-	async createRole(@BodyParams() @Groups('creation') role: RoleModel) {
+	@Returns(201, RoleSerializer).Groups('read')
+	@Returns(400, String).Description('Bad request')
+	async createRole(@Required() @BodyParams() @Groups('post') role: RoleSerializer) {
 		return this.prisma.role.create({ data: role })
 	}
 
 	@Put('/:id')
 	@Summary('Update a role by its id')
-	@Returns(200, RoleModel)
+	@Returns(200, RoleSerializer).Groups('read')
+	@Returns(404, String).Description('Not found')
 	async updateRole(
-		@PathParams('id') role_id: number,
-		role: RoleModel
-	): Promise<RoleModel> {
+		@PathParams('id') id: number,
+		@BodyParams()
+		@Groups('put')
+		role: RoleSerializer
+	): Promise<RoleSerializer> {
 		return this.prisma.role.update({
-			where: { role_id },
+			where: { role_id: id },
 			data: role,
 		})
 	}
@@ -59,7 +53,8 @@ export class Roles {
 	@Summary('Delete a role by its id')
 	@In('authorization').Type(String).Description('Bearer token')
 	@Returns(204)
-	async deleteRole(@PathParams('id') role_id: number): Promise<RoleModel> {
-		return this.prisma.role.delete({ where: { role_id } })
+	@Returns(404, String).Description('Not found')
+	async deleteRole(@PathParams('id') role_id: number): Promise<void> {
+		await this.prisma.role.delete({ where: { role_id } })
 	}
 }

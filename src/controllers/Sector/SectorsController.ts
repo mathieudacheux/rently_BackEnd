@@ -1,22 +1,8 @@
 import { Controller, Get, PathParams, Post, BodyParams, Put, Delete } from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
-import { Returns, Summary, Groups } from '@tsed/schema'
-import { Sector } from '@prisma/client'
-
-class SectorModel implements Sector {
-	sector_id: number
-	@Groups('!creation')
-	name: string
-	created_at: Date
-	updated_at: Date | null
-	deleted_at: Date | null
-	@Groups('!creation')
-	polygon: string
-	@Groups('!creation')
-	agency_id: number
-}
-
+import { Returns, Summary, Groups, Required } from '@tsed/schema'
+import { SectorSerializer } from '../../models/SectorModel'
 @Controller('/')
 export class Sectors {
 	@Inject()
@@ -24,35 +10,40 @@ export class Sectors {
 
 	@Get('/')
 	@Summary('Return a list of all sectors')
-	@Returns(200, Array).Of(SectorModel)
-	async getAllAgencies(): Promise<SectorModel[]> {
+	@Returns(200, Array).Of(SectorSerializer).Groups('read')
+	@Returns(404, String).Description('Not found')
+	async getAllAgencies(): Promise<SectorSerializer[]> {
 		return this.prisma.sector.findMany()
 	}
 
 	@Get('/:id')
 	@Summary('Return a sector by his id')
-	@Returns(200, SectorModel)
+	@Returns(200, SectorSerializer).Groups('read')
+	@Returns(404, String).Description('Not found')
 	async getSectorById(@PathParams('id') sector_id: number) {
 		return this.prisma.sector.findUnique({ where: { sector_id } })
 	}
 
 	@Post('/')
 	@Summary('Create a new sector')
-	@Returns(201, SectorModel)
-	// required name, polygon, agency_id
-	async createSector(@BodyParams() sector: SectorModel): Promise<SectorModel> {
+	@Returns(201, SectorSerializer).Groups('read')
+	@Returns(400, String).Description('Bad request')
+	async createSector(@Required() @BodyParams() @Groups('post') sector: SectorSerializer) {
 		return this.prisma.sector.create({ data: sector })
 	}
 
 	@Put('/:id')
 	@Summary('Update a sector by its id')
-	@Returns(200, SectorModel)
+	@Returns(200, SectorSerializer).Groups('read')
+	@Returns(404, String).Description('Not found')
 	async updateSector(
-		@PathParams('id') sector_id: number,
-		sector: SectorModel
-	): Promise<SectorModel> {
+		@PathParams('id') id: number,
+		@BodyParams()
+		@Groups('put')
+		sector: SectorSerializer
+	): Promise<SectorSerializer> {
 		return this.prisma.sector.update({
-			where: { sector_id },
+			where: { sector_id: id },
 			data: sector,
 		})
 	}
@@ -60,7 +51,8 @@ export class Sectors {
 	@Delete('/:id')
 	@Summary('Delete a sector by its id')
 	@Returns(204)
-	async deleteSector(@PathParams('id') sector_id: number): Promise<SectorModel> {
-		return this.prisma.sector.delete({ where: { sector_id } })
+	@Returns(404, String).Description('Not found')
+	async deleteSector(@PathParams('id') sector_id: number): Promise<void> {
+		await this.prisma.sector.delete({ where: { sector_id } })
 	}
 }
