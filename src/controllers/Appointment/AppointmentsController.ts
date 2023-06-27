@@ -10,62 +10,54 @@ import {
 } from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
-import { Returns, Summary, Groups } from '@tsed/schema'
-import { Appointment } from '@prisma/client'
+import { Returns, Summary, Groups, Required } from '@tsed/schema'
+import { AppointmentSerializer } from '../../models/AppointmentModel'
 import AuthentificationMiddleware from '../../middlewares/AuthentificationMiddleware'
-
-class AppointmentModel implements Appointment {
-	@Groups('!creation')
-	appointment_id: number
-	tag: number
-	date_start: Date
-	date_end: Date
-	note: string | null
-	reminder: Date
-	created_at: Date
-	updated_at: Date | null
-	deleted_at: Date | null
-	property_id: number
-	user_id: number
-}
 
 @Controller('/')
 export class Appointments {
 	@Inject()
 	protected prisma: PrismaService
+
 	@UseBeforeEach(AuthentificationMiddleware)
 	@Get('/')
 	@Summary('Return a list of all appointments')
-	@Returns(200, Array).Of(AppointmentModel)
-	async getAllAppointments(): Promise<AppointmentModel[]> {
+	@Returns(200, Array).Of(AppointmentSerializer).Groups('read')
+	@Returns(404, String).Description('Not found')
+	async getAllAppointments(): Promise<AppointmentSerializer[]> {
 		return this.prisma.appointment.findMany()
 	}
 
 	@Get('/:id')
 	@Summary('Return a appointment by his id')
-	@Returns(200, AppointmentModel)
+	@Returns(200, AppointmentSerializer).Groups('read')
+	@Returns(404, String).Description('Not found')
 	async getAppointmentById(
 		@PathParams('id') appointment_id: number
-	): Promise<AppointmentModel | null> {
+	): Promise<AppointmentSerializer | null> {
 		return this.prisma.appointment.findUnique({ where: { appointment_id } })
 	}
 
 	@Post('/')
 	@Summary('Create a new appointment')
-	@Returns(201, AppointmentModel)
+	@Returns(200, AppointmentSerializer).Groups('read')
+	@Returns(400, String).Description('Bad request')
 	async createAppointment(
-		@BodyParams() @Groups('creation') appointment: AppointmentModel
+		@Required() @BodyParams() @Groups('post') appointment: AppointmentSerializer
 	) {
 		return this.prisma.appointment.create({ data: appointment })
 	}
 
 	@Put('/:id')
 	@Summary('Update a appointment by its id')
-	@Returns(200, AppointmentModel)
+	@Returns(200, AppointmentSerializer).Groups('read')
+	@Returns(404, String).Description('Not found')
 	async updateAppointment(
 		@PathParams('id') appointment_id: number,
-		appointment: AppointmentModel
-	): Promise<AppointmentModel> {
+		@BodyParams()
+		@Groups('put')
+		appointment: AppointmentSerializer
+	): Promise<AppointmentSerializer> {
 		return this.prisma.appointment.update({
 			where: { appointment_id },
 			data: appointment,
@@ -75,9 +67,8 @@ export class Appointments {
 	@Delete('/:id')
 	@Summary('Delete a appointment by its id')
 	@Returns(204)
-	async deleteAppointment(
-		@PathParams('id') appointment_id: number
-	): Promise<AppointmentModel> {
-		return this.prisma.appointment.delete({ where: { appointment_id } })
+	@Returns(404, String).Description('Not found')
+	async deleteAppointment(@PathParams('id') appointment_id: number): Promise<void> {
+		await this.prisma.appointment.delete({ where: { appointment_id } })
 	}
 }

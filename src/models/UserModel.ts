@@ -11,7 +11,7 @@ class UserSerialiazer implements User {
 	name: string | null
 	@Groups('read', 'put')
 	phone: string | null
-	@Groups('read', 'put')
+	@Groups('read', 'put', 'post')
 	mail: string
 	@Groups('post', 'put')
 	password: string
@@ -29,7 +29,7 @@ class UserSerialiazer implements User {
 	country_id: number
 	@Groups('post', 'put', 'read')
 	role_id: number
-	@Groups('post', 'put', 'read')
+	@Groups('put', 'read')
 	agency_id: number | null
 }
 
