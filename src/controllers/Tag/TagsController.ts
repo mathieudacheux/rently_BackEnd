@@ -9,7 +9,7 @@ class TagModel implements Tag {
 	tag_id: number
 	@Required()
 	name: string
-	created_at: Date | null
+	created_at: Date
 	updated_at: Date | null
 	deleted_at: Date | null
 }
