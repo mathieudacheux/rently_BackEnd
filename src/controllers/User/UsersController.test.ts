@@ -7,7 +7,7 @@ describe('Users controller endpoint', () => {
 		password: 'string',
 		newsletter: true,
 		country_id: 1,
-		role_id: 1,
+		role_id: 2,
 	}
 
 	let user_id: number

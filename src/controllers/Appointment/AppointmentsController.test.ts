@@ -10,7 +10,7 @@ describe('Appointments controller endpoint', () => {
 		note: `${Math.random().toString(10).substring(7)}`,
 		reminder: new Date(),
 		property_id: 1,
-		user_id: 5,
+		user_id: 47,
 	}
 
 	let appointment_id: number

@@ -5,7 +5,7 @@ describe('Agencies controller endpoint', () => {
 	const newAgency = {
 		name: `${Math.random().toString(10).substring(7)}`,
 		fee_id: 1,
-		address_id: 1,
+		address_id: 5,
 	}
 
 	let agency_id: number

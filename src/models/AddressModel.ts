@@ -1,7 +1,7 @@
 import { Address } from '@prisma/client'
 import { Groups } from '@tsed/schema'
 
-class AddressSerialiazer implements Address {
+class AddressSerializer implements Address {
 	@Groups('read')
 	address_id: number
 	@Groups('read', 'put', 'post')
@@ -21,4 +21,4 @@ class AddressSerialiazer implements Address {
 	deleted_at: Date | null
 }
 
-export { AddressSerialiazer }
+export { AddressSerializer }
