@@ -2,7 +2,7 @@ import { Controller, Get, PathParams, Post, BodyParams, Put, Delete } from '@tse
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
 import { Returns, Summary, Groups, Required } from '@tsed/schema'
-import { AddressSerialiazer } from '../../models/AddressModel'
+import { AddressSerializer } from '../../models/AddressModel'
 
 @Controller('/')
 export class Addresses {
@@ -11,15 +11,15 @@ export class Addresses {
 
 	@Get('/')
 	@Summary('Return a list of all addresses')
-	@Returns(200, Array).Of(AddressSerialiazer).Groups('read')
+	@Returns(200, Array).Of(AddressSerializer).Groups('read')
 	@Returns(404, String).Description('Not found')
-	async getAllAddresses(): Promise<AddressSerialiazer[]> {
+	async getAllAddresses(): Promise<AddressSerializer[]> {
 		return this.prisma.address.findMany()
 	}
 
 	@Get('/:id')
 	@Summary('Return a address by his id')
-	@Returns(200, AddressSerialiazer).Groups('read')
+	@Returns(200, AddressSerializer).Groups('read')
 	@Returns(404, String).Description('Not found')
 	async getAddressById(@PathParams('id') address_id: number) {
 		return this.prisma.address.findUnique({ where: { address_id } })
@@ -27,24 +27,24 @@ export class Addresses {
 
 	@Post('/')
 	@Summary('Create a new address')
-	@Returns(200, AddressSerialiazer).Groups('read')
+	@Returns(200, AddressSerializer).Groups('read')
 	@Returns(400, String).Description('Bad request')
 	async createAddress(
-		@Required() @BodyParams() @Groups('post') address: AddressSerialiazer
+		@Required() @BodyParams() @Groups('post') address: AddressSerializer
 	) {
 		return this.prisma.address.create({ data: address })
 	}
 
 	@Put('/:id')
 	@Summary('Update a address by its id')
-	@Returns(200, AddressSerialiazer).Groups('read')
+	@Returns(200, AddressSerializer).Groups('read')
 	@Returns(404, String).Description('Not found')
 	async updateAddress(
 		@PathParams('id') id: number,
 		@BodyParams()
 		@Groups('put')
-		address: AddressSerialiazer
-	): Promise<AddressSerialiazer> {
+		address: AddressSerializer
+	): Promise<AddressSerializer> {
 		return this.prisma.address.update({
 			where: { address_id: id },
 			data: address,

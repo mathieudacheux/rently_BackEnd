@@ -1,14 +1,27 @@
 import { Controller, Get, PathParams, Post, BodyParams, Put, Delete } from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
-import { Required, Returns, Summary, Groups } from '@tsed/schema'
+import { Returns, Summary, Groups } from '@tsed/schema'
 import { Permission } from '@prisma/client'
 
 class PermissionModel implements Permission {
 	@Groups('!creation')
 	permission_id: number
-	@Required()
-	name: string
+	properties: string
+	addresses: string
+	agencies: string
+	appointments: string
+	articles: string
+	attachments: string
+	bookmarks: string
+	countries: string
+	fees: string
+	messages: string
+	roles: string
+	sectors: string
+	statuses: string
+	tags: string
+	users: string
 	created_at: Date
 	updated_at: Date | null
 	deleted_at: Date | null
