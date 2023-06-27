@@ -7,7 +7,7 @@ import { Bookmark } from '@prisma/client'
 class BookmarkModel implements Bookmark {
 	@Groups('!creation')
 	bookmark_id: number
-	created_at: Date | null
+	created_at: Date
 	updated_at: Date | null
 	deleted_at: Date | null
 	user_id: number

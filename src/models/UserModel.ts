@@ -1,10 +1,11 @@
 import { User } from '@prisma/client'
-import { Groups } from '@tsed/schema'
+import { Groups, RequiredGroups } from '@tsed/schema'
 
 class UserSerialiazer implements User {
 	@Groups('read')
 	user_id: number
-	@Groups('read', 'put')
+	@Groups('read')
+	@RequiredGroups('patch')
 	firstname: string | null
 	@Groups('read', 'put')
 	name: string | null
@@ -17,7 +18,7 @@ class UserSerialiazer implements User {
 	@Groups('post', 'put', 'read')
 	newsletter: boolean
 	token: string | null
-	created_at: Date | null
+	created_at: Date
 	@Groups('read', 'put')
 	validated_at: Date | null
 	updated_at: Date | null

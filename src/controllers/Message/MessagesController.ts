@@ -8,7 +8,7 @@ class MessageModel implements Message {
 	@Groups('!creation')
 	message_id: number
 	content: string
-	created_at: Date | null
+	created_at: Date
 	updated_at: Date | null
 	deleted_at: Date | null
 	user_id_1: number
