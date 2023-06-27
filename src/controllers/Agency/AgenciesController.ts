@@ -1,8 +1,18 @@
-import { Controller, Get, PathParams, Post, BodyParams, Put, Delete } from '@tsed/common'
+import {
+	Controller,
+	Get,
+	PathParams,
+	Post,
+	BodyParams,
+	Put,
+	Delete,
+	UseBefore,
+} from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
 import { Returns, Summary, Groups, Required } from '@tsed/schema'
 import { AgencySerializer } from '../../models/AgencyModel'
+import AuthentificationMiddleware from '../../middlewares/AuthentificationMiddleware'
 
 @Controller('/')
 export class Agencies {
@@ -25,6 +35,7 @@ export class Agencies {
 		return this.prisma.agency.findUnique({ where: { agency_id } })
 	}
 
+	@UseBefore(AuthentificationMiddleware)
 	@Post('/')
 	@Summary('Create a new agency')
 	@Returns(201, AgencySerializer).Groups('read')
@@ -33,6 +44,7 @@ export class Agencies {
 		return this.prisma.agency.create({ data: agency })
 	}
 
+	@UseBefore(AuthentificationMiddleware)
 	@Put('/:id')
 	@Summary('Update a agency by its id')
 	@Returns(200, AgencySerializer).Groups('read')
@@ -47,6 +59,7 @@ export class Agencies {
 		})
 	}
 
+	@UseBefore(AuthentificationMiddleware)
 	@Delete('/:id')
 	@Summary('Delete a agency by its id')
 	@Returns(204)
