@@ -14,6 +14,7 @@ describe('GET /users', () => {
 	let user_id: number
 	beforeAll(async () => {
 		user_id = (await request(baseURL).post('/users').send(newUser)).body.user_id
+		console.log(user_id)
 	})
 	afterAll(async () => {
 		await request(baseURL).delete(`/users/${user_id}`)
