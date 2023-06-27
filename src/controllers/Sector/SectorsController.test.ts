@@ -26,7 +26,7 @@ describe('Sectors controller endpoint', () => {
 		expect(response.error).toBe(false)
 	})
 	it('should return sectors', async () => {
-		const response = await request(BASE_URL).get('/addresses')
+		const response = await request(BASE_URL).get('/sectors')
 		expect(response.body.length >= 1).toBe(true)
 	})
 })
