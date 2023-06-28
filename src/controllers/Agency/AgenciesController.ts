@@ -7,6 +7,7 @@ import {
 	Put,
 	Delete,
 	UseBefore,
+	QueryParams,
 } from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
@@ -25,6 +26,34 @@ export class Agencies {
 	@Returns(404, String).Description('Not found')
 	async getAllAgencies(): Promise<AgencySerializer[]> {
 		return this.prisma.agency.findMany()
+	}
+
+	@Get('/agency_filter')
+	@Summary('Return a list of agencies by filter')
+	@Returns(200, Array).Of(AgencySerializer).Groups('read')
+	@Returns(404, String).Description('Not found')
+	async getAgenciesByFilter(
+		@QueryParams('name') name: string,
+		@QueryParams('city') city: string,
+		@QueryParams('zipcode') zipcode: string
+	): Promise<AgencySerializer[]> {
+		const agencyAddresses = await this.prisma.address.findMany({
+			where: {
+				city,
+				zipcode,
+			},
+		})
+
+		return this.prisma.agency.findMany({
+			where: {
+				name,
+				address_id: {
+					in: agencyAddresses.map((agencyAddress) => agencyAddress.address_id),
+				},
+			},
+
+			orderBy: { name: 'asc' },
+		})
 	}
 
 	@Get('/:id')

@@ -7,6 +7,7 @@ import {
 	Put,
 	Delete,
 	UseBefore,
+	QueryParams,
 } from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
@@ -22,10 +23,31 @@ export class Articles {
 	@Get('/')
 	@Summary('Return a list of all articles')
 	@Returns(200, Array).Of(ArticleSerializer).Groups('read')
-	async getAllArticles(
-		@PathParams('offset') offset: number
+	async getAllArticles(@QueryParams('page') page: number): Promise<ArticleSerializer[]> {
+		const pageSize = 20
+		return this.prisma.article.findMany({
+			take: 15,
+			skip: (page ? page - 1 : 0) * pageSize,
+		})
+	}
+
+	@Get('/articles_filter')
+	@Summary('Return a list of articles by filter')
+	@Returns(200, Array).Of(ArticleSerializer).Groups('read')
+	@Returns(404, String).Description('Not found')
+	async getArticlesByFilter(
+		@QueryParams('name') name: string,
+		@QueryParams('tag_id') tag_id: number,
+		@QueryParams('user_id') user_id: number
 	): Promise<ArticleSerializer[]> {
-		return this.prisma.article.findMany({ take: 15, skip: offset })
+		return this.prisma.article.findMany({
+			where: {
+				name,
+				tag_id,
+				user_id,
+			},
+			orderBy: { name: 'asc' },
+		})
 	}
 
 	@Get('/:id')
