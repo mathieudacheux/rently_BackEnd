@@ -17,6 +17,7 @@ import * as fees from './controllers/Fee/FeesController'
 import * as messages from './controllers/Message/MessagesController'
 import * as permissions from './controllers/Permission/PermissionsController'
 import * as properties from './controllers/Property/PropertiesController'
+import * as property_types from './controllers/PropertyType/PropertyTypesController'
 import * as roles from './controllers/Role/RolesController'
 import * as sectors from './controllers/Sector/SectorsController'
 import * as status from './controllers/Statuses/StatusesController'
@@ -45,6 +46,7 @@ import * as attachment from './controllers/Attachment/AttachmentsController'
 		'/messages': [...Object.values(messages)],
 		'/permissions': [...Object.values(permissions)],
 		'/properties': [...Object.values(properties)],
+		'/property_types': [...Object.values(property_types)],
 		'/roles': [...Object.values(roles)],
 		'/sectors': [...Object.values(sectors)],
 		'/statuses': [...Object.values(status)],

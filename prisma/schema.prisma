@@ -208,7 +208,7 @@ model Property {
   user_property_tenant_idTouser User?          @relation("property_tenant_idTouser", fields: [tenant_id], references: [user_id], onDelete: Restrict, onUpdate: Restrict, map: "property_ibfk_3")
   address                       Address        @relation(fields: [address_id], references: [address_id], onUpdate: Restrict, map: "property_ibfk_4")
   agency                        Agency         @relation(fields: [agency_id], references: [agency_id], onUpdate: Restrict, map: "property_ibfk_5")
-  property_types                property_types @relation(fields: [property_type], references: [property_type_id], onUpdate: Restrict, map: "property_ibfk_6")
+  property_types                Property_type @relation(fields: [property_type], references: [property_type_id], onUpdate: Restrict, map: "property_ibfk_6")
 
   @@index([address_id], map: "address_id")
   @@index([owner_id], map: "owner_id")
@@ -305,9 +305,11 @@ model User {
   @@map("users")
 }
 
-model property_types {
+model Property_type {
   property_type_id Int        @id @default(autoincrement())
   label            String     @db.VarChar(50)
   created_at       DateTime   @default(now()) @db.DateTime(0)
   properties       Property[]
+
+  @@map("property_types")
 }
