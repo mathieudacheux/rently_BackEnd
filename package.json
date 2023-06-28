@@ -11,7 +11,8 @@
     "prisma:generate": "npx prisma generate",
     "test:lint": "eslint '**/*.{ts,js}'",
     "test:lint:fix": "eslint '**/*.{ts,js}' --fix",
-    "test": "jest --runInBand --detectOpenHandles --forceExit"
+    "test": "jest --runInBand --detectOpenHandles --forceExit",
+    "prettier": "prettier --write \"**/*.{js,ts,json,md}\""
   },
   "dependencies": {
     "@prisma/client": "^4.16.1",
@@ -99,5 +100,10 @@
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "sh pre-commit.sh"
+    }
   }
 }
