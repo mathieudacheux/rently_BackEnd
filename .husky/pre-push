@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+if npm run test; then
+  echo "Tests passed. Pushing changes..."
+  exit 0
+else
+  echo "Tests failed. Aborting push."
+  exit 1
+fi
