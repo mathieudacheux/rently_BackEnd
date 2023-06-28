@@ -7,6 +7,7 @@ import {
 	Put,
 	Delete,
 	UseBeforeEach,
+	QueryParams,
 } from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
@@ -26,6 +27,23 @@ export class Appointments {
 	@Returns(404, String).Description('Not found')
 	async getAllAppointments(): Promise<AppointmentSerializer[]> {
 		return this.prisma.appointment.findMany()
+	}
+
+	@Get('/appointments_filter')
+	@Summary('Return a list of appointments by filter')
+	@Returns(200, Array).Of(AppointmentSerializer).Groups('read')
+	@Returns(404, String).Description('Not found')
+	async getAppointmentsByFilter(
+		@QueryParams('user_id_1') user_id_1: number,
+		@QueryParams('user_id_2') user_id_2: number
+	): Promise<AppointmentSerializer[]> {
+		return this.prisma.appointment.findMany({
+			where: {
+				user_id_1,
+				user_id_2,
+			},
+			orderBy: { date_start: 'asc' },
+		})
 	}
 
 	@Get('/:id')

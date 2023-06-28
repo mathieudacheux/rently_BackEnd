@@ -1,7 +1,7 @@
 import { User } from '@prisma/client'
 import { Groups } from '@tsed/schema'
 
-class UserSerialiazer implements User {
+class UserSerializer implements User {
 	@Groups('read')
 	user_id: number
 	@Groups('read')
@@ -32,4 +32,4 @@ class UserSerialiazer implements User {
 	agency_id: number | null
 }
 
-export { UserSerialiazer }
+export { UserSerializer }
