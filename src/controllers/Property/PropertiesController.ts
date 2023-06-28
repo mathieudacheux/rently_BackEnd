@@ -22,17 +22,16 @@ export class Properties {
 	@Summary('Return a list of properties')
 	@Returns(200, Array).Of(PropertySerializer).Groups('read')
 	@Returns(404, String).Description('Not found')
-	async getProperties(
-		@QueryParams('offset') offset: number
-	): Promise<PropertySerializer[]> {
+	async getProperties(@QueryParams('page') page: number): Promise<PropertySerializer[]> {
+		const pageSize = 50
 		return this.prisma.property.findMany({
-			take: 50,
-			skip: offset,
+			take: pageSize,
+			skip: (page - 1) * pageSize,
 			orderBy: { property_id: 'asc' },
 		})
 	}
 
-	@Get('/filter')
+	@Get('/properties_filter')
 	@Summary('Return a list of properties by filter')
 	@Returns(200, Array).Of(PropertySerializer).Groups('read')
 	@Returns(404, String).Description('Not found')
@@ -62,8 +61,17 @@ export class Properties {
 		@QueryParams('ground_floor') ground_floor: boolean,
 		@QueryParams('land_size_1') land_size_1: string,
 		@QueryParams('garden') garden: boolean,
-		@QueryParams('dpe') dpe: number
+		@QueryParams('dpe') dpe: number,
+		@QueryParams('city') city: string,
+		@QueryParams('zipcode') zipcode: string
 	): Promise<PropertySerializer[]> {
+		const propertyAddresses = await this.prisma.address.findMany({
+			where: {
+				city,
+				zipcode,
+			},
+		})
+
 		return this.prisma.property.findMany({
 			where: {
 				property_type,
@@ -92,6 +100,9 @@ export class Properties {
 				land_size_1,
 				garden,
 				dpe,
+				address_id: {
+					in: propertyAddresses.map((propertyAddresses) => propertyAddresses.address_id),
+				},
 			},
 			orderBy: price ? { price: 'asc' } : { property_id: 'asc' },
 		})

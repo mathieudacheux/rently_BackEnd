@@ -10,6 +10,7 @@ import * as pages from './controllers/pages/IndexController'
 import * as addresses from './controllers/Address/AddressesController'
 import * as agencies from './controllers/Agency/AgenciesController'
 import * as appointments from './controllers/Appointment/AppointmentsController'
+import * as appointmentsTags from './controllers/AppointmentTag/AppointmentTagController'
 import * as articles from './controllers/Article/ArticlesController'
 import * as bookmarks from './controllers/Bookmark/BookmarksController'
 import * as countries from './controllers/Country/CountriesController'
@@ -38,6 +39,7 @@ import * as attachment from './controllers/Attachment/AttachmentsController'
 		'/addresses': [...Object.values(addresses)],
 		'/agencies': [...Object.values(agencies)],
 		'/appointments': [...Object.values(appointments)],
+		'/appointments_tags': [...Object.values(appointmentsTags)],
 		'/articles': [...Object.values(articles)],
 		'/bookmarks': [...Object.values(bookmarks)],
 		'/countries': [...Object.values(countries)],

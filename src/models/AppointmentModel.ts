@@ -5,7 +5,7 @@ class AppointmentSerializer implements Appointment {
 	@Groups('read')
 	appointment_id: number
 	@Groups('read', 'put', 'post')
-	tag: number
+	tag_id: number
 	@Groups('read', 'put', 'post')
 	date_start: Date
 	@Groups('read', 'put', 'post')
@@ -20,7 +20,9 @@ class AppointmentSerializer implements Appointment {
 	@Groups('read', 'put', 'post')
 	property_id: number
 	@Groups('read', 'put', 'post')
-	user_id: number
+	user_id_1: number
+	@Groups('read', 'put', 'post')
+	user_id_2: number
 }
 
 export { AppointmentSerializer }
