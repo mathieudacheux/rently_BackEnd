@@ -25,7 +25,10 @@ export class Articles {
 	@Returns(200, Array).Of(ArticleSerializer).Groups('read')
 	async getAllArticles(@QueryParams('page') page: number): Promise<ArticleSerializer[]> {
 		const pageSize = 20
-		return this.prisma.article.findMany({ take: 15, skip: (page - 1) * pageSize })
+		return this.prisma.article.findMany({
+			take: 15,
+			skip: (page ? page - 1 : 0) * pageSize,
+		})
 	}
 
 	@Get('/articles_filter')

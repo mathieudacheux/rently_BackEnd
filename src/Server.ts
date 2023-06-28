@@ -39,7 +39,7 @@ import * as attachment from './controllers/Attachment/AttachmentsController'
 		'/addresses': [...Object.values(addresses)],
 		'/agencies': [...Object.values(agencies)],
 		'/appointments': [...Object.values(appointments)],
-		'/appointments_tags': [...Object.values(appointmentsTags)],
+		'/appointment_tags': [...Object.values(appointmentsTags)],
 		'/articles': [...Object.values(articles)],
 		'/bookmarks': [...Object.values(bookmarks)],
 		'/countries': [...Object.values(countries)],

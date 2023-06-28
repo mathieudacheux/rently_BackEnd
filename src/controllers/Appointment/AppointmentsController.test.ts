@@ -4,13 +4,14 @@ import { getUserToken } from '../../helpers/helpersFunctions'
 
 describe('Appointments controller endpoint', () => {
 	const newAppointment = {
-		tag: 1,
+		tag_id: 1,
 		date_start: new Date(),
 		date_end: new Date(),
 		note: `${Math.random().toString(10).substring(7)}`,
 		reminder: new Date(),
 		property_id: 4,
-		user_id: 47,
+		user_id_1: 47,
+		user_id_2: 57,
 	}
 
 	let appointment_id: number

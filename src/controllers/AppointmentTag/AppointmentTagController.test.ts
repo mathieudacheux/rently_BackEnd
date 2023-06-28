@@ -13,7 +13,7 @@ describe('Appointment tags controller endpoint', () => {
 	})
 	it('all appointments should return 200', async () => {
 		const response = await request(BASE_URL)
-			.get('/appointments')
+			.get('/appointment_tags')
 			.set('Authorization', `Bearer ${await getUserToken()}`)
 			.send()
 		expect(response.statusCode).toBe(200)
@@ -21,7 +21,7 @@ describe('Appointment tags controller endpoint', () => {
 	})
 	it('should return appointments', async () => {
 		const response = await request(BASE_URL)
-			.get('/appointments')
+			.get('/appointment_tags')
 			.set('Authorization', `Bearer ${await getUserToken()}`)
 			.send()
 		expect(response.body.length >= 1).toBe(true)

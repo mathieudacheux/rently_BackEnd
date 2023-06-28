@@ -25,7 +25,10 @@ export class Users {
 	@Returns(404, String).Description('Not found')
 	async getAllUsers(@QueryParams('page') page: number): Promise<UserSerializer[]> {
 		const pageSize = 20
-		return this.prisma.user.findMany({ take: pageSize, skip: (page - 1) * pageSize })
+		return this.prisma.user.findMany({
+			take: pageSize,
+			skip: (page ? page - 1 : 0) * pageSize,
+		})
 	}
 
 	@Get('/users_filter')

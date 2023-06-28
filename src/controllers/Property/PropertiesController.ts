@@ -26,7 +26,7 @@ export class Properties {
 		const pageSize = 50
 		return this.prisma.property.findMany({
 			take: pageSize,
-			skip: (page - 1) * pageSize,
+			skip: (page ? page - 1 : 0) * pageSize,
 			orderBy: { property_id: 'asc' },
 		})
 	}
