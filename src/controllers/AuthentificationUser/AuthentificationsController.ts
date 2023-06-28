@@ -61,7 +61,7 @@ export class Authentifications {
 
 		const { exp } = decoded as { exp: number }
 
-		if (!(exp < Date.now())) {
+		if (Date.now() >= exp * 1000) {
 			await this.prisma.user.update({
 				where: { user_id: user.user_id },
 				data: {
