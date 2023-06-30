@@ -1,6 +1,6 @@
 {
   "name": "rently-back-end",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "",
   "scripts": {
     "build": "tsc && babel src --out-dir dist --extensions \".ts,.tsx\" --source-maps inline",
@@ -11,10 +11,11 @@
     "prisma:generate": "npx prisma generate",
     "test:lint": "eslint '**/*.{ts,js}'",
     "test:lint:fix": "eslint '**/*.{ts,js}' --fix",
-    "prepare": "husky install"
+    "test": "jest --runInBand --detectOpenHandles --forceExit",
+    "prettier": "prettier --write \"**/*.{js,ts,json,md}\""
   },
   "dependencies": {
-    "@prisma/client": "^4.14.1",
+    "@prisma/client": "^4.16.1",
     "@tsed/ajv": "^7.29.0",
     "@tsed/common": "^7.29.0",
     "@tsed/core": "^7.29.0",
@@ -38,6 +39,7 @@
     "@tsed/swagger": "^7.29.0",
     "ajv": "^8.12.0",
     "barrelsby": "^2.8.0",
+    "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
     "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
@@ -47,7 +49,12 @@
     "dotenv-expand": "^10.0.0",
     "dotenv-flow": "^3.2.0",
     "express": "^4.18.2",
-    "method-override": "^3.0.0"
+    "jest": "^29.5.0",
+    "jsonwebtoken": "^9.0.0",
+    "method-override": "^3.0.0",
+    "prisma": "^4.16.1",
+    "sharp": "^0.32.1",
+    "ts-jest": "^29.1.0"
   },
   "devDependencies": {
     "@babel/cli": "^7.21.5",
@@ -60,11 +67,13 @@
     "@tsed/cli-plugin-eslint": "4.5.2",
     "@tsed/cli-plugin-jest": "4.5.2",
     "@tsed/cli-plugin-prisma": "4.5.2",
+    "@types/bcrypt": "^5.0.0",
     "@types/compression": "^1.7.2",
     "@types/cookie-parser": "^1.4.3",
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
     "@types/jest": "^29.5.1",
+    "@types/jsonwebtoken": "^9.0.2",
     "@types/method-override": "^0.0.32",
     "@types/multer": "^1.4.7",
     "@types/node": "^20.2.3",
@@ -76,10 +85,9 @@
     "eslint": "^8.41.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "husky": "^8.0.3",
     "lint-staged": "^13.2.2",
     "prettier": "2.8.8",
-    "prisma": "^4.14.1",
+    "prisma": "^4.16.1",
     "supertest": "^6.3.3",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
@@ -93,5 +101,10 @@
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "sh pre-commit.sh"
+    }
   }
 }
