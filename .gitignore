@@ -1,7 +1,7 @@
 ### Node template
 .DS_Store
 .env
-.env.dev
+.env.local
 # Logs
 logs
 *.log
