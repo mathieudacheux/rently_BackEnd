@@ -53,7 +53,7 @@ import * as attachment from './controllers/Attachment/AttachmentsController'
 		'/sectors': [...Object.values(sectors)],
 		'/statuses': [...Object.values(status)],
 		'/tags': [...Object.values(tags)],
-		'/fileTest': [...Object.values(attachment)],
+		'/file': [...Object.values(attachment)],
 		'/': [...Object.values(pages)],
 	},
 	// swagger with jwt auth
