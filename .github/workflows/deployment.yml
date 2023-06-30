@@ -22,6 +22,8 @@ jobs:
           npm install
           npm update
           npx prisma generate
+          npm install babel
+          npm uninstall babel
           npm run build
 
       - name: 📂 Sync files
