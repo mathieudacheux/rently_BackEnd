@@ -5,7 +5,7 @@ import { PrismaService } from '../../services/PrismaService'
 import { Post, Returns, Summary } from '@tsed/schema'
 import { NotFound, BadRequest } from '@tsed/exceptions'
 import { compare } from 'bcrypt'
-import { decode, sign, verify } from 'jsonwebtoken'
+import jwt from 'jsonwebtoken'
 import { JWT_SECRET } from '../../constants'
 
 class UserAuth implements Partial<User> {
@@ -38,10 +38,11 @@ export class Authentifications {
 			throw new BadRequest('Wrong password')
 		}
 
-		const tokenGeneration = sign(
+		const tokenGeneration = jwt.sign(
 			{ role_id: user.role_id, user_id: user.user_id },
 			JWT_SECRET,
 			{
+				algorithm: 'HS256',
 				expiresIn: '12h',
 			}
 		)
@@ -57,7 +58,7 @@ export class Authentifications {
 			}
 		}
 
-		const decoded = !user.token ? decode(tokenGeneration) : decode(user.token)
+		const decoded = !user.token ? jwt.decode(tokenGeneration) : jwt.decode(user.token)
 
 		const { exp } = decoded as { exp: number }
 
@@ -69,7 +70,7 @@ export class Authentifications {
 				},
 			})
 
-			const newTokenVerify = verify(tokenGeneration, JWT_SECRET)
+			const newTokenVerify = jwt.verify(tokenGeneration, JWT_SECRET)
 
 			if (!newTokenVerify) {
 				throw new BadRequest('Token not valid')
@@ -79,7 +80,9 @@ export class Authentifications {
 				token: tokenGeneration,
 			}
 		}
-		const tokenVerify = verify(user.token, JWT_SECRET)
+
+		// verify token
+		const tokenVerify = jwt.verify(user.token, JWT_SECRET)
 
 		if (!tokenVerify) {
 			throw new BadRequest('Token not valid')
