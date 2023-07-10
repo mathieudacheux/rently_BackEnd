@@ -26,7 +26,7 @@ export class Agencies {
 	@Summary('Return a list of all agencies')
 	@Returns(200, Array).Of(AgencySerializer).Groups('read')
 	async getAllAgencies(): Promise<AgencySerializer[]> {
-		const allAgencies = this.prisma.agency.findMany()
+		const allAgencies = await this.prisma.agency.findMany()
 
 		if (!allAgencies) {
 			const errorObject = {
@@ -102,7 +102,7 @@ export class Agencies {
 	@Summary('Return a agency by his id')
 	@Returns(200, AgencySerializer).Groups('read')
 	async getAgencyById(@PathParams('id') agency_id: number) {
-		const uniqueAgency = this.prisma.agency.findUnique({ where: { agency_id } })
+		const uniqueAgency = await this.prisma.agency.findUnique({ where: { agency_id } })
 
 		if (!uniqueAgency) {
 			const errorObject = {
@@ -131,7 +131,7 @@ export class Agencies {
 		@PathParams('id') agency_id: number,
 		@BodyParams() agency: AgencySerializer
 	): Promise<AgencySerializer> {
-		const updateAgency = this.prisma.agency.update({
+		const updateAgency = await this.prisma.agency.update({
 			where: { agency_id },
 			data: agency,
 		})
@@ -153,7 +153,7 @@ export class Agencies {
 	@Summary('Delete a agency by its id')
 	@Returns(204)
 	async deleteAgency(@PathParams('id') agency_id: number): Promise<void> {
-		const deleteAgency = this.prisma.agency.delete({ where: { agency_id } })
+		const deleteAgency = await this.prisma.agency.delete({ where: { agency_id } })
 
 		if (!deleteAgency) {
 			const errorObject = {

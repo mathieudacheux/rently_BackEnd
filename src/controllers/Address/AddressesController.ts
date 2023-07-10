@@ -25,9 +25,8 @@ export class Addresses {
 	@Get('/')
 	@Summary('Return a list of all addresses')
 	@Returns(200, Array).Of(AddressSerializer).Groups('read')
-	@Returns(404, String).Description('Not found')
 	async getAllAddresses(): Promise<AddressSerializer[]> {
-		const allAddresses = this.prisma.address.findMany()
+		const allAddresses = await this.prisma.address.findMany()
 
 		if (!allAddresses) {
 			const errorObject = {
@@ -68,7 +67,7 @@ export class Addresses {
 	async createAddress(
 		@Required() @BodyParams() @Groups('post') address: AddressSerializer
 	) {
-		return this.prisma.address.create({ data: address })
+		return await this.prisma.address.create({ data: address })
 	}
 
 	@Put('/:id')
@@ -80,7 +79,7 @@ export class Addresses {
 		@Groups('put')
 		address: AddressSerializer
 	): Promise<AddressSerializer> {
-		const updateAddress = this.prisma.address.update({
+		const updateAddress = await this.prisma.address.update({
 			where: { address_id: id },
 			data: address,
 		})
@@ -101,7 +100,7 @@ export class Addresses {
 	@Summary('Delete a address by its id')
 	@Returns(204)
 	async deleteAddress(@PathParams('id') address_id: number): Promise<void> {
-		const deleteAddress = this.prisma.address.delete({ where: { address_id } })
+		const deleteAddress = await this.prisma.address.delete({ where: { address_id } })
 
 		if (!deleteAddress) {
 			const errorObject = {

@@ -12,23 +12,35 @@ import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
 import { Returns, Summary, Groups, Required } from '@tsed/schema'
 import { PropertySerializer } from '../../models/PropertyModel'
+import i18n from '../../translations/i18n'
 
 @Controller('/')
 export class Properties {
 	@Inject()
 	protected prisma: PrismaService
+	protected i18n = i18n
 
 	@Get('/')
 	@Summary('Return a list of properties')
 	@Returns(200, Array).Of(PropertySerializer).Groups('read')
-	@Returns(404, String).Description('Not found')
 	async getProperties(@QueryParams('page') page: number): Promise<PropertySerializer[]> {
 		const pageSize = 50
-		return this.prisma.property.findMany({
+		const allProperties = await this.prisma.property.findMany({
 			take: pageSize,
 			skip: (page ? page - 1 : 0) * pageSize,
 			orderBy: { property_id: 'asc' },
 		})
+
+		if (!allProperties) {
+			const errorObject = {
+				status: 404,
+				message: this.i18n.t('notFound'),
+			}
+
+			throw errorObject
+		}
+
+		return allProperties
 	}
 
 	@Get('/properties_filter')
@@ -111,9 +123,21 @@ export class Properties {
 	@Get('/:id')
 	@Summary('Return a property by his id')
 	@Returns(200, PropertySerializer).Groups('read')
-	@Returns(404, String).Description('Not found')
 	async getPropertyById(@PathParams('id') property_id: number) {
-		return this.prisma.property.findUnique({ where: { property_id } })
+		const uniqueProperty = await this.prisma.property.findUnique({
+			where: { property_id },
+		})
+
+		if (!uniqueProperty) {
+			const errorObject = {
+				status: 404,
+				message: this.i18n.t('idNotFound', { id: property_id }),
+			}
+
+			throw errorObject
+		}
+
+		return uniqueProperty
 	}
 
 	@Post('/')
@@ -129,24 +153,42 @@ export class Properties {
 	@Put('/:id')
 	@Summary('Update a property by its id')
 	@Returns(200, PropertySerializer).Groups('read')
-	@Returns(404, String).Description('Not found')
 	async updateProperty(
 		@PathParams('id') id: number,
 		@BodyParams()
 		@Groups('put')
 		property: PropertySerializer
 	): Promise<PropertySerializer> {
-		return this.prisma.property.update({
+		const updateProperty = await this.prisma.property.update({
 			where: { property_id: id },
 			data: property,
 		})
+
+		if (!updateProperty) {
+			const errorObject = {
+				status: 404,
+				message: this.i18n.t('idNotFound', { id }),
+			}
+
+			throw errorObject
+		}
+
+		return updateProperty
 	}
 
 	@Delete('/:id')
 	@Summary('Delete a property by its id')
 	@Returns(204)
-	@Returns(404, String).Description('Not found')
 	async deleteProperty(@PathParams('id') property_id: number): Promise<void> {
-		await this.prisma.property.delete({ where: { property_id } })
+		const deleteProperty = await this.prisma.property.delete({ where: { property_id } })
+
+		if (!deleteProperty) {
+			const errorObject = {
+				status: 404,
+				message: this.i18n.t('idNotFound', { id: property_id }),
+			}
+
+			throw errorObject
+		}
 	}
 }

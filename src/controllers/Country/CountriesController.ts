@@ -29,7 +29,7 @@ export class Countries {
 		@QueryParams('name') name: string | null
 	): Promise<CountryModel[]> {
 		if (name) {
-			const countryName = this.prisma.country.findMany({
+			const countryName = await this.prisma.country.findMany({
 				where: { name: name },
 			})
 
@@ -45,7 +45,7 @@ export class Countries {
 			return countryName
 		}
 
-		const allCountries = this.prisma.country.findMany()
+		const allCountries = await this.prisma.country.findMany()
 
 		if (!allCountries) {
 			const errorObject = {
@@ -63,7 +63,7 @@ export class Countries {
 	@Summary('Return a country by his id')
 	@Returns(200, CountryModel).Groups('read')
 	async getCountryById(@PathParams('id') country_id: number) {
-		const uniqueCountry = this.prisma.country.findUnique({ where: { country_id } })
+		const uniqueCountry = await this.prisma.country.findUnique({ where: { country_id } })
 
 		if (!uniqueCountry) {
 			const errorObject = {
@@ -85,7 +85,7 @@ export class Countries {
 	async createCountry(
 		@Required() @BodyParams() @Groups('creation') country: CountryModel
 	) {
-		return this.prisma.country.create({ data: country })
+		return await this.prisma.country.create({ data: country })
 	}
 
 	@UseBefore(AuthentificationMiddleware)
@@ -96,7 +96,7 @@ export class Countries {
 		@PathParams('id') id: number,
 		@BodyParams() country: CountryModel
 	): Promise<CountryModel> {
-		const updateCountry = this.prisma.country.update({
+		const updateCountry = await this.prisma.country.update({
 			where: { country_id: id },
 			data: country,
 		})
@@ -118,7 +118,7 @@ export class Countries {
 	@Summary('Delete a country by its id')
 	@Returns(204)
 	async deleteCountry(@PathParams('id') country_id: number): Promise<void> {
-		const deleteCountry = this.prisma.country.delete({ where: { country_id } })
+		const deleteCountry = await this.prisma.country.delete({ where: { country_id } })
 
 		if (!deleteCountry) {
 			const errorObject = {

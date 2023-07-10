@@ -3,6 +3,7 @@
   "idNotFound": "ID number {{id}} not found",
   "wrongPassword": "Wrong password",
   "tokenInvalid": "Invalid token",
+  "userExists": "User already exists with this email",
   "attachmentFailed": "Error during directory creation",
   "attachmentExtensionFailed": "Bad file extension (only .jpeg, .jpg, .png, .heic, .heif"
 }

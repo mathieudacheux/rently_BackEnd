@@ -27,7 +27,7 @@ export class Appointments {
 	@Summary('Return a list of all appointments')
 	@Returns(200, Array).Of(AppointmentSerializer).Groups('read')
 	async getAllAppointments(): Promise<AppointmentSerializer[]> {
-		const allAppointments = this.prisma.appointment.findMany()
+		const allAppointments = await this.prisma.appointment.findMany()
 
 		if (!allAppointments) {
 			const errorObject = {
@@ -83,7 +83,7 @@ export class Appointments {
 			throw errorObject
 		}
 
-		const getAppointment = this.prisma.appointment.findMany({
+		const getAppointment = await this.prisma.appointment.findMany({
 			where: {
 				user_id_1,
 				user_id_2,
@@ -110,7 +110,7 @@ export class Appointments {
 	async getAppointmentById(
 		@PathParams('id') appointment_id: number
 	): Promise<AppointmentSerializer | null> {
-		const uniqueAppointment = this.prisma.appointment.findUnique({
+		const uniqueAppointment = await this.prisma.appointment.findUnique({
 			where: { appointment_id },
 		})
 
@@ -133,7 +133,7 @@ export class Appointments {
 	async createAppointment(
 		@Required() @BodyParams() @Groups('post') appointment: AppointmentSerializer
 	) {
-		return this.prisma.appointment.create({ data: appointment })
+		return await this.prisma.appointment.create({ data: appointment })
 	}
 
 	@Put('/:id')
@@ -145,7 +145,7 @@ export class Appointments {
 		@Groups('put')
 		appointment: AppointmentSerializer
 	): Promise<AppointmentSerializer> {
-		const updateAppointment = this.prisma.appointment.update({
+		const updateAppointment = await this.prisma.appointment.update({
 			where: { appointment_id },
 			data: appointment,
 		})
@@ -166,7 +166,7 @@ export class Appointments {
 	@Summary('Delete a appointment by its id')
 	@Returns(204)
 	async deleteAppointment(@PathParams('id') appointment_id: number): Promise<void> {
-		const deleteAppointment = this.prisma.appointment.delete({
+		const deleteAppointment = await this.prisma.appointment.delete({
 			where: { appointment_id },
 		})
 
