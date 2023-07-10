@@ -100,7 +100,6 @@ export class Addresses {
 	@Delete('/:id')
 	@Summary('Delete a address by its id')
 	@Returns(204)
-	@Returns(404, String).Description('Not found')
 	async deleteAddress(@PathParams('id') address_id: number): Promise<void> {
 		const deleteAddress = this.prisma.address.delete({ where: { address_id } })
 

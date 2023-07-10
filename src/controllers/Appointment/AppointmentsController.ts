@@ -14,46 +14,116 @@ import { PrismaService } from '../../services/PrismaService'
 import { Returns, Summary, Groups, Required } from '@tsed/schema'
 import { AppointmentSerializer } from '../../models/AppointmentModel'
 import AuthentificationMiddleware from '../../middlewares/AuthentificationMiddleware'
+import i18n from '../../translations/i18n'
 
 @Controller('/')
 export class Appointments {
 	@Inject()
 	protected prisma: PrismaService
+	protected i18n = i18n
 
 	@UseBeforeEach(AuthentificationMiddleware)
 	@Get('/')
 	@Summary('Return a list of all appointments')
 	@Returns(200, Array).Of(AppointmentSerializer).Groups('read')
-	@Returns(404, String).Description('Not found')
 	async getAllAppointments(): Promise<AppointmentSerializer[]> {
-		return this.prisma.appointment.findMany()
+		const allAppointments = this.prisma.appointment.findMany()
+
+		if (!allAppointments) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('notFound'),
+			}
+
+			throw errorObject
+		}
+
+		return allAppointments
 	}
 
 	@Get('/appointments_filter')
 	@Summary('Return a list of appointments by filter')
 	@Returns(200, Array).Of(AppointmentSerializer).Groups('read')
-	@Returns(404, String).Description('Not found')
 	async getAppointmentsByFilter(
 		@QueryParams('user_id_1') user_id_1: number,
 		@QueryParams('user_id_2') user_id_2: number
 	): Promise<AppointmentSerializer[]> {
-		return this.prisma.appointment.findMany({
+		if (!user_id_1 && !user_id_2) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('notFound'),
+			}
+
+			throw errorObject
+		}
+
+		const user1 = await this.prisma.user.findUnique({
+			where: { user_id: user_id_1 },
+		})
+
+		if (!user1) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { id: user_id_1 }),
+			}
+
+			throw errorObject
+		}
+
+		const user2 = await this.prisma.user.findUnique({
+			where: { user_id: user_id_2 },
+		})
+
+		if (!user2) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { id: user_id_2 }),
+			}
+
+			throw errorObject
+		}
+
+		const getAppointment = this.prisma.appointment.findMany({
 			where: {
 				user_id_1,
 				user_id_2,
 			},
+
 			orderBy: { date_start: 'asc' },
 		})
+
+		if (!getAppointment) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('notFound'),
+			}
+
+			throw errorObject
+		}
+
+		return getAppointment
 	}
 
 	@Get('/:id')
 	@Summary('Return a appointment by his id')
 	@Returns(200, AppointmentSerializer).Groups('read')
-	@Returns(404, String).Description('Not found')
 	async getAppointmentById(
 		@PathParams('id') appointment_id: number
 	): Promise<AppointmentSerializer | null> {
-		return this.prisma.appointment.findUnique({ where: { appointment_id } })
+		const uniqueAppointment = this.prisma.appointment.findUnique({
+			where: { appointment_id },
+		})
+
+		if (!uniqueAppointment) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { id: appointment_id }),
+			}
+
+			throw errorObject
+		}
+
+		return uniqueAppointment
 	}
 
 	@Post('/')
@@ -69,24 +139,44 @@ export class Appointments {
 	@Put('/:id')
 	@Summary('Update a appointment by its id')
 	@Returns(200, AppointmentSerializer).Groups('read')
-	@Returns(404, String).Description('Not found')
 	async updateAppointment(
 		@PathParams('id') appointment_id: number,
 		@BodyParams()
 		@Groups('put')
 		appointment: AppointmentSerializer
 	): Promise<AppointmentSerializer> {
-		return this.prisma.appointment.update({
+		const updateAppointment = this.prisma.appointment.update({
 			where: { appointment_id },
 			data: appointment,
 		})
+
+		if (!updateAppointment) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { id: appointment_id }),
+			}
+
+			throw errorObject
+		}
+
+		return updateAppointment
 	}
 
 	@Delete('/:id')
 	@Summary('Delete a appointment by its id')
 	@Returns(204)
-	@Returns(404, String).Description('Not found')
 	async deleteAppointment(@PathParams('id') appointment_id: number): Promise<void> {
-		await this.prisma.appointment.delete({ where: { appointment_id } })
+		const deleteAppointment = this.prisma.appointment.delete({
+			where: { appointment_id },
+		})
+
+		if (!deleteAppointment) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { id: appointment_id }),
+			}
+
+			throw errorObject
+		}
 	}
 }
