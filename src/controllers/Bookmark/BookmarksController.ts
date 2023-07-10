@@ -27,7 +27,7 @@ export class Bookmarks {
 	async getAllBookmarks(
 		@PathParams('offset') offset: number
 	): Promise<BookmarkSerializer[]> {
-		const allBookmarks = this.prisma.bookmark.findMany({ take: 15, skip: offset })
+		const allBookmarks = await this.prisma.bookmark.findMany({ take: 15, skip: offset })
 
 		if (!allBookmarks) {
 			const errorObject = {
@@ -45,7 +45,9 @@ export class Bookmarks {
 	@Summary('Return a bookmark by his id')
 	@Returns(200, BookmarkSerializer).Groups('read')
 	async getBookmarkById(@PathParams('id') bookmark_id: number) {
-		const uniqueBookmark = this.prisma.bookmark.findUnique({ where: { bookmark_id } })
+		const uniqueBookmark = await this.prisma.bookmark.findUnique({
+			where: { bookmark_id },
+		})
 
 		if (!uniqueBookmark) {
 			const errorObject = {
@@ -67,7 +69,7 @@ export class Bookmarks {
 	async createBookmark(
 		@Required() @BodyParams() @Groups('post') bookmark: BookmarkSerializer
 	) {
-		return this.prisma.bookmark.create({ data: bookmark })
+		return await this.prisma.bookmark.create({ data: bookmark })
 	}
 
 	@UseBefore(AuthentificationMiddleware)
@@ -78,7 +80,7 @@ export class Bookmarks {
 		@PathParams('id') id: number,
 		@BodyParams() @Groups('put') bookmark: BookmarkSerializer
 	): Promise<BookmarkSerializer> {
-		const updateBookmark = this.prisma.bookmark.update({
+		const updateBookmark = await this.prisma.bookmark.update({
 			where: { bookmark_id: id },
 			data: bookmark,
 		})
@@ -99,9 +101,8 @@ export class Bookmarks {
 	@Delete('/:id')
 	@Summary('Delete a bookmark by its id')
 	@Returns(204)
-	@Returns(404, String).Description('Not found')
 	async deleteBookmark(@PathParams('id') bookmark_id: number): Promise<void> {
-		const deleteBookmark = this.prisma.bookmark.delete({ where: { bookmark_id } })
+		const deleteBookmark = await this.prisma.bookmark.delete({ where: { bookmark_id } })
 
 		if (!deleteBookmark) {
 			const errorObject = {
