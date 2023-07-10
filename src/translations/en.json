@@ -1,4 +1,8 @@
 {
   "notFound": "No results found",
-  "idNotFound": "ID number {{id}} not found"
+  "idNotFound": "ID number {{id}} not found",
+  "wrongPassword": "Wrong password",
+  "tokenInvalid": "Invalid token",
+  "attachmentFailed": "Error during directory creation",
+  "attachmentExtensionFailed": "Bad file extension (only .jpeg, .jpg, .png, .heic, .heif"
 }

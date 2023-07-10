@@ -14,33 +14,67 @@ import { PrismaService } from '../../services/PrismaService'
 import { Returns, Summary, Groups, Required } from '@tsed/schema'
 import AuthentificationMiddleware from '../../middlewares/AuthentificationMiddleware'
 import { CountryModel } from '../../models/CountryModel'
+import i18n from '../../translations/i18n'
 
 @Controller('/')
 export class Countries {
 	@Inject()
 	protected prisma: PrismaService
+	protected i18n = i18n
 
 	@Get('/')
 	@Summary('Return a list of all countries')
 	@Returns(200, Array).Of(CountryModel).Groups('read')
-	@Returns(404, String).Description('Not found')
 	async getAllCountries(
 		@QueryParams('name') name: string | null
 	): Promise<CountryModel[]> {
 		if (name) {
-			return this.prisma.country.findMany({
+			const countryName = this.prisma.country.findMany({
 				where: { name: name },
 			})
+
+			if (!countryName) {
+				const errorObject = {
+					status: 404,
+					errors: this.i18n.t('notFound'),
+				}
+
+				throw errorObject
+			}
+
+			return countryName
 		}
-		return this.prisma.country.findMany()
+
+		const allCountries = this.prisma.country.findMany()
+
+		if (!allCountries) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('notFound'),
+			}
+
+			throw errorObject
+		}
+
+		return allCountries
 	}
 
 	@Get('/:id')
 	@Summary('Return a country by his id')
 	@Returns(200, CountryModel).Groups('read')
-	@Returns(404, String).Description('Not found')
 	async getCountryById(@PathParams('id') country_id: number) {
-		return this.prisma.country.findUnique({ where: { country_id } })
+		const uniqueCountry = this.prisma.country.findUnique({ where: { country_id } })
+
+		if (!uniqueCountry) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { id: country_id }),
+			}
+
+			throw errorObject
+		}
+
+		return uniqueCountry
 	}
 
 	@UseBefore(AuthentificationMiddleware)
@@ -58,23 +92,41 @@ export class Countries {
 	@Put('/:id')
 	@Summary('Update a country by its id')
 	@Returns(200, CountryModel)
-	@Returns(404, String).Description('Not found')
 	async updateCountry(
 		@PathParams('id') id: number,
 		@BodyParams() country: CountryModel
 	): Promise<CountryModel> {
-		return this.prisma.country.update({
+		const updateCountry = this.prisma.country.update({
 			where: { country_id: id },
 			data: country,
 		})
+
+		if (!updateCountry) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { id }),
+			}
+
+			throw errorObject
+		}
+
+		return updateCountry
 	}
 
 	@UseBefore(AuthentificationMiddleware)
 	@Delete('/:id')
 	@Summary('Delete a country by its id')
 	@Returns(204)
-	@Returns(404, String).Description('Not found')
 	async deleteCountry(@PathParams('id') country_id: number): Promise<void> {
-		await this.prisma.country.delete({ where: { country_id } })
+		const deleteCountry = this.prisma.country.delete({ where: { country_id } })
+
+		if (!deleteCountry) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { id: country_id }),
+			}
+
+			throw errorObject
+		}
 	}
 }

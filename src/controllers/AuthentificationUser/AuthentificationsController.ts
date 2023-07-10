@@ -7,6 +7,7 @@ import { NotFound, BadRequest } from '@tsed/exceptions'
 import { compare } from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { JWT_SECRET } from '../../constants'
+import i18n from '../../translations/i18n'
 
 class UserAuth implements Partial<User> {
 	token: string | null
@@ -16,12 +17,11 @@ class UserAuth implements Partial<User> {
 export class Authentifications {
 	@Inject()
 	protected prisma: PrismaService
+	protected i18n = i18n
 
 	@Post('/')
 	@Summary('Login an user and return a token')
 	@Returns(200, UserAuth)
-	@Returns(404, String).Description('Not found')
-	@Returns(400, String).Description('Bad request')
 	async login(
 		@BodyParams('mail') mail: string,
 		@BodyParams('password') password: string
@@ -31,11 +31,11 @@ export class Authentifications {
 		})
 
 		if (!user) {
-			throw new NotFound('User not found')
+			throw new NotFound(this.i18n.t('idNotFound', { id: 'user' }))
 		}
 
 		if (!(await compare(password, user.password))) {
-			throw new BadRequest('Wrong password')
+			throw new BadRequest(this.i18n.t('wrongPassword'))
 		}
 
 		const tokenGeneration = jwt.sign(
@@ -73,7 +73,7 @@ export class Authentifications {
 			const newTokenVerify = jwt.verify(tokenGeneration, JWT_SECRET)
 
 			if (!newTokenVerify) {
-				throw new BadRequest('Token not valid')
+				throw new BadRequest(this.i18n.t('tokenInvalid'))
 			}
 
 			return {
@@ -81,11 +81,10 @@ export class Authentifications {
 			}
 		}
 
-		// verify token
 		const tokenVerify = jwt.verify(user.token, JWT_SECRET)
 
 		if (!tokenVerify) {
-			throw new BadRequest('Token not valid')
+			throw new BadRequest(this.i18n.t('tokenInvalid'))
 		}
 
 		return {
