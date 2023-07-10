@@ -13,11 +13,13 @@ import { PrismaService } from '../../services/PrismaService'
 import { Returns, Summary, Groups, Required } from '@tsed/schema'
 import { AddressSerializer } from '../../models/AddressModel'
 import AuthentificationMiddleware from '../../middlewares/AuthentificationMiddleware'
+import i18n from '../../translations/i18n'
 
 @Controller('/')
 export class Addresses {
 	@Inject()
 	protected prisma: PrismaService
+	protected i18n = i18n
 
 	@UseBeforeEach(AuthentificationMiddleware)
 	@Get('/')
@@ -25,15 +27,38 @@ export class Addresses {
 	@Returns(200, Array).Of(AddressSerializer).Groups('read')
 	@Returns(404, String).Description('Not found')
 	async getAllAddresses(): Promise<AddressSerializer[]> {
-		return this.prisma.address.findMany()
+		const allAddresses = this.prisma.address.findMany()
+
+		if (!allAddresses) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('notFound'),
+			}
+
+			throw errorObject
+		}
+
+		return allAddresses
 	}
 
 	@Get('/:id')
 	@Summary('Return a address by his id')
 	@Returns(200, AddressSerializer).Groups('read')
-	@Returns(404, String).Description('Not found')
 	async getAddressById(@PathParams('id') address_id: number) {
-		return this.prisma.address.findUnique({ where: { address_id } })
+		const uniqueAddress = await this.prisma.address.findUnique({
+			where: { address_id },
+		})
+
+		if (!uniqueAddress) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { id: address_id }),
+			}
+
+			throw errorObject
+		}
+
+		return uniqueAddress
 	}
 
 	@Post('/')
@@ -49,17 +74,27 @@ export class Addresses {
 	@Put('/:id')
 	@Summary('Update a address by its id')
 	@Returns(200, AddressSerializer).Groups('read')
-	@Returns(404, String).Description('Not found')
 	async updateAddress(
 		@PathParams('id') id: number,
 		@BodyParams()
 		@Groups('put')
 		address: AddressSerializer
 	): Promise<AddressSerializer> {
-		return this.prisma.address.update({
+		const updateAddress = this.prisma.address.update({
 			where: { address_id: id },
 			data: address,
 		})
+
+		if (!updateAddress) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { id }),
+			}
+
+			throw errorObject
+		}
+
+		return updateAddress
 	}
 
 	@Delete('/:id')
@@ -67,6 +102,15 @@ export class Addresses {
 	@Returns(204)
 	@Returns(404, String).Description('Not found')
 	async deleteAddress(@PathParams('id') address_id: number): Promise<void> {
-		await this.prisma.address.delete({ where: { address_id } })
+		const deleteAddress = this.prisma.address.delete({ where: { address_id } })
+
+		if (!deleteAddress) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { id: address_id }),
+			}
+
+			throw errorObject
+		}
 	}
 }
