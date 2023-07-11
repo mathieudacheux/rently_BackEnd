@@ -9,9 +9,12 @@ import { Controller } from '@tsed/di'
 import multer from 'multer'
 import { access, mkdir, unlink } from 'fs'
 import sharp from 'sharp'
+import i18n from '../../translations/i18n'
 
 @Controller('/')
 export class Attachment {
+	protected i18n = i18n
+
 	@Post('/img/:folder/:id')
 	@MulterOptions({
 		storage: multer.diskStorage({
@@ -21,7 +24,7 @@ export class Attachment {
 					if (error) {
 						mkdir(path, (err) => {
 							if (err) {
-								throw new Error('Error during directory creation')
+								throw new Error(this.i18n.t('attachmentFailed'))
 							}
 						})
 					}
@@ -51,7 +54,7 @@ export class Attachment {
 				await sharp(file.path).resize().heif({ quality: 45 }).toFile(newPath)
 				break
 			default:
-				throw new Error('Bad file extension (only .jpeg, .jpg, .png, .heic, .heif')
+				throw new Error(this.i18n.t('attachmentFailed'))
 		}
 
 		unlink(file.path, (error) => {
@@ -71,7 +74,7 @@ export class Attachment {
 					if (error) {
 						mkdir(path, (err) => {
 							if (err) {
-								throw new Error('Error during directory creation')
+								throw new Error(this.i18n.t('attachmentFailed'))
 							}
 						})
 					}

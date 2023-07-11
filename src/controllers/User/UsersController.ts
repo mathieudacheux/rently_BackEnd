@@ -13,28 +13,39 @@ import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
 import { Returns, Summary, Groups } from '@tsed/schema'
 import { UserSerializer } from '../../models/UserModel'
+import i18n from '../../translations/i18n'
 
 @Controller('/')
 export class Users {
 	@Inject()
 	protected prisma: PrismaService
+	protected i18n = i18n
 
 	@Get('/')
 	@Summary('Return a list of all users')
 	@Returns(200, Array).Of(UserSerializer).Groups('read')
-	@Returns(404, String).Description('Not found')
 	async getAllUsers(@QueryParams('page') page: number): Promise<UserSerializer[]> {
 		const pageSize = 20
-		return this.prisma.user.findMany({
+		const allUsers = await this.prisma.user.findMany({
 			take: pageSize,
 			skip: (page ? page - 1 : 0) * pageSize,
 		})
+
+		if (!allUsers) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('notFound'),
+			}
+
+			throw errorObject
+		}
+
+		return allUsers
 	}
 
 	@Get('/users_filter')
 	@Summary('Return a list of users by filter')
 	@Returns(200, Array).Of(UserSerializer).Groups('read')
-	@Returns(404, String).Description('Not found')
 	async getUsersByFilter(
 		@QueryParams('mail') mail: string,
 		@QueryParams('phone') phone: string,
@@ -43,33 +54,75 @@ export class Users {
 		@QueryParams('city') city: string,
 		@QueryParams('zipcode') zipcode: string
 	): Promise<UserSerializer[]> {
+		if (!mail && !phone && !name && !firstname && !city && !zipcode) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('notFound'),
+			}
+
+			throw errorObject
+		}
+
 		const userAddresses = await this.prisma.address.findMany({
 			where: {
-				city,
-				zipcode,
+				city: {
+					contains: city,
+				},
+				zipcode: {
+					contains: zipcode,
+				},
 			},
 		})
 
-		return this.prisma.user.findMany({
+		const filterUsers = await this.prisma.user.findMany({
 			where: {
-				mail,
-				phone,
-				name,
-				firstname,
+				mail: {
+					contains: mail,
+				},
+				phone: {
+					contains: phone,
+				},
+				name: {
+					contains: name,
+				},
+				firstname: {
+					contains: firstname,
+				},
 				address_id: {
 					in: userAddresses.map((userAddresses) => userAddresses.address_id),
 				},
 			},
 			orderBy: { name: 'asc' },
 		})
+
+		if (!filterUsers) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('notFound'),
+			}
+
+			throw errorObject
+		}
+
+		return filterUsers
 	}
 
 	@Get('/:id')
 	@Summary('Return a user by his id')
 	@Returns(200, UserSerializer).Groups('read')
-	@Returns(404, String).Description('Not found')
 	async getUserById(@PathParams('id') id: number) {
-		return this.prisma.user.findUnique({ where: { user_id: id } })
+		const uniqueUser = await this.prisma.user.findUnique({ where: { user_id: id } })
+
+		if (!uniqueUser) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('notFound'),
+			}
+
+			throw errorObject
+		}
+
+		return uniqueUser
 	}
 
 	@Post('/')
@@ -82,9 +135,11 @@ export class Users {
 		const userExists = await this.prisma.user.findUnique({
 			where: { mail: user.mail },
 		})
+
 		if (userExists) {
-			throw new Error('User already exists')
+			throw new Error(this.i18n.t('userExists'))
 		}
+
 		return this.prisma.user.create({
 			data: {
 				...user,
@@ -96,22 +151,40 @@ export class Users {
 	@Put('/:id')
 	@Summary('Update a user by its id')
 	@Returns(200, UserSerializer).Description('Updated').Groups('read')
-	@Returns(404, String).Description('Not found')
 	async UpdateUser(
 		@PathParams('id') id: number,
 		@BodyParams() @Groups('put') user: UserSerializer
 	): Promise<UserSerializer> {
-		return this.prisma.user.update({
+		const updateUser = await this.prisma.user.update({
 			where: { user_id: id },
 			data: user,
 		})
+
+		if (!updateUser) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { id }),
+			}
+
+			throw errorObject
+		}
+
+		return updateUser
 	}
 
 	@Delete('/:id')
 	@Summary('Delete a user by its id')
 	@Returns(204)
-	@Returns(404, String).Description('Not found')
 	async deleteUser(@PathParams('id') user_id: number): Promise<void> {
-		await this.prisma.user.delete({ where: { user_id } })
+		const deleteUser = await this.prisma.user.delete({ where: { user_id } })
+
+		if (!deleteUser) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { id: user_id }),
+			}
+
+			throw errorObject
+		}
 	}
 }

@@ -1,0 +1,9 @@
+{
+  "notFound": "Aucun résultat trouvé",
+  "idNotFound": "ID numéro {{id}} non trouvé",
+  "wrongPassword": "Mot de passe incorrect",
+  "tokenInvalid": "Token invalide",
+  "userExists": "Un utilisateur avec cet email existe déjà",
+  "attachmentFailed": "Erreur dans la création du dossier",
+  "attachmentExtensionFailed": "Mauvaise extensiond de fichier(only .jpeg, .jpg, .png, .heic, .heif"
+}
