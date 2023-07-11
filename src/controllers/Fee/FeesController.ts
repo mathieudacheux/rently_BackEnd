@@ -13,26 +13,48 @@ import { PrismaService } from '../../services/PrismaService'
 import { Returns, Summary, Groups, Required } from '@tsed/schema'
 import { FeeSerializer } from '../../models/FeeModel'
 import AuthentificationMiddleware from '../../middlewares/AuthentificationMiddleware'
+import i18n from '../../translations/i18n'
 
 @Controller('/')
 export class Fees {
 	@Inject()
 	protected prisma: PrismaService
+	protected i18n = i18n
 
 	@Get('/')
 	@Summary('Return a list of all fees')
 	@Returns(200, Array).Of(FeeSerializer).Groups('read')
-	@Returns(404, String).Description('Not found')
 	async getAllFees(): Promise<FeeSerializer[]> {
-		return this.prisma.fee.findMany()
+		const allFees = await this.prisma.fee.findMany()
+
+		if (!allFees) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('notFound'),
+			}
+
+			throw errorObject
+		}
+
+		return allFees
 	}
 
 	@Get('/:id')
 	@Summary('Return a fee by his id')
 	@Returns(200, FeeSerializer).Groups('read')
-	@Returns(404, String).Description('Not found')
 	async getFeeById(@PathParams('id') fee_id: number) {
-		return this.prisma.fee.findUnique({ where: { fee_id } })
+		const uniqueFee = await this.prisma.fee.findUnique({ where: { fee_id } })
+
+		if (!uniqueFee) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { id: fee_id }),
+			}
+
+			throw errorObject
+		}
+
+		return uniqueFee
 	}
 
 	@UseBefore(AuthentificationMiddleware)
@@ -41,22 +63,32 @@ export class Fees {
 	@Returns(201, FeeSerializer).Groups('read')
 	@Returns(400, String).Description('Bad request')
 	async createFee(@Required() @BodyParams() @Groups('put') fee: FeeSerializer) {
-		return this.prisma.fee.create({ data: fee })
+		return await this.prisma.fee.create({ data: fee })
 	}
 
 	@UseBefore(AuthentificationMiddleware)
 	@Put('/:id')
 	@Summary('Update a fee by its id')
 	@Returns(200, FeeSerializer).Groups('read')
-	@Returns(400, String).Description('Bad request')
 	async updateFee(
 		@PathParams('id') id: number,
 		@Required() @BodyParams() @Groups('put') fee: FeeSerializer
 	): Promise<FeeSerializer> {
-		return this.prisma.fee.update({
+		const updateFee = await this.prisma.fee.update({
 			where: { fee_id: id },
 			data: fee,
 		})
+
+		if (!updateFee) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { id }),
+			}
+
+			throw errorObject
+		}
+
+		return updateFee
 	}
 
 	@UseBefore(AuthentificationMiddleware)
@@ -65,6 +97,15 @@ export class Fees {
 	@Returns(204)
 	@Returns(404, String).Description('Not found')
 	async deleteFee(@PathParams('id') fee_id: number): Promise<void> {
-		await this.prisma.fee.delete({ where: { fee_id } })
+		const deleteFee = await this.prisma.fee.delete({ where: { fee_id } })
+
+		if (!deleteFee) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { id: fee_id }),
+			}
+
+			throw errorObject
+		}
 	}
 }
