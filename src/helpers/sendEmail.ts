@@ -1,7 +1,8 @@
 import * as SibApiV3Sdk from 'sib-api-v3-typescript'
 import { UserSerializer } from 'src/models/UserModel'
-import { API_KEY } from '../../src/config'
+import * as dotenv from 'dotenv'
 
+dotenv.config()
 const sendEmail = async (
 	templateId: number,
 	title: string,
@@ -13,8 +14,10 @@ const sendEmail = async (
 	user: UserSerializer | null
 ) => {
 	const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi()
-
-	apiInstance.setApiKey(SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey, API_KEY)
+	apiInstance.setApiKey(
+		SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey,
+		process.env.API_KEY || ''
+	)
 
 	const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail()
 
