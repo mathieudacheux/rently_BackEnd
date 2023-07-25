@@ -5,5 +5,21 @@
   "tokenInvalid": "Invalid token",
   "userExists": "User already exists with this email",
   "attachmentFailed": "Error during directory creation",
-  "attachmentExtensionFailed": "Bad file extension (only .jpeg, .jpg, .png, .heic, .heif"
+  "attachmentExtensionFailed": "Bad file extension (only .jpeg, .jpg, .png, .heic, .heif",
+  "mail": {
+    "confirmEmail" : {
+      "title": "Registration confirmation",
+      "subject": "Thank you for registering with Rently. To validate your account, please click on the button below.",
+      "subjectDetails": "It is essential that you complete this step within 15 minutes of receiving this e-mail. After this time, your validation link will expire and you will have to restart the registration process. If you encounter any difficulties, please do not hesitate to contact us at contact@front-rently.mathieudacheux. We thank you for your confidence and look forward to welcoming you to Rently.",
+      "callToAction": "Confirm my account",
+      "linkInfo": "Confirm my e-mail address"
+    },
+    "resetPassword" : {
+      "title": "Reset your password",
+      "subject": "We have received your request to reset your account password. Please click on the link below to access the password change page.",
+      "subjectDetails": "It is important to note that this reset link is temporary and will expire within 15 minutes for security reasons. If the link expires, you will need to restart the reset process. If you have not requested a password reset, please ignore this e-mail and contact our support team at contact@front-rently.mathieudacheux.",
+      "callToAction": "Reinitialize my password",
+      "linkInfo": "Reset password"
+    }
+  }
 }

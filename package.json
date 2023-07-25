@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@prisma/client": "^4.16.1",
+    "@sendinblue/client": "^3.3.1",
     "@tsed/ajv": "^7.29.0",
     "@tsed/common": "^7.29.0",
     "@tsed/core": "^7.29.0",
@@ -45,7 +46,7 @@
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",
-    "dotenv": "^16.0.3",
+    "dotenv": "^16.3.1",
     "dotenv-expand": "^10.0.0",
     "dotenv-flow": "^3.2.0",
     "express": "^4.18.2",
@@ -57,6 +58,8 @@
     "method-override": "^3.0.0",
     "prisma": "^4.16.1",
     "sharp": "^0.32.1",
+    "sib-api-v3-sdk": "^8.5.0",
+    "sib-api-v3-typescript": "^2.2.2",
     "ts-jest": "^29.1.0"
   },
   "devDependencies": {
