@@ -1,15 +1,21 @@
 import request from 'supertest'
 import { AUTHORIZED_MAIL, AUTHORIZED_PASSWORD, BASE_URL } from '../config/index'
 import { PrismaService } from '../services/PrismaService'
-import { JWT_SECRET } from '../constants'
 import { decode, verify, sign } from 'jsonwebtoken'
+import * as dotenv from 'dotenv'
+
+dotenv.config()
 
 async function getUserToken() {
 	const prisma = new PrismaService()
 
-	const tokenGeneration = sign({ role_id: 2, user_id: 57 }, JWT_SECRET, {
-		expiresIn: '12h',
-	})
+	const tokenGeneration = sign(
+		{ role_id: 2, user_id: 57 },
+		process.env.JWT_SECRET || '',
+		{
+			expiresIn: '12h',
+		}
+	)
 
 	const userToken = await request(BASE_URL).post('/authentifications').send({
 		mail: AUTHORIZED_MAIL,
@@ -29,7 +35,7 @@ async function getUserToken() {
 			},
 		})
 
-		const newTokenVerify = verify(tokenGeneration, JWT_SECRET)
+		const newTokenVerify = verify(tokenGeneration, process.env.JWT_SECRET || '')
 
 		if (!newTokenVerify) {
 			throw new Error('Token not valid')
