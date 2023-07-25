@@ -6,8 +6,10 @@ import { Post, Returns, Summary } from '@tsed/schema'
 import { NotFound, BadRequest } from '@tsed/exceptions'
 import { compare } from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import { JWT_SECRET } from '../../constants'
 import i18n from '../../translations/i18n'
+import * as dotenv from 'dotenv'
+
+dotenv.config()
 
 class UserAuth implements Partial<User> {
 	token: string | null
@@ -40,7 +42,7 @@ export class Authentifications {
 
 		const tokenGeneration = jwt.sign(
 			{ role_id: user.role_id, user_id: user.user_id },
-			JWT_SECRET,
+			process.env.JWT_SECRET || '',
 			{
 				algorithm: 'HS256',
 				expiresIn: '12h',
@@ -70,7 +72,7 @@ export class Authentifications {
 				},
 			})
 
-			const newTokenVerify = jwt.verify(tokenGeneration, JWT_SECRET)
+			const newTokenVerify = jwt.verify(tokenGeneration, process.env.JWT_SECRET || '')
 
 			if (!newTokenVerify) {
 				throw new BadRequest(this.i18n.t('tokenInvalid'))
@@ -81,7 +83,7 @@ export class Authentifications {
 			}
 		}
 
-		const tokenVerify = jwt.verify(user.token, JWT_SECRET)
+		const tokenVerify = jwt.verify(user.token, process.env.JWT_SECRET || '')
 
 		if (!tokenVerify) {
 			throw new BadRequest(this.i18n.t('tokenInvalid'))
