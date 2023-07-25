@@ -1,0 +1,25 @@
+{
+  "notFound": "Aucun résultat trouvé",
+  "idNotFound": "ID numéro {{id}} non trouvé",
+  "wrongPassword": "Mot de passe incorrect",
+  "tokenInvalid": "Token invalide",
+  "userExists": "Un utilisateur avec cet email existe déjà",
+  "attachmentFailed": "Erreur dans la création du dossier",
+  "attachmentExtensionFailed": "Mauvaise extensiond de fichier(only .jpeg, .jpg, .png, .heic, .heif",
+  "mail": {
+    "confirmEmail" : {
+      "title": "Confirmation d'inscription",
+      "subject": "Nous vous remercions de vous être inscrit sur Rently. Afin de valider votre compte, veuillez cliquer sur le bouton ci-dessous.",
+      "subjectDetails": "Il est essentiel de compléter cette étape dans les 15 minutes à compter de la réception de cet e-mail. Passé ce délai, votre lien de validation expirera et vous devrez recommencer le processus d'inscription. Si vous rencontrez des difficultés lors du processus de validation, n'hésitez pas à nous contacter à  contact@front-rently.mathieudacheux. Nous vous remercions de votre confiance et nous sommes impatients de vous accueillir sur Rently.",
+      "callToAction": "Confirmer mon compte",
+      "linkInfo": "Confirmer mon adresse mail"
+    },
+    "resetPassword" : {
+      "title": "Réinitialisation de mot de passe",
+      "subject": "Nous avons bien reçu votre demande de réinitialisation de mot de passe pour votre compte. Veuillez cliquer sur le lien ci-dessous pour accéder à la page de changement de mot de passe.",
+      "subjectDetails": "Il est important de noter que ce lien de réinitialisation est temporaire et expirera dans les 15 minutes pour des raisons de sécurité. Si le lien expire, vous devrez recommencer le processus de réinitialisation. Si vous n'avez pas demandé la réinitialisation de votre mot de passe, veuillez ignorer cet e-mail et prendre contact avec notre équipe de support à contact@front-rently.mathieudacheux.",
+      "callToAction": "Réinitialiser mon mot de passe",
+      "linkDetail": "Réinitialiser"
+    }
+  }
+}

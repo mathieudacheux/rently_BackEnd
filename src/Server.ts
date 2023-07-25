@@ -15,6 +15,7 @@ import * as articles from './controllers/Article/ArticlesController'
 import * as bookmarks from './controllers/Bookmark/BookmarksController'
 import * as countries from './controllers/Country/CountriesController'
 import * as fees from './controllers/Fee/FeesController'
+import * as mails from './controllers/Mail/MailsController'
 import * as messages from './controllers/Message/MessagesController'
 import * as permissions from './controllers/Permission/PermissionsController'
 import * as properties from './controllers/Property/PropertiesController'
@@ -45,6 +46,7 @@ import * as attachment from './controllers/Attachment/AttachmentsController'
 		'/bookmarks': [...Object.values(bookmarks)],
 		'/countries': [...Object.values(countries)],
 		'/fees': [...Object.values(fees)],
+		'/mail': [...Object.values(mails)],
 		'/messages': [...Object.values(messages)],
 		'/permissions': [...Object.values(permissions)],
 		'/properties': [...Object.values(properties)],

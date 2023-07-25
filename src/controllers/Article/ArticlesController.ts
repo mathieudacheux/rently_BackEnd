@@ -25,7 +25,7 @@ export class Articles {
 	@Returns(200, Array).Of(ArticleSerializer).Groups('read')
 	async getAllArticles(@QueryParams('page') page: number): Promise<ArticleSerializer[]> {
 		const pageSize = 20
-		return this.prisma.article.findMany({
+		return await this.prisma.article.findMany({
 			take: 15,
 			skip: (page ? page - 1 : 0) * pageSize,
 		})
@@ -40,9 +40,9 @@ export class Articles {
 		@QueryParams('tag_id') tag_id: number,
 		@QueryParams('user_id') user_id: number
 	): Promise<ArticleSerializer[]> {
-		return this.prisma.article.findMany({
+		return await this.prisma.article.findMany({
 			where: {
-				name,
+				name: { contains: name },
 				tag_id,
 				user_id,
 			},
@@ -55,7 +55,7 @@ export class Articles {
 	@Returns(200, ArticleSerializer).Groups('read')
 	@Returns(404, String).Description('Not found')
 	async getArticleById(@PathParams('id') article_id: number) {
-		return this.prisma.article.findUnique({ where: { article_id } })
+		return await this.prisma.article.findUnique({ where: { article_id } })
 	}
 
 	@UseBefore(AuthentificationMiddleware)
@@ -66,7 +66,7 @@ export class Articles {
 	async createArticle(
 		@Required() @BodyParams() @Groups('post') article: ArticleSerializer
 	) {
-		return this.prisma.article.create({ data: article })
+		return await this.prisma.article.create({ data: article })
 	}
 
 	@UseBefore(AuthentificationMiddleware)
@@ -78,7 +78,7 @@ export class Articles {
 		@PathParams('id') id: number,
 		@BodyParams() @Groups('put') article: ArticleSerializer
 	): Promise<ArticleSerializer> {
-		return this.prisma.article.update({
+		return await this.prisma.article.update({
 			where: { article_id: id },
 			data: article,
 		})

@@ -14,54 +14,104 @@ import { PrismaService } from '../../services/PrismaService'
 import { Returns, Summary, Groups, Required } from '@tsed/schema'
 import { AgencySerializer } from '../../models/AgencyModel'
 import AuthentificationMiddleware from '../../middlewares/AuthentificationMiddleware'
+import i18n from '../../translations/i18n'
 
 @Controller('/')
 export class Agencies {
 	@Inject()
 	protected prisma: PrismaService
+	protected i18n = i18n
 
 	@Get('/')
 	@Summary('Return a list of all agencies')
 	@Returns(200, Array).Of(AgencySerializer).Groups('read')
-	@Returns(404, String).Description('Not found')
 	async getAllAgencies(): Promise<AgencySerializer[]> {
-		return this.prisma.agency.findMany()
+		const allAgencies = await this.prisma.agency.findMany()
+
+		if (!allAgencies) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('notFound'),
+			}
+
+			throw errorObject
+		}
+
+		return allAgencies
 	}
 
 	@Get('/agency_filter')
 	@Summary('Return a list of agencies by filter')
 	@Returns(200, Array).Of(AgencySerializer).Groups('read')
-	@Returns(404, String).Description('Not found')
 	async getAgenciesByFilter(
-		@QueryParams('name') name: string,
 		@QueryParams('city') city: string,
 		@QueryParams('zipcode') zipcode: string
 	): Promise<AgencySerializer[]> {
+		if (!city && !zipcode) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('notFound'),
+			}
+
+			throw errorObject
+		}
+
 		const agencyAddresses = await this.prisma.address.findMany({
 			where: {
-				city,
-				zipcode,
-			},
-		})
-
-		return this.prisma.agency.findMany({
-			where: {
-				name,
-				address_id: {
-					in: agencyAddresses.map((agencyAddress) => agencyAddress.address_id),
+				city: {
+					contains: city.toLowerCase(),
+				},
+				zipcode: {
+					contains: zipcode,
 				},
 			},
-
-			orderBy: { name: 'asc' },
 		})
+
+		if (!agencyAddresses) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('notFound'),
+			}
+
+			throw errorObject
+		}
+
+		const addressId = agencyAddresses.map((agencyAddress) => agencyAddress.address_id)
+
+		const agencies = await this.prisma.agency.findMany({
+			where: {
+				address_id: {
+					in: addressId,
+				},
+			},
+		})
+
+		if (!agencies || agencies.length === 0) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('notFound'),
+			}
+
+			throw errorObject
+		}
+
+		return agencies
 	}
 
 	@Get('/:id')
 	@Summary('Return a agency by his id')
 	@Returns(200, AgencySerializer).Groups('read')
-	@Returns(404, String).Description('Not found')
 	async getAgencyById(@PathParams('id') agency_id: number) {
-		return this.prisma.agency.findUnique({ where: { agency_id } })
+		const uniqueAgency = await this.prisma.agency.findUnique({ where: { agency_id } })
+
+		if (!uniqueAgency) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { agency_id }),
+			}
+
+			throw errorObject
+		}
 	}
 
 	@UseBefore(AuthentificationMiddleware)
@@ -77,23 +127,41 @@ export class Agencies {
 	@Put('/:id')
 	@Summary('Update a agency by its id')
 	@Returns(200, AgencySerializer).Groups('read')
-	@Returns(404, String).Description('Not found')
 	async updateAgency(
 		@PathParams('id') agency_id: number,
 		@BodyParams() agency: AgencySerializer
 	): Promise<AgencySerializer> {
-		return this.prisma.agency.update({
+		const updateAgency = await this.prisma.agency.update({
 			where: { agency_id },
 			data: agency,
 		})
+
+		if (!updateAgency) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { agency_id }),
+			}
+
+			throw errorObject
+		}
+
+		return updateAgency
 	}
 
 	@UseBefore(AuthentificationMiddleware)
 	@Delete('/:id')
 	@Summary('Delete a agency by its id')
 	@Returns(204)
-	@Returns(404, String).Description('Not found')
 	async deleteAgency(@PathParams('id') agency_id: number): Promise<void> {
-		await this.prisma.agency.delete({ where: { agency_id } })
+		const deleteAgency = await this.prisma.agency.delete({ where: { agency_id } })
+
+		if (!deleteAgency) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { agency_id }),
+			}
+
+			throw errorObject
+		}
 	}
 }
