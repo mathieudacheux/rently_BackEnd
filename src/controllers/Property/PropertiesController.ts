@@ -79,27 +79,27 @@ export class Properties {
 	): Promise<PropertySerializer[]> {
 		const propertyAddresses = await this.prisma.address.findMany({
 			where: {
-				city,
-				zipcode,
+				city: city !== '' ? city : undefined,
+				zipcode: zipcode !== '' ? zipcode : undefined,
 			},
 		})
 
 		return this.prisma.property.findMany({
 			where: {
-				property_type,
-				price,
-				surface,
-				land_size,
-				bathroom,
-				kitchen,
-				toilet,
-				bedroom,
+				property_type: property_type !== null ? property_type : undefined,
+				price: price !== null ? price : undefined,
+				surface: surface !== '' ? surface : undefined,
+				land_size: land_size !== '' ? land_size : undefined,
+				bathroom: bathroom !== null ? bathroom : undefined,
+				kitchen: kitchen !== null ? kitchen : undefined,
+				toilet: toilet !== null ? toilet : undefined,
+				bedroom: bedroom !== null ? bedroom : undefined,
 				elevator,
 				balcony,
 				terrace,
 				cellar,
 				parking,
-				number_room,
+				number_room: number_room !== null ? number_room : undefined,
 				pool,
 				caretaker,
 				fiber_deployed,
@@ -109,9 +109,9 @@ export class Properties {
 				work_done,
 				life_annuity,
 				ground_floor,
-				land_size_1,
+				land_size_1: land_size_1 !== '' ? land_size_1 : undefined,
 				garden,
-				dpe,
+				dpe: dpe !== null ? dpe : undefined,
 				address_id: {
 					in: propertyAddresses.map((propertyAddresses) => propertyAddresses.address_id),
 				},
