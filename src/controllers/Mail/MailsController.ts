@@ -5,7 +5,10 @@ import jwt from 'jsonwebtoken'
 import sendEmail from '../../helpers/sendEmail'
 import { PrismaService } from '../../services/PrismaService'
 import i18n from '../../translations/i18n'
-import { TEMPLATES, JWT_SECRET } from '../../constants'
+import { TEMPLATES } from '../../constants'
+import * as dotenv from 'dotenv'
+
+dotenv.config()
 
 @Controller('/')
 export class Mails {
@@ -26,10 +29,14 @@ export class Mails {
 		const callToAction = this.i18n.t('mail.confirmEmail.callToAction')
 		const linkDetail = this.i18n.t('mail.confirmEmail.linkDetail')
 
-		const tokenGeneration = jwt.sign({ user_id: user?.user_id }, JWT_SECRET, {
-			algorithm: 'HS256',
-			expiresIn: '12h',
-		})
+		const tokenGeneration = jwt.sign(
+			{ user_id: user?.user_id },
+			process.env.JWT_SECRET || '',
+			{
+				algorithm: 'HS256',
+				expiresIn: '12h',
+			}
+		)
 
 		const link = `https://front-rently.mathieudacheux.fr/confirm_account/${tokenGeneration}`
 
@@ -57,10 +64,14 @@ export class Mails {
 		const callToAction = this.i18n.t('mail.resetPassword.callToAction')
 		const linkDetail = this.i18n.t('mail.resetPassword.linkDetail')
 
-		const tokenGeneration = jwt.sign({ user_id: user?.user_id }, JWT_SECRET, {
-			algorithm: 'HS256',
-			expiresIn: '12h',
-		})
+		const tokenGeneration = jwt.sign(
+			{ user_id: user?.user_id },
+			process.env.JWT_SECRET || '',
+			{
+				algorithm: 'HS256',
+				expiresIn: '12h',
+			}
+		)
 
 		const link = `https://front-rently.mathieudacheux.fr/reset_password/${tokenGeneration}`
 

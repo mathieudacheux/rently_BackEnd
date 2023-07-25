@@ -1,9 +1,12 @@
 import { Middleware, Req, Next, MiddlewareMethods } from '@tsed/common'
 import { Unauthorized } from '@tsed/exceptions'
 import { verify } from 'jsonwebtoken'
-import { JWT_SECRET } from '../constants'
 import { JWTDecoded } from '../types'
 import { PrismaClient } from '@prisma/client'
+import * as dotenv from 'dotenv'
+
+dotenv.config()
+
 @Middleware()
 export default class AuthentificationMiddleware implements MiddlewareMethods {
 	async use(@Req() req: Req, @Next() next: Next): Promise<void> {
@@ -16,7 +19,7 @@ export default class AuthentificationMiddleware implements MiddlewareMethods {
 		const token = req.headers['authorization']?.split(' ')[1]
 
 		try {
-			const decoded = verify(token, JWT_SECRET) as unknown as JWTDecoded
+			const decoded = verify(token, process.env.JWT_SECRET || '') as unknown as JWTDecoded
 			const userId = decoded.user_id
 
 			if (!userId) {
