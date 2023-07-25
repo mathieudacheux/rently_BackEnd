@@ -17,6 +17,7 @@ const ressources = {
 i18next.use(Backend).use(i18nextMiddleware.LanguageDetector).init({
 	resources: ressources,
 	lng: 'fr',
+	fallbackLng: 'fr',
 })
 
 export const i18nMiddleware: RequestHandler = i18nextMiddleware.handle(i18next)
