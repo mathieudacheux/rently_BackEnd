@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "",
   "scripts": {
-    "build": "tsc && babel src --out-dir dist --extensions \".ts,.tsx\" --source-maps inline",
+    "build": "tsc && babel src --out-dir dist --extensions \".ts,.tsx,.json\" --source-maps inline",
     "barrels": "barrelsby --config .barrelsby.json",
     "start": "babel-watch --extensions .ts src/index.ts",
     "start:prod": "cross-env NODE_ENV=production node dist/index.js",
