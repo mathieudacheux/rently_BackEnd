@@ -80,8 +80,6 @@ export class Users {
 			orderBy: { name: 'asc' },
 		})
 
-		console.log(userAddresses)
-
 		if (!filterUsers) {
 			const errorObject = {
 				status: 404,

@@ -45,7 +45,6 @@ export class Properties {
 					where: { address_id: property.address_id },
 				})
 
-				console.log(address)
 				return {
 					...property,
 					city: address?.city || '',
@@ -143,7 +142,6 @@ export class Properties {
 					where: { address_id: property.address_id },
 				})
 
-				console.log(address)
 				return {
 					...property,
 					city: address?.city || '',
