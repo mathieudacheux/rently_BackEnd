@@ -87,7 +87,7 @@ export class Properties {
 		return this.prisma.property.findMany({
 			where: {
 				property_type: property_type !== null ? property_type : undefined,
-				price: price !== null ? { lte: price - 15000, gte: price + 15000 } : undefined,
+				price: price !== null ? { lte: price + 15000, gte: price - 15000 } : undefined,
 				surface: surface !== '' ? surface : undefined,
 				land_size: land_size !== '' ? land_size : undefined,
 				bathroom: bathroom !== null ? bathroom : undefined,
