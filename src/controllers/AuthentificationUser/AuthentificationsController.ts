@@ -6,6 +6,7 @@ import { Post, Returns, Summary } from '@tsed/schema'
 import { NotFound, BadRequest } from '@tsed/exceptions'
 import { compare } from 'bcrypt'
 import jwt from 'jsonwebtoken'
+import { AuthSerializer } from '../../models/AuthentificationModel'
 import i18n from '../../translations/i18n'
 import * as dotenv from 'dotenv'
 
@@ -23,7 +24,7 @@ export class Authentifications {
 
 	@Post('/')
 	@Summary('Login an user and return a token')
-	@Returns(200, UserAuth)
+	@Returns(200).Of(AuthSerializer).Groups('read')
 	async login(
 		@BodyParams('mail') mail: string,
 		@BodyParams('password') password: string
