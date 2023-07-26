@@ -1,4 +1,13 @@
-import { Controller, Get, PathParams, Post, BodyParams, Put, Delete } from '@tsed/common'
+import {
+	Controller,
+	Get,
+	PathParams,
+	Post,
+	BodyParams,
+	Put,
+	Delete,
+	QueryParams,
+} from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
 import { Required, Returns, Summary, Groups, In } from '@tsed/schema'
@@ -14,8 +23,12 @@ export class Roles {
 	@Get('/')
 	@Summary('Return a list of all roles')
 	@Returns(200, Array).Of(RoleSerializer)
-	async getAllRoles(): Promise<RoleSerializer[]> {
-		const allRoles = await this.prisma.role.findMany()
+	async getAllRoles(@QueryParams('name') name: string): Promise<RoleSerializer[]> {
+		const allRoles = await this.prisma.role.findMany({
+			where: {
+				name: name !== '' ? name : undefined,
+			},
+		})
 
 		if (!allRoles) {
 			const errorObject = {
