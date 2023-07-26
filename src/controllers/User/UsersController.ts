@@ -54,12 +54,15 @@ export class Users {
 		@QueryParams('city') city: string,
 		@QueryParams('zipcode') zipcode: string
 	): Promise<UserSerializer[]> {
-		const userAddresses = await this.prisma.address.findMany({
-			where: {
-				city: city !== '' ? city : undefined,
-				zipcode: zipcode !== '' ? zipcode : undefined,
-			},
-		})
+		const userAddresses =
+			!city && !zipcode
+				? []
+				: await this.prisma.address.findMany({
+						where: {
+							city: city,
+							zipcode: zipcode,
+						},
+				  })
 
 		const filterUsers = await this.prisma.user.findMany({
 			where: {
@@ -76,6 +79,8 @@ export class Users {
 			},
 			orderBy: { name: 'asc' },
 		})
+
+		console.log(userAddresses)
 
 		if (!filterUsers) {
 			const errorObject = {

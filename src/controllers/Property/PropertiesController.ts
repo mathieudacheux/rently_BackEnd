@@ -39,8 +39,23 @@ export class Properties {
 
 			throw errorObject
 		}
+		const propertiesExpanded = await Promise.all(
+			allProperties.map(async (property) => {
+				const address = await this.prisma.address.findUnique({
+					where: { address_id: property.address_id },
+				})
 
-		return allProperties
+				console.log(address)
+				return {
+					...property,
+					city: address?.city || '',
+					zipcode: address?.zipcode || '',
+					way: address?.address || '',
+				}
+			})
+		)
+
+		return propertiesExpanded
 	}
 
 	@Get('/properties_filter')
@@ -48,34 +63,34 @@ export class Properties {
 	@Returns(200, Array).Of(PropertySerializer).Groups('read')
 	@Returns(404, String).Description('Not found')
 	async getPropertiesByFilter(
-		@QueryParams('property_type') property_type: number,
-		@QueryParams('price') price: number,
-		@QueryParams('surface') surface: string,
-		@QueryParams('land_size') land_size: string,
-		@QueryParams('bathroom') bathroom: number,
-		@QueryParams('kitchen') kitchen: number,
-		@QueryParams('toilet') toilet: number,
-		@QueryParams('bedroom') bedroom: number,
-		@QueryParams('elevator') elevator: boolean,
-		@QueryParams('balcony') balcony: boolean,
-		@QueryParams('terrace') terrace: boolean,
-		@QueryParams('cellar') cellar: boolean,
-		@QueryParams('parking') parking: boolean,
-		@QueryParams('number_room') number_room: number,
-		@QueryParams('pool') pool: boolean,
-		@QueryParams('caretaker') caretaker: boolean,
-		@QueryParams('fiber_deployed') fiber_deployed: boolean,
-		@QueryParams('duplex') duplex: boolean,
-		@QueryParams('top_floor') top_floor: boolean,
-		@QueryParams('garage') garage: boolean,
-		@QueryParams('work_done') work_done: boolean,
-		@QueryParams('life_annuity') life_annuity: boolean,
-		@QueryParams('ground_floor') ground_floor: boolean,
-		@QueryParams('land_size_1') land_size_1: string,
-		@QueryParams('garden') garden: boolean,
-		@QueryParams('dpe') dpe: number,
-		@QueryParams('city') city: string,
-		@QueryParams('zipcode') zipcode: string
+		@QueryParams('property_type') property_type?: number,
+		@QueryParams('price') price?: number,
+		@QueryParams('surface') surface?: string,
+		@QueryParams('land_size') land_size?: string,
+		@QueryParams('bathroom') bathroom?: number,
+		@QueryParams('kitchen') kitchen?: number,
+		@QueryParams('toilet') toilet?: number,
+		@QueryParams('bedroom') bedroom?: number,
+		@QueryParams('elevator') elevator?: boolean,
+		@QueryParams('balcony') balcony?: boolean,
+		@QueryParams('terrace') terrace?: boolean,
+		@QueryParams('cellar') cellar?: boolean,
+		@QueryParams('parking') parking?: boolean,
+		@QueryParams('number_room') number_room?: number,
+		@QueryParams('pool') pool?: boolean,
+		@QueryParams('caretaker') caretaker?: boolean,
+		@QueryParams('fiber_deployed') fiber_deployed?: boolean,
+		@QueryParams('duplex') duplex?: boolean,
+		@QueryParams('top_floor') top_floor?: boolean,
+		@QueryParams('garage') garage?: boolean,
+		@QueryParams('work_done') work_done?: boolean,
+		@QueryParams('life_annuity') life_annuity?: boolean,
+		@QueryParams('ground_floor') ground_floor?: boolean,
+		@QueryParams('land_size_1') land_size_1?: string,
+		@QueryParams('garden') garden?: boolean,
+		@QueryParams('dpe') dpe?: number,
+		@QueryParams('city') city?: string,
+		@QueryParams('zipcode') zipcode?: string
 	): Promise<PropertySerializer[]> {
 		const propertyAddresses = await this.prisma.address.findMany({
 			where: {
@@ -84,10 +99,13 @@ export class Properties {
 			},
 		})
 
-		return this.prisma.property.findMany({
+		const allProperties = await this.prisma.property.findMany({
 			where: {
 				property_type: property_type !== null ? property_type : undefined,
-				price: price !== null ? { lte: price + 15000, gte: price - 15000 } : undefined,
+				price:
+					price && price !== null
+						? { lte: price + 15000, gte: price - 15000 }
+						: undefined,
 				surface: surface !== '' ? surface : undefined,
 				land_size: land_size !== '' ? land_size : undefined,
 				bathroom: bathroom !== null ? bathroom : undefined,
@@ -118,6 +136,24 @@ export class Properties {
 			},
 			orderBy: price ? { price: 'asc' } : { property_id: 'asc' },
 		})
+
+		const propertiesExpanded = await Promise.all(
+			allProperties.map(async (property) => {
+				const address = await this.prisma.address.findUnique({
+					where: { address_id: property.address_id },
+				})
+
+				console.log(address)
+				return {
+					...property,
+					city: address?.city || '',
+					zipcode: address?.zipcode || '',
+					way: address?.address || '',
+				}
+			})
+		)
+
+		return propertiesExpanded
 	}
 
 	@Get('/:id')
@@ -172,8 +208,17 @@ export class Properties {
 
 			throw errorObject
 		}
+		const address = await this.prisma.address.findUnique({
+			where: { address_id: property.address_id },
+		})
+		const propertyExpanded = {
+			...updateProperty,
+			city: address?.city || '',
+			zipcode: address?.zipcode || '',
+			way: address?.address || '',
+		}
 
-		return updateProperty
+		return propertyExpanded
 	}
 
 	@Delete('/:id')

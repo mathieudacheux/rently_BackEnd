@@ -71,6 +71,12 @@ class PropertySerializer implements Property {
 	tenant_id: number | null
 	@Groups('read', 'put', 'post')
 	address_id: number
+	@Groups('read')
+	city: string
+	@Groups('read')
+	zipcode: string
+	@Groups('read')
+	way: string
 	@Groups('read', 'put', 'post')
 	dpe: number
 	@Groups('read', 'put', 'post')
