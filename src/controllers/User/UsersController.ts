@@ -54,43 +54,25 @@ export class Users {
 		@QueryParams('city') city: string,
 		@QueryParams('zipcode') zipcode: string
 	): Promise<UserSerializer[]> {
-		if (!mail && !phone && !name && !firstname && !city && !zipcode) {
-			const errorObject = {
-				status: 404,
-				errors: this.i18n.t('notFound'),
-			}
-
-			throw errorObject
-		}
-
 		const userAddresses = await this.prisma.address.findMany({
 			where: {
-				city: {
-					contains: city,
-				},
-				zipcode: {
-					contains: zipcode,
-				},
+				city: city !== '' ? city : undefined,
+				zipcode: zipcode !== '' ? zipcode : undefined,
 			},
 		})
 
 		const filterUsers = await this.prisma.user.findMany({
 			where: {
-				mail: {
-					contains: mail,
-				},
-				phone: {
-					contains: phone,
-				},
-				name: {
-					contains: name,
-				},
-				firstname: {
-					contains: firstname,
-				},
-				address_id: {
-					in: userAddresses.map((userAddresses) => userAddresses.address_id),
-				},
+				mail: mail !== '' ? mail : undefined,
+				phone: phone !== '' ? phone : undefined,
+				name: name !== '' ? name : undefined,
+				firstname: firstname !== '' ? firstname : undefined,
+				address_id:
+					userAddresses.length > 0
+						? {
+								in: userAddresses.map((userAddresses) => userAddresses.address_id),
+						  }
+						: undefined,
 			},
 			orderBy: { name: 'asc' },
 		})
