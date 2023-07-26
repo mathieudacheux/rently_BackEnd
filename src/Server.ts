@@ -35,6 +35,13 @@ import * as attachment from './controllers/Attachment/AttachmentsController'
 	httpsPort: false,
 	disableComponentsScan: true,
 
+	statics: {
+		'/property': [
+			{
+				root: './public/property',
+			},
+		],
+	},
 	mount: {
 		'/users': [...Object.values(users)],
 		'/authentifications': [...Object.values(authentifications)],
