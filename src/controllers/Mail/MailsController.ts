@@ -38,7 +38,7 @@ export class Mails {
 			}
 		)
 
-		const link = `https://front-rently.mathieudacheux.fr/confirm_account/${tokenGeneration}`
+		const link = `https://front-rently.mathieudacheux.fr/validate-account?token=${tokenGeneration}`
 
 		return sendEmail(
 			TEMPLATES.EMAIL_CONFIRMATION,
