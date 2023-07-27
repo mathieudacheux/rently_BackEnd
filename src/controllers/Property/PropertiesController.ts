@@ -50,6 +50,8 @@ export class Properties {
 					city: address?.city || '',
 					zipcode: address?.zipcode || '',
 					way: address?.address || '',
+					longitude: address?.longitude || '',
+					latitude: address?.latitude || '',
 				}
 			})
 		)
@@ -147,6 +149,8 @@ export class Properties {
 					city: address?.city || '',
 					zipcode: address?.zipcode || '',
 					way: address?.address || '',
+					longitude: address?.longitude || '',
+					latitude: address?.latitude || '',
 				}
 			})
 		)
@@ -214,6 +218,8 @@ export class Properties {
 			city: address?.city || '',
 			zipcode: address?.zipcode || '',
 			way: address?.address || '',
+			longitude: address?.longitude || '',
+			latitude: address?.latitude || '',
 		}
 
 		return propertyExpanded
