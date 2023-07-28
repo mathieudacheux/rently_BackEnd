@@ -73,7 +73,7 @@ export class Mails {
 			}
 		)
 
-		const link = `https://front-rently.mathieudacheux.fr/reset_password/${tokenGeneration}`
+		const link = `https://front-rently.mathieudacheux.fr/forgot-password?token=${tokenGeneration}`
 
 		return sendEmail(
 			TEMPLATES.RESET_PASSWORD,
