@@ -142,7 +142,10 @@ export class Users {
 	): Promise<UserSerializer> {
 		const updateUser = await this.prisma.user.update({
 			where: { user_id: id },
-			data: user,
+			data: {
+				...user,
+				password: await hash(user.password, 10),
+			},
 		})
 
 		if (!updateUser) {
