@@ -14,6 +14,10 @@ import { PrismaService } from '../../services/PrismaService'
 import { Returns, Summary, Groups } from '@tsed/schema'
 import { UserSerializer } from '../../models/UserModel'
 import i18n from '../../translations/i18n'
+import * as dotenv from 'dotenv'
+import * as SibApiV3Sdk from 'sib-api-v3-typescript'
+
+dotenv.config()
 
 @Controller('/')
 export class Users {
@@ -123,6 +127,29 @@ export class Users {
 
 		if (userExists) {
 			throw new Error(this.i18n.t('userExists'))
+		}
+
+		if (user.newsletter) {
+			const apiInstance = new SibApiV3Sdk.ContactsApi()
+
+			apiInstance.setApiKey(
+				SibApiV3Sdk.ContactsApiApiKeys.apiKey,
+				process.env.API_KEY || ''
+			)
+
+			const createContact = new SibApiV3Sdk.CreateContact()
+
+			createContact.email = user.mail
+			createContact.listIds = [2]
+
+			apiInstance.createContact(createContact).then(
+				function (data) {
+					console.log('API called successfully. Returned data: ' + data)
+				},
+				function (error) {
+					return new Error(error)
+				}
+			)
 		}
 
 		return this.prisma.user.create({
