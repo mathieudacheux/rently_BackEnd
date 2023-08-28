@@ -142,14 +142,7 @@ export class Users {
 			createContact.email = user.mail
 			createContact.listIds = [2]
 
-			apiInstance.createContact(createContact).then(
-				function (data) {
-					console.log('API called successfully. Returned data: ' + data)
-				},
-				function (error) {
-					return new Error(error)
-				}
-			)
+			apiInstance.createContact(createContact)
 		}
 
 		return this.prisma.user.create({
