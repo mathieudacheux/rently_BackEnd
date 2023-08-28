@@ -1,4 +1,4 @@
-import { hash } from 'bcrypt'
+import { compare, hash } from 'bcrypt'
 import {
 	Controller,
 	Get,
@@ -140,12 +140,37 @@ export class Users {
 		@PathParams('id') id: number,
 		@BodyParams() @Groups('put') user: UserSerializer
 	): Promise<UserSerializer> {
+		if ((user.password && !user.newPassword) || (!user.password && user.newPassword)) {
+			throw new Error(this.i18n.t('needOldAndNewPassword'))
+		}
+
+		const selectedUser = await this.prisma.user.findUnique({
+			where: { user_id: id },
+		})
+
+		if (!selectedUser) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { id }),
+			}
+
+			throw errorObject
+		}
+
+		if (user.newPassword) {
+			const passwordMatch = await compare(user.password, selectedUser.password)
+			if (!passwordMatch) {
+				throw new Error(this.i18n.t('wrongPassword'))
+			}
+		}
+
+		delete user.newPassword
+
 		const updateUser = await this.prisma.user.update({
 			where: { user_id: id },
-			data: {
-				...user,
-				password: await hash(user.password, 10),
-			},
+			data: user.newPassword
+				? { ...user, password: await hash(user.newPassword, 10) }
+				: user,
 		})
 
 		if (!updateUser) {
