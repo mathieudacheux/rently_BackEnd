@@ -85,6 +85,10 @@ class PropertySerializer implements Property {
 	dpe: number
 	@Groups('read', 'put', 'post')
 	agency_id: number
+	@Groups('read', 'put', 'post')
+	latitude: number
+	@Groups('read', 'put', 'post')
+	longitude: number
 }
 
 export { PropertySerializer }

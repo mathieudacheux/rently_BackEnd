@@ -9,6 +9,7 @@ import {
 	QueryParams,
 } from '@tsed/common'
 import { Inject } from '@tsed/di'
+import { getDistance } from 'geolib'
 import { PrismaService } from '../../services/PrismaService'
 import { Returns, Summary, Groups, Required } from '@tsed/schema'
 import { PropertySerializer } from '../../models/PropertyModel'
@@ -50,8 +51,8 @@ export class Properties {
 					city: address?.city || '',
 					zipcode: address?.zipcode || '',
 					way: address?.address || '',
-					longitude: address?.longitude || '',
-					latitude: address?.latitude || '',
+					latitude: Number(address?.latitude) || 0,
+					longitude: Number(address?.longitude) || 0,
 				}
 			})
 		)
@@ -149,13 +150,66 @@ export class Properties {
 					city: address?.city || '',
 					zipcode: address?.zipcode || '',
 					way: address?.address || '',
-					longitude: address?.longitude || '',
-					latitude: address?.latitude || '',
+					latitude: Number(address?.latitude) || 0,
+					longitude: Number(address?.longitude) || 0,
 				}
 			})
 		)
 
 		return propertiesExpanded
+	}
+
+	@Get('/properties_home')
+	@Summary('Return a list of 6 properties for the home page')
+	@Returns(200, Array).Of(PropertySerializer).Groups('read')
+	async getPropertiesForHome(
+		@QueryParams('base_latitude') baseLatitude: number,
+		@QueryParams('base_longitude') baseLongitude: number
+	): Promise<PropertySerializer[]> {
+		const allProperties = await this.prisma.property.findMany({
+			orderBy: { property_id: 'asc' },
+		})
+
+		if (!allProperties) {
+			const errorObject = {
+				status: 404,
+				message: this.i18n.t('notFound'),
+			}
+
+			throw errorObject
+		}
+
+		const propertiesExpanded = await Promise.all(
+			allProperties.map(async (property) => {
+				const address = await this.prisma.address.findUnique({
+					where: { address_id: property.address_id },
+				})
+
+				return {
+					...property,
+					city: address?.city || '',
+					zipcode: address?.zipcode || '',
+					way: address?.address || '',
+					latitude: Number(address?.latitude) || 0,
+					longitude: Number(address?.longitude) || 0,
+				}
+			})
+		)
+
+		return propertiesExpanded
+			.filter(
+				(property) =>
+					getDistance(
+						{ latitude: baseLatitude, longitude: baseLongitude },
+						{
+							latitude: property.latitude,
+							longitude: property.longitude,
+						}
+					) /
+						1000 <
+					30
+			)
+			.slice(0, 6)
 	}
 
 	@Get('/:id')
@@ -218,8 +272,8 @@ export class Properties {
 			city: address?.city || '',
 			zipcode: address?.zipcode || '',
 			way: address?.address || '',
-			longitude: address?.longitude || '',
-			latitude: address?.latitude || '',
+			latitude: Number(address?.latitude) || 0,
+			longitude: Number(address?.longitude) || 0,
 		}
 
 		return propertyExpanded
