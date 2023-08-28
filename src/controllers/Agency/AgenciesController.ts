@@ -25,7 +25,9 @@ export class Agencies {
 	@Get('/')
 	@Summary('Return a list of all agencies')
 	@Returns(200, Array).Of(AgencySerializer).Groups('read')
-	async getAllAgencies(): Promise<AgencySerializer[]> {
+	async getAllAgencies(
+		@QueryParams('expanded') expanded: boolean
+	): Promise<AgencySerializer[]> {
 		const allAgencies = await this.prisma.agency.findMany()
 
 		if (!allAgencies) {
@@ -37,7 +39,26 @@ export class Agencies {
 			throw errorObject
 		}
 
-		return allAgencies
+		const result = expanded
+			? await Promise.all(
+					allAgencies.map(async (agency) => {
+						const address = await this.prisma.address.findUnique({
+							where: { address_id: agency.address_id },
+						})
+
+						return {
+							...agency,
+							city: address?.city || '',
+							zipcode: address?.zipcode || '',
+							way: address?.address || '',
+							longitude: address?.longitude || '',
+							latitude: address?.latitude || '',
+						}
+					})
+			  )
+			: allAgencies
+
+		return result
 	}
 
 	@Get('/agency_filter')
