@@ -179,6 +179,10 @@ export class Properties {
 			throw errorObject
 		}
 
+		if (allProperties.length < 6) {
+			return allProperties
+		}
+
 		const propertiesExpanded = await Promise.all(
 			allProperties.map(async (property) => {
 				const address = await this.prisma.address.findUnique({
@@ -196,20 +200,44 @@ export class Properties {
 			})
 		)
 
-		return propertiesExpanded
-			.filter(
+		const getHomeProperties = (
+			baseLatitude: number,
+			baseLongitude: number,
+			propertiesExpanded: PropertySerializer[],
+			maxDistance: number
+		) => {
+			const result = propertiesExpanded.filter(
 				(property) =>
 					getDistance(
 						{ latitude: baseLatitude, longitude: baseLongitude },
 						{
-							latitude: property.latitude,
-							longitude: property.longitude,
+							latitude: property.latitude || 0,
+							longitude: property.longitude || 0,
 						}
 					) /
 						1000 <
-					30
+					maxDistance
 			)
-			.slice(0, 6)
+
+			// While the result has less than 6 properties, we increase the max distance
+			if (result.length < 6) {
+				getHomeProperties(
+					baseLatitude,
+					baseLongitude,
+					propertiesExpanded,
+					maxDistance + 30
+				)
+			} else {
+				return result
+			}
+		}
+
+		const maxDistance = 30
+
+		return (
+			getHomeProperties(baseLatitude, baseLongitude, propertiesExpanded, maxDistance) ||
+			[]
+		)
 	}
 
 	@Get('/:id')
