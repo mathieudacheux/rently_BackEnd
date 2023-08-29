@@ -116,7 +116,7 @@ export class Attachment {
 	@Get('/img/:id/:file')
 	@Summary("Return the image 'file' in the folder 'id'")
 	async getOneFileImg(@PathParams('id') id: number, @PathParams('file') file: string) {
-		const data = sharp(`./src/uploads/img/${id}/${file}`).webp()
+		const data = sharp(`./src/uploads/img/${id}/${file}`).jpeg({ quality: 60 }).toBuffer()
 		return data
 	}
 
