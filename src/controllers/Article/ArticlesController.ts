@@ -38,8 +38,19 @@ export class Articles {
 	async getArticlesByFilter(
 		@QueryParams('name') name: string,
 		@QueryParams('tag_id') tag_id: number,
-		@QueryParams('user_id') user_id: number
+		@QueryParams('user_id') user_id: number,
+		@QueryParams('home') home: boolean
 	): Promise<ArticleSerializer[]> {
+		if (home) {
+			return await this.prisma.article.findMany({
+				where: {
+					deleted_at: null,
+				},
+				orderBy: { created_at: 'desc' },
+				take: 3,
+			})
+		}
+
 		return await this.prisma.article.findMany({
 			where: {
 				name: { contains: name },
