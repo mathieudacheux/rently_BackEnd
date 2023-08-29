@@ -14,6 +14,8 @@ class UserSerializer implements User {
 	mail: string
 	@Groups('post', 'put')
 	password: string
+	@Groups('put')
+	newPassword?: string
 	@Groups('post', 'put', 'read')
 	newsletter: boolean
 	token: string | null

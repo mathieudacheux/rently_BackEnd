@@ -11,6 +11,7 @@ import {
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
 import { Returns, Summary, Groups, Required } from '@tsed/schema'
+import { PropertySerializer } from '../../models/PropertyModel'
 import { BookmarkSerializer } from '../../models/BookmarkModel'
 import AuthentificationMiddleware from '../../middlewares/AuthentificationMiddleware'
 import i18n from '../../translations/i18n'
@@ -59,6 +60,35 @@ export class Bookmarks {
 		}
 
 		return uniqueBookmark
+	}
+
+	// Get bookmarks by user id
+	@Get('/user/:id')
+	@Summary('Return all properties of a user by his id')
+	@Returns(200, PropertySerializer).Groups('read')
+	async getBookmarkByUserId(@PathParams('id') user_id: number) {
+		const usersBookmark = await this.prisma.bookmark.findMany({
+			where: { user_id },
+		})
+
+		if (!usersBookmark) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { id: user_id }),
+			}
+
+			throw errorObject
+		}
+
+		const properties = await this.prisma.property.findMany({
+			where: {
+				property_id: { in: usersBookmark.map((bookmark) => bookmark.property_id) },
+			},
+		})
+
+		console.log(properties)
+
+		return properties
 	}
 
 	@UseBefore(AuthentificationMiddleware)

@@ -72,15 +72,15 @@ class PropertySerializer implements Property {
 	@Groups('read', 'put', 'post')
 	address_id: number
 	@Groups('read')
-	city: string
+	city?: string
 	@Groups('read')
-	zipcode: string
+	zipcode?: string
 	@Groups('read')
-	way: string
-	@Groups('read')
-	longitude: string
-	@Groups('read')
-	latitude: string
+	way?: string
+	@Groups('read', 'put', 'post')
+	latitude?: number
+	@Groups('read', 'put', 'post')
+	longitude?: number
 	@Groups('read', 'put', 'post')
 	dpe: number
 	@Groups('read', 'put', 'post')
