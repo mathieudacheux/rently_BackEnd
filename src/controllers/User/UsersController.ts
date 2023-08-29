@@ -177,6 +177,28 @@ export class Users {
 			throw errorObject
 		}
 
+		if (user.newsletter) {
+			const createOrDelete = user.newsletter === true
+
+			const apiInstance = new SibApiV3Sdk.ContactsApi()
+
+			apiInstance.setApiKey(
+				SibApiV3Sdk.ContactsApiApiKeys.apiKey,
+				process.env.API_KEY || ''
+			)
+
+			if (createOrDelete) {
+				const createContact = new SibApiV3Sdk.CreateContact()
+
+				createContact.email = user.mail
+				createContact.listIds = [2]
+
+				apiInstance.createContact(createContact)
+			} else {
+				apiInstance.deleteContact(user.mail)
+			}
+		}
+
 		if (user.newPassword) {
 			const passwordMatch = await compare(user.password, selectedUser.password)
 			if (!passwordMatch) {
