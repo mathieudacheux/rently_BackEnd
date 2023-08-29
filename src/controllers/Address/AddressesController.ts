@@ -1,18 +1,8 @@
-import {
-	Controller,
-	Get,
-	PathParams,
-	Post,
-	BodyParams,
-	Put,
-	Delete,
-	UseBeforeEach,
-} from '@tsed/common'
+import { Controller, Get, PathParams, Post, BodyParams, Put, Delete } from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
 import { Returns, Summary, Groups, Required } from '@tsed/schema'
 import { AddressSerializer } from '../../models/AddressModel'
-import AuthentificationMiddleware from '../../middlewares/AuthentificationMiddleware'
 import i18n from '../../translations/i18n'
 
 @Controller('/')
@@ -21,7 +11,6 @@ export class Addresses {
 	protected prisma: PrismaService
 	protected i18n = i18n
 
-	@UseBeforeEach(AuthentificationMiddleware)
 	@Get('/')
 	@Summary('Return a list of all addresses')
 	@Returns(200, Array).Of(AddressSerializer).Groups('read')
