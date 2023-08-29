@@ -101,7 +101,7 @@ export class Attachment {
 	async getAllFolderImg(@PathParams('id') id: number) {
 		const files = await promises.readdir(`./src/uploads/img/${id}`)
 
-		return files.map((file) => sharp(`./src/uploads/img/${id}/${file}`))
+		return files
 	}
 
 	@Get('/pdf/:id')
@@ -116,9 +116,9 @@ export class Attachment {
 	@Get('/img/:id/:file')
 	@Summary("Return the image 'file' in the folder 'id'")
 	async getOneFileImg(@PathParams('id') id: number, @PathParams('file') file: string) {
-		const data = (
-			await sharp(`./src/uploads/img/${id}/${file}`).jpeg({ quality: 60 }).toBuffer()
-		).toString('base64')
+		const data = await sharp(`./src/uploads/img/${id}/${file}`)
+			.jpeg({ quality: 60 })
+			.toBuffer()
 		return data
 	}
 
