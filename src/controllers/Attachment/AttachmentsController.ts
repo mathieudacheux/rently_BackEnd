@@ -99,7 +99,7 @@ export class Attachment {
 	@Get('/img/:id')
 	@Summary("Return all the images in the folder 'id'")
 	async getAllFolderImg(@PathParams('id') id: number) {
-		const files = await promises.readdir(`./src/uploads/img/${id}`)
+		const files = await promises.readdir(`./public/img/property/${id}`)
 
 		return files
 	}
