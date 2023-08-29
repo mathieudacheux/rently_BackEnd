@@ -7,6 +7,7 @@ import { PrismaService } from '../../services/PrismaService'
 import i18n from '../../translations/i18n'
 import { TEMPLATES } from '../../constants'
 import * as dotenv from 'dotenv'
+import * as SibApiV3Sdk from 'sib-api-v3-typescript'
 
 dotenv.config()
 
@@ -85,5 +86,25 @@ export class Mails {
 			linkDetail,
 			user
 		)
+	}
+
+	@Post('/subscribe_newsletter/')
+	@Summary('Subscribe to newsletter')
+	@Returns(201).Groups('read')
+	@Returns(400, String).Description('Bad request')
+	async subscribeNewsletter(@BodyParams('mail') mail: string) {
+		const apiInstance = new SibApiV3Sdk.ContactsApi()
+
+		apiInstance.setApiKey(
+			SibApiV3Sdk.ContactsApiApiKeys.apiKey,
+			process.env.API_KEY || ''
+		)
+
+		const createContact = new SibApiV3Sdk.CreateContact()
+
+		createContact.email = mail
+		createContact.listIds = [2]
+
+		return apiInstance.createContact(createContact)
 	}
 }

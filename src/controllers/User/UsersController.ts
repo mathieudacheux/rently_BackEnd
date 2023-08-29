@@ -14,6 +14,10 @@ import { PrismaService } from '../../services/PrismaService'
 import { Returns, Summary, Groups } from '@tsed/schema'
 import { UserSerializer } from '../../models/UserModel'
 import i18n from '../../translations/i18n'
+import * as dotenv from 'dotenv'
+import * as SibApiV3Sdk from 'sib-api-v3-typescript'
+
+dotenv.config()
 
 @Controller('/')
 export class Users {
@@ -125,6 +129,22 @@ export class Users {
 			throw new Error(this.i18n.t('userExists'))
 		}
 
+		if (user.newsletter) {
+			const apiInstance = new SibApiV3Sdk.ContactsApi()
+
+			apiInstance.setApiKey(
+				SibApiV3Sdk.ContactsApiApiKeys.apiKey,
+				process.env.API_KEY || ''
+			)
+
+			const createContact = new SibApiV3Sdk.CreateContact()
+
+			createContact.email = user.mail
+			createContact.listIds = [2]
+
+			apiInstance.createContact(createContact)
+		}
+
 		return this.prisma.user.create({
 			data: {
 				...user,
@@ -155,6 +175,28 @@ export class Users {
 			}
 
 			throw errorObject
+		}
+
+		if (user.newsletter) {
+			const createOrDelete = user.newsletter === true
+
+			const apiInstance = new SibApiV3Sdk.ContactsApi()
+
+			apiInstance.setApiKey(
+				SibApiV3Sdk.ContactsApiApiKeys.apiKey,
+				process.env.API_KEY || ''
+			)
+
+			if (createOrDelete) {
+				const createContact = new SibApiV3Sdk.CreateContact()
+
+				createContact.email = user.mail
+				createContact.listIds = [2]
+
+				apiInstance.createContact(createContact)
+			} else {
+				apiInstance.deleteContact(user.mail)
+			}
 		}
 
 		if (user.newPassword) {
