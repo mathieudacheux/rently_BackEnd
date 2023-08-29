@@ -4,10 +4,10 @@ import {
 	PathParams,
 	PlatformMulterFile,
 } from '@tsed/common'
-import { Post } from '@tsed/schema'
+import { Get, Post, Summary } from '@tsed/schema'
 import { Controller } from '@tsed/di'
 import multer from 'multer'
-import { access, mkdir, unlink } from 'fs'
+import { access, mkdir, promises, unlink } from 'fs'
 import sharp from 'sharp'
 import i18n from '../../translations/i18n'
 
@@ -16,6 +16,7 @@ export class Attachment {
 	protected i18n = i18n
 
 	@Post('/img/:folder/:id')
+	@Summary("Create the image in the folder 'id' in the folder 'folder'")
 	@MulterOptions({
 		storage: multer.diskStorage({
 			destination: async function (req, file, cb) {
@@ -66,6 +67,7 @@ export class Attachment {
 	}
 
 	@Post('/pdf/:folder/:id')
+	@Summary("Create the pdf in the folder 'id' in the folder 'folder'")
 	@MulterOptions({
 		storage: multer.diskStorage({
 			destination: async function (req, file, cb) {
@@ -92,5 +94,37 @@ export class Attachment {
 		@PathParams('id') idUser: number
 	) {
 		return { file: file, id_user: idUser }
+	}
+
+	@Get('/img/:id')
+	@Summary("Return all the images in the folder 'id'")
+	async getAllFolderImg(@PathParams('id') id: number) {
+		const files = await promises.readdir(`./src/uploads/img/${id}`)
+
+		return files.map((file) => sharp(`./src/uploads/img/${id}/${file}`))
+	}
+
+	@Get('/pdf/:id')
+	@Summary("Return all the pdf in the folder 'id'")
+	async getAllFolderPdf(@PathParams('id') id: number) {
+		const files = await promises.readdir(`./src/uploads/pdf/${id}`)
+		return await Promise.all(
+			files.map((file) => promises.readFile(`./src/uploads/pdf/${id}/${file}`))
+		)
+	}
+
+	@Get('/img/:id/:file')
+	@Summary("Return the image 'file' in the folder 'id'")
+	async getOneFileImg(@PathParams('id') id: number, @PathParams('file') file: string) {
+		const data = sharp(`./src/uploads/img/${id}/${file}`).webp()
+		return data
+	}
+
+	@Get('/pdf/:id/:file')
+	@Summary("Return the pdf 'file' in the folder 'id'")
+	async getOneFilePdf(@PathParams('id') id: number, @PathParams('file') file: string) {
+		const pdf = await promises.readFile(`./src/uploads/pdf/${id}/${file}`)
+
+		return pdf
 	}
 }

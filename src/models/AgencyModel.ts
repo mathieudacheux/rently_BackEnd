@@ -13,6 +13,16 @@ class AgencySerializer implements Agency {
 	fee_id: number
 	@Groups('read', 'put', 'post')
 	address_id: number
+	@Groups('read')
+	city?: string
+	@Groups('read')
+	zipcode?: string
+	@Groups('read')
+	way?: string
+	@Groups('read')
+	longitude?: string
+	@Groups('read')
+	latitude?: string
 }
 
 export { AgencySerializer }
