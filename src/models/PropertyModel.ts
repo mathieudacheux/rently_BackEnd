@@ -85,6 +85,16 @@ class PropertySerializer implements Property {
 	dpe: number
 	@Groups('read', 'put', 'post')
 	agency_id: number
+	@Groups('read', 'put', 'post')
+	agent_id: number | null
+	@Groups('read')
+	agent_firstname?: string | null
+	@Groups('read', 'put')
+	agent_name?: string | null
+	@Groups('read', 'put')
+	agent_phone?: string | null
+	@Groups('read', 'put', 'post')
+	agent_mail?: string
 }
 
 export { PropertySerializer }

@@ -248,6 +248,12 @@ export class Properties {
 			where: { property_id },
 		})
 
+		const agent = uniqueProperty?.agent_id
+			? await this.prisma.user.findUnique({
+					where: { user_id: uniqueProperty?.agent_id },
+			  })
+			: undefined
+
 		if (!uniqueProperty) {
 			const errorObject = {
 				status: 404,
@@ -257,7 +263,13 @@ export class Properties {
 			throw errorObject
 		}
 
-		return uniqueProperty
+		return {
+			...uniqueProperty,
+			agent_firstname: agent?.firstname,
+			agent_name: agent?.name,
+			agent_phone: agent?.phone,
+			agent_mail: agent?.mail,
+		}
 	}
 
 	@Post('/')
