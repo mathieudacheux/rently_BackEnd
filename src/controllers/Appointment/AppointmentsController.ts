@@ -179,4 +179,44 @@ export class Appointments {
 			throw errorObject
 		}
 	}
+
+	// get appointments by user id
+	@Get('/user/:id')
+	@Summary('Return a list of appointments by user id')
+	@Returns(200, Array).Of(AppointmentSerializer).Groups('read')
+	async getAppointmentsByUserId(
+		@PathParams('id') user_id: number
+	): Promise<AppointmentSerializer[]> {
+		const user = await this.prisma.user.findUnique({
+			where: { user_id },
+		})
+
+		if (!user) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { id: user_id }),
+			}
+
+			throw errorObject
+		}
+
+		const getAppointments = await this.prisma.appointment.findMany({
+			where: {
+				user_id_1: user_id,
+			},
+
+			orderBy: { date_start: 'asc' },
+		})
+
+		if (!getAppointments) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('notFound'),
+			}
+
+			throw errorObject
+		}
+
+		return getAppointments
+	}
 }
