@@ -86,7 +86,14 @@ export class Bookmarks {
 			},
 		})
 
-		return properties
+		const propertiesWithBookmark = properties.map((property) => {
+			const bookmark = usersBookmark.find(
+				(bookmark) => bookmark.property_id === property.property_id
+			)
+			return { ...property, bookmark }
+		})
+
+		return propertiesWithBookmark
 	}
 
 	@UseBefore(AuthentificationMiddleware)
