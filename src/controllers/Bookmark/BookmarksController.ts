@@ -86,10 +86,7 @@ export class Bookmarks {
 			},
 		})
 
-		return {
-			...properties,
-			bookmark_id: usersBookmark.find((bookmark) => bookmark.property_id),
-		}
+		return properties
 	}
 
 	@UseBefore(AuthentificationMiddleware)
