@@ -95,6 +95,8 @@ class PropertySerializer implements Property {
 	agent_phone?: string | null
 	@Groups('read', 'put', 'post')
 	agent_mail?: string
+	@Groups('read')
+	bookmark_id?: number
 }
 
 export { PropertySerializer }
