@@ -90,7 +90,7 @@ export class Bookmarks {
 			const bookmark = usersBookmark.find(
 				(bookmark) => bookmark.property_id === property.property_id
 			)
-			return { ...property, bookmark }
+			return { ...property, bookmark_id: bookmark?.bookmark_id }
 		})
 
 		return propertiesWithBookmark
