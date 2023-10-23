@@ -65,7 +65,7 @@ export class Bookmarks {
 	// Get bookmarks by user id
 	@Get('/user/:id')
 	@Summary('Return all properties of a user by his id')
-	@Returns(200, PropertySerializer).Groups('read')
+	@Returns(200, Array).Of(PropertySerializer).Groups('read')
 	async getBookmarkByUserId(@PathParams('id') user_id: number) {
 		const usersBookmark = await this.prisma.bookmark.findMany({
 			where: { user_id },
