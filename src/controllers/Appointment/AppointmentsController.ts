@@ -183,10 +183,13 @@ export class Appointments {
 	// get appointments by user id
 	@Get('/user/:id')
 	@Summary('Return a list of appointments by user id')
-	@Returns(200, Array).Of(AppointmentSerializer).Groups('read')
-	async getAppointmentsByUserId(
-		@PathParams('id') user_id: number
-	): Promise<AppointmentSerializer[]> {
+	@Returns(200, Array).Of().Groups('read')
+	async getAppointmentsByUserId(@PathParams('id') user_id: number): Promise<
+		{
+			dateStart: string
+			appointments: AppointmentSerializer[]
+		}[]
+	> {
 		const user = await this.prisma.user.findUnique({
 			where: { user_id },
 		})
@@ -208,6 +211,18 @@ export class Appointments {
 			orderBy: { date_start: 'asc' },
 		})
 
+		const formatDate = (date: Date): string => {
+			const d = new Date(date)
+			let month = '' + (d.getMonth() + 1)
+			let day = '' + d.getDate()
+			const year = d.getFullYear()
+
+			if (month.length < 2) month = '0' + month
+			if (day.length < 2) day = '0' + day
+
+			return [day, month, year].join('-')
+		}
+
 		if (!getAppointments) {
 			const errorObject = {
 				status: 404,
@@ -217,6 +232,28 @@ export class Appointments {
 			throw errorObject
 		}
 
-		return getAppointments
+		const allDays: { dateStart: string; appointments: AppointmentSerializer[] }[] = []
+
+		getAppointments.forEach((appointment) => {
+			const dateStart = formatDate(appointment.date_start)
+
+			if (!allDays.find((item) => item.dateStart === dateStart)) {
+				allDays.push({ dateStart: dateStart, appointments: [] })
+			}
+		})
+
+		getAppointments.forEach((appointment) => {
+			const dateStart = formatDate(appointment.date_start)
+
+			allDays.forEach((day) => {
+				if (day.dateStart === dateStart) {
+					day.appointments.push(appointment)
+				}
+			})
+		})
+
+		console.log(allDays)
+
+		return allDays
 	}
 }
