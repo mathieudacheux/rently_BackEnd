@@ -160,10 +160,6 @@ export class Users {
 		@PathParams('id') id: number,
 		@BodyParams() @Groups('put') user: UserSerializer
 	): Promise<UserSerializer> {
-		if ((user.password && !user.newPassword) || (!user.password && user.newPassword)) {
-			throw new Error(this.i18n.t('needOldAndNewPassword'))
-		}
-
 		const selectedUser = await this.prisma.user.findUnique({
 			where: { user_id: id },
 		})
@@ -199,7 +195,7 @@ export class Users {
 			}
 		}
 
-		if (user.newPassword) {
+		if (user.newPassword && user.password) {
 			const passwordMatch = await compare(user.password, selectedUser.password)
 			if (!passwordMatch) {
 				throw new Error(this.i18n.t('wrongPassword'))
