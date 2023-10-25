@@ -1,4 +1,4 @@
-import { hash } from 'bcrypt'
+import { compare, hash } from 'bcrypt'
 import {
 	Controller,
 	Get,
@@ -195,21 +195,43 @@ export class Users {
 			}
 		}
 
-		const updateUser = await this.prisma.user.update({
-			where: { user_id: id },
-			data: user.password ? { ...user, password: await hash(user.password, 10) } : user,
-		})
-
-		if (!updateUser) {
-			const errorObject = {
-				status: 404,
-				errors: this.i18n.t('idNotFound', { id }),
+		if (user.newPassword) {
+			const passwordMatch = await compare(user.password, selectedUser.password)
+			if (!passwordMatch) {
+				throw new Error(this.i18n.t('wrongPassword'))
 			}
+			const updateUser = await this.prisma.user.update({
+				where: { user_id: id },
+				data: user.newPassword
+					? { ...user, password: await hash(user.newPassword, 10) }
+					: user,
+			})
 
-			throw errorObject
+			if (!updateUser) {
+				const errorObject = {
+					status: 404,
+					errors: this.i18n.t('idNotFound', { id }),
+				}
+
+				throw errorObject
+			}
+			return updateUser
+		} else {
+			const updateUser = await this.prisma.user.update({
+				where: { user_id: id },
+				data: user.password ? { ...user, password: await hash(user.password, 10) } : user,
+			})
+
+			if (!updateUser) {
+				const errorObject = {
+					status: 404,
+					errors: this.i18n.t('idNotFound', { id }),
+				}
+
+				throw errorObject
+			}
+			return updateUser
 		}
-
-		return updateUser
 	}
 
 	@Delete('/:id')
