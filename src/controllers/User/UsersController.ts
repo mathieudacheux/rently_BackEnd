@@ -1,4 +1,4 @@
-import { compare, hash } from 'bcrypt'
+import { hash } from 'bcrypt'
 import {
 	Controller,
 	Get,
@@ -195,20 +195,9 @@ export class Users {
 			}
 		}
 
-		if (user.newPassword && user.password) {
-			const passwordMatch = await compare(user.password, selectedUser.password)
-			if (!passwordMatch) {
-				throw new Error(this.i18n.t('wrongPassword'))
-			}
-		}
-
-		delete user.newPassword
-
 		const updateUser = await this.prisma.user.update({
 			where: { user_id: id },
-			data: user.newPassword
-				? { ...user, password: await hash(user.newPassword, 10) }
-				: user,
+			data: user.password ? { ...user, password: await hash(user.password, 10) } : user,
 		})
 
 		if (!updateUser) {
