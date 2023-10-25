@@ -252,8 +252,6 @@ export class Appointments {
 			})
 		})
 
-		console.log(allDays)
-
 		return allDays
 	}
 }
