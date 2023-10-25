@@ -200,11 +200,14 @@ export class Users {
 			if (!passwordMatch) {
 				throw new Error(this.i18n.t('wrongPassword'))
 			}
+
+			const newPassword = user.newPassword
+
+			delete user.newPassword
+
 			const updateUser = await this.prisma.user.update({
 				where: { user_id: id },
-				data: user.newPassword
-					? { ...user, password: await hash(user.newPassword, 10) }
-					: user,
+				data: newPassword ? { ...user, password: await hash(newPassword, 10) } : user,
 			})
 
 			if (!updateUser) {
