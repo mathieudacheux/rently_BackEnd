@@ -263,8 +263,17 @@ export class Properties {
 			throw errorObject
 		}
 
+		const address = await this.prisma.address.findUnique({
+			where: { address_id: uniqueProperty.address_id },
+		})
+
 		return {
 			...uniqueProperty,
+			city: address?.city || '',
+			zipcode: address?.zipcode || '',
+			way: address?.address || '',
+			latitude: Number(address?.latitude) || 0,
+			longitude: Number(address?.longitude) || 0,
 			agent_firstname: agent?.firstname,
 			agent_name: agent?.name,
 			agent_phone: agent?.phone,
