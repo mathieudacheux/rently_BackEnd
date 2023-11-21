@@ -313,9 +313,23 @@ export class Properties {
 
 			throw errorObject
 		}
-		const address = await this.prisma.address.findUnique({
-			where: { address_id: property.address_id },
+		const updatedProperty = await this.prisma.property.findUnique({
+			where: { property_id: id },
 		})
+
+		if (!updatedProperty) {
+			const errorObject = {
+				status: 404,
+				message: this.i18n.t('idNotFound', { id }),
+			}
+
+			throw errorObject
+		}
+
+		const address = await this.prisma.address.findUnique({
+			where: { address_id: updatedProperty.address_id },
+		})
+
 		const propertyExpanded = {
 			...updateProperty,
 			city: address?.city || '',
