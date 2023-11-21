@@ -56,7 +56,9 @@ export class Users {
 		@QueryParams('name') name: string,
 		@QueryParams('firstname') firstname: string,
 		@QueryParams('city') city: string,
-		@QueryParams('zipcode') zipcode: string
+		@QueryParams('zipcode') zipcode: string,
+		@QueryParams('agency') agency: number | null,
+		@QueryParams('role') role: number
 	): Promise<UserSerializer[]> {
 		const userAddresses =
 			!city && !zipcode
@@ -74,6 +76,8 @@ export class Users {
 				phone: phone !== '' ? phone : undefined,
 				name: name !== '' ? name : undefined,
 				firstname: firstname !== '' ? firstname : undefined,
+				agency_id: agency !== 0 ? agency : undefined,
+				role_id: role !== 0 ? role : undefined,
 				address_id:
 					userAddresses.length > 0
 						? {

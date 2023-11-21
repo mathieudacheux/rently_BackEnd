@@ -4,7 +4,7 @@ import { PlatformApplication } from '@tsed/common'
 import '@tsed/platform-express'
 import '@tsed/ajv'
 import '@tsed/swagger'
-// import multer from 'multer'
+import '@tsed/socketio'
 import { config } from './config/index'
 import * as pages from './controllers/pages/IndexController'
 import * as addresses from './controllers/Address/AddressesController'
@@ -42,6 +42,14 @@ import * as attachment from './controllers/Attachment/AttachmentsController'
 			},
 		],
 	},
+
+	socketIO: {
+		path: '/socket.io',
+		cors: {
+			origin: '*',
+		},
+	},
+
 	mount: {
 		'/users': [...Object.values(users)],
 		'/authentifications': [...Object.values(authentifications)],
