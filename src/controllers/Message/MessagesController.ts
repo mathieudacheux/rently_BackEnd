@@ -7,15 +7,19 @@ import {
 	Put,
 	Delete,
 	UseBeforeEach,
+	QueryParams,
 } from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { PrismaService } from '../../services/PrismaService'
 import { Returns, Summary, Groups, Required } from '@tsed/schema'
 import { MessageSerializer } from '../../models/MessageModel'
 import AuthentificationMiddleware from '../../middlewares/AuthentificationMiddleware'
+import { ChatService } from '../../services/ChatService'
 
 @Controller('/')
 export class Messages {
+	@Inject()
+	protected chatService: ChatService
 	@Inject()
 	protected prisma: PrismaService
 
@@ -25,16 +29,22 @@ export class Messages {
 	@Returns(200, Array).Of(MessageSerializer).Groups('read')
 	@Returns(404, String).Description('Not found')
 	async getAllMessages(
-		@PathParams('offset') offset: number,
-		@PathParams('user_id_1') user_id_1: number,
-		@PathParams('user_id_2') user_id_2: number
+		@QueryParams('user_id_1') user_id_1: number,
+		@QueryParams('user_id_2') user_id_2: number
 	): Promise<MessageSerializer[]> {
-		return this.prisma.message.findMany({
-			take: 50,
-			skip: offset,
-			where: { user_id_1: user_id_1, user_id_2: user_id_2 },
+		const userOneSend = await this.prisma.message.findMany({
+			where: { user_id_1, user_id_2 },
 			orderBy: { created_at: 'desc' },
 		})
+
+		const userTwoSend = await this.prisma.message.findMany({
+			where: { user_id_1: user_id_2, user_id_2: user_id_1 },
+			orderBy: { created_at: 'desc' },
+		})
+
+		const messages = [...userOneSend, ...userTwoSend]
+
+		return messages
 	}
 
 	@Get('/:id')
@@ -52,6 +62,11 @@ export class Messages {
 	async createMessage(
 		@Required() @BodyParams() @Groups('post') message: MessageSerializer
 	) {
+		this.chatService.message(
+			String(message?.user_id_1),
+			String(message?.user_id_2),
+			message?.content
+		)
 		return this.prisma.message.create({ data: message })
 	}
 
