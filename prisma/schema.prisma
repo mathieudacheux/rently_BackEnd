@@ -49,18 +49,18 @@ model Appointment {
   appointment_id                      Int             @id @default(autoincrement())
   tag_id                              Int
   date_start                          DateTime        @db.DateTime(0)
-  date_end                            DateTime?        @db.DateTime(0)
+  date_end                            DateTime?       @db.DateTime(0)
   note                                String?         @db.Text
-  reminder                            DateTime?        @db.DateTime(0)
+  reminder                            DateTime?       @db.DateTime(0)
   created_at                          DateTime        @default(now()) @db.DateTime(0)
   updated_at                          DateTime?       @db.DateTime(0)
   deleted_at                          DateTime?       @db.DateTime(0)
   property_id                         Int?
   user_id_1                           Int
   user_id_2                           Int?
-  property                            Property?        @relation(fields: [property_id], references: [property_id], onUpdate: Restrict, map: "appointment_ibfk_1")
+  property                            Property?       @relation(fields: [property_id], references: [property_id], onUpdate: Restrict, map: "appointment_ibfk_1")
   users_appointments_user_id_1Tousers User            @relation("appointments_user_id_1Tousers", fields: [user_id_1], references: [user_id], onUpdate: Restrict, map: "appointment_ibfk_2")
-  users_appointments_user_id_2Tousers User?            @relation("appointments_user_id_2Tousers", fields: [user_id_2], references: [user_id], onUpdate: Restrict, map: "appointment_ibfk_3")
+  users_appointments_user_id_2Tousers User?           @relation("appointments_user_id_2Tousers", fields: [user_id_2], references: [user_id], onUpdate: Restrict, map: "appointment_ibfk_3")
   appointment_tags                    Appointment_tag @relation(fields: [tag_id], references: [appointment_tag_id], onUpdate: Restrict, map: "appointment_ibfk_4")
 
   @@index([property_id], map: "property_id")
@@ -199,6 +199,8 @@ model Property {
   ground_floor                     Boolean
   land_size_1                      String        @db.VarChar(50)
   garden                           Boolean
+  year_construction                Int           @db.Year
+  draft                            Boolean       @default(false)
   created_at                       DateTime      @default(now()) @db.DateTime(0)
   updated_at                       DateTime?     @db.DateTime(0)
   deleted_at                       DateTime?     @db.DateTime(0)
