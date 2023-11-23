@@ -60,6 +60,10 @@ class PropertySerializer implements Property {
 	land_size_1: string
 	@Groups('read', 'put', 'post')
 	garden: boolean
+	@Groups('read', 'put', 'post')
+	draft: boolean
+	@Groups('read', 'put', 'post')
+	year_construction: number
 	created_at: Date
 	updated_at: Date | null
 	deleted_at: Date | null
