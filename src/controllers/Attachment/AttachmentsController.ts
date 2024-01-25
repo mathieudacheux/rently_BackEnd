@@ -20,7 +20,7 @@ export class Attachment {
 	@MulterOptions({
 		storage: multer.diskStorage({
 			destination: function (req, file, cb) {
-				const path = `./public/${req.params.folder}/${req.params.id}`
+				const path = `./public/img/${req.params.folder}/${req.params.id}`
 				access(path, function (error) {
 					if (error) {
 						mkdir(path, (err) => {
@@ -46,7 +46,7 @@ export class Attachment {
 		@PathParams('id') idUser: number,
 		@PathParams('folder') folder: string
 	) {
-		const newPath = `./public/${folder}/${idUser}/resized-${file.filename}`
+		const newPath = `./public/img/${folder}/${idUser}/resized-${file.filename}`
 		switch (file.mimetype) {
 			case 'image/jpeg':
 			case 'image/jpg':
