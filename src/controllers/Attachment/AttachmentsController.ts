@@ -4,10 +4,10 @@ import {
 	PathParams,
 	PlatformMulterFile,
 } from '@tsed/common'
-import { Get, Post, Summary } from '@tsed/schema'
 import { Controller } from '@tsed/di'
-import multer from 'multer'
+import { Get, Post, Summary } from '@tsed/schema'
 import { access, mkdir, promises, unlink } from 'fs'
+import multer from 'multer'
 import sharp from 'sharp'
 import i18n from '../../translations/i18n'
 
@@ -20,7 +20,7 @@ export class Attachment {
 	@MulterOptions({
 		storage: multer.diskStorage({
 			destination: async function (req, file, cb) {
-				const path = `./src/uploads/${req.params.folder}/${req.params.id}`
+				const path = `./public/${req.params.folder}/${req.params.id}`
 				access(path, function (error) {
 					if (error) {
 						mkdir(path, (err) => {
@@ -43,7 +43,7 @@ export class Attachment {
 		@PathParams('id') idUser: number,
 		@PathParams('folder') folder: string
 	) {
-		const newPath = `./src/uploads/${folder}/${idUser}/resized-${file.filename}`
+		const newPath = `./public/${folder}/${idUser}/resized-${file.filename}`
 		switch (file.mimetype) {
 			case 'image/jpeg' || 'image/jpg':
 				await sharp(file.path).resize().jpeg({ quality: 45 }).toFile(newPath)
