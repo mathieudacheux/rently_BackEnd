@@ -19,17 +19,20 @@ export class Attachment {
 	@Summary("Create the image in the folder 'id' in the folder 'folder'")
 	@MulterOptions({
 		storage: multer.diskStorage({
-			destination: async function (req, file, cb) {
+			destination: function (req, file, cb) {
 				const path = `./public/${req.params.folder}/${req.params.id}`
 				access(path, function (error) {
 					if (error) {
 						mkdir(path, (err) => {
 							if (err) {
-								throw new Error(this.i18n.t('attachmentFailed'))
+								cb(err, path)
+							} else {
+								cb(null, path)
 							}
 						})
+					} else {
+						cb(null, path)
 					}
-					cb(null, path)
 				})
 			},
 			filename: function (req, file, cb) {
@@ -45,7 +48,8 @@ export class Attachment {
 	) {
 		const newPath = `./public/${folder}/${idUser}/resized-${file.filename}`
 		switch (file.mimetype) {
-			case 'image/jpeg' || 'image/jpg':
+			case 'image/jpeg':
+			case 'image/jpg':
 				await sharp(file.path).resize().jpeg({ quality: 45 }).toFile(newPath)
 				break
 			case 'image/png':
@@ -60,7 +64,7 @@ export class Attachment {
 
 		unlink(file.path, (error) => {
 			if (error) {
-				throw new Error('Error during file deletion')
+				console.error('Error during file deletion:', error)
 			}
 		})
 		return { file: file, id_user: idUser }
