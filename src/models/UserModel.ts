@@ -4,11 +4,11 @@ import { Groups } from '@tsed/schema'
 class UserSerializer implements User {
 	@Groups('read')
 	user_id: number
-	@Groups('read')
+	@Groups('read', 'put', 'post')
 	firstname: string | null
-	@Groups('read', 'put')
+	@Groups('read', 'put', 'post')
 	name: string | null
-	@Groups('read', 'put')
+	@Groups('read', 'put', 'post')
 	phone: string | null
 	@Groups('read', 'put', 'post')
 	mail: string
@@ -24,13 +24,13 @@ class UserSerializer implements User {
 	validated_at: Date | null
 	updated_at: Date | null
 	deleted_at: Date | null
-	@Groups('read', 'put')
+	@Groups('read', 'put', 'post')
 	address_id: number | null
 	@Groups('post', 'put', 'read')
 	country_id: number
 	@Groups('post', 'put', 'read')
 	role_id: number
-	@Groups('put', 'read')
+	@Groups('read', 'put', 'post')
 	agency_id: number | null
 }
 
