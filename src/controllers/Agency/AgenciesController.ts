@@ -133,6 +133,8 @@ export class Agencies {
 
 			throw errorObject
 		}
+
+		return uniqueAgency
 	}
 
 	@UseBefore(AuthentificationMiddleware)
