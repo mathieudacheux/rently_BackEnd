@@ -134,6 +134,28 @@ export class Agencies {
 			throw errorObject
 		}
 
+		const address = await this.prisma.address.findUnique({
+			where: { address_id: uniqueAgency.address_id },
+		})
+
+		if (!address) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('idNotFound', { address_id: uniqueAgency.address_id }),
+			}
+
+			throw errorObject
+		}
+
+		return {
+			...uniqueAgency,
+			city: address.city,
+			zipcode: address.zipcode,
+			way: address.address,
+			longitude: address.longitude,
+			latitude: address.latitude,
+		}
+
 		return uniqueAgency
 	}
 
