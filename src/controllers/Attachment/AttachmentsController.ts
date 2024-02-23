@@ -46,7 +46,7 @@ export class Attachment {
 		@PathParams('id') idUser: number,
 		@PathParams('folder') folder: string
 	) {
-		const newPath = `./public/img/${folder}/${idUser}/resized-${file.filename}`
+		const newPath = `./public/img/${folder}/${idUser}/${file.filename}`
 		switch (file.mimetype) {
 			case 'image/jpeg':
 			case 'image/jpg':
