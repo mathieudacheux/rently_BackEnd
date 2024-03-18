@@ -115,7 +115,18 @@ export class Users {
 			throw errorObject
 		}
 
-		return uniqueUser
+		const address = await this.prisma.address.findUnique({
+			where: { address_id: uniqueUser.address_id as number },
+		})
+
+		return {
+			...uniqueUser,
+			city: address?.city || '',
+			zipcode: address?.zipcode || '',
+			way: address?.address || '',
+			latitude: Number(address?.latitude) || 0,
+			longitude: Number(address?.longitude) || 0,
+		}
 	}
 
 	@Post('/')
