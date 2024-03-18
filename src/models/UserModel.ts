@@ -26,6 +26,16 @@ class UserSerializer implements User {
 	deleted_at: Date | null
 	@Groups('read', 'put', 'post')
 	address_id: number | null
+	@Groups('read')
+	city?: string
+	@Groups('read')
+	zipcode?: string
+	@Groups('read')
+	way?: string
+	@Groups('read', 'put', 'post')
+	latitude?: number
+	@Groups('read', 'put', 'post')
+	longitude?: number
 	@Groups('post', 'put', 'read')
 	country_id: number
 	@Groups('post', 'put', 'read')
