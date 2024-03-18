@@ -119,6 +119,10 @@ export class Users {
 			where: { address_id: uniqueUser.address_id as number },
 		})
 
+		if (!address) {
+			return uniqueUser
+		}
+
 		return {
 			...uniqueUser,
 			city: address?.city || '',
