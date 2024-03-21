@@ -93,7 +93,9 @@ export class Properties {
 		@QueryParams('dpe') dpe?: number,
 		@QueryParams('city') city?: string,
 		@QueryParams('zipcode') zipcode?: string,
-		@QueryParams('agent_id') agent_id?: number
+		@QueryParams('agent_id') agent_id?: number,
+		@QueryParams('draft') draft?: boolean,
+		@QueryParams('status_id') status_id?: number
 	): Promise<PropertySerializer[]> {
 		const propertyAddresses = await this.prisma.address.findMany({
 			where: {
@@ -137,6 +139,8 @@ export class Properties {
 				address_id: {
 					in: propertyAddresses.map((propertyAddresses) => propertyAddresses.address_id),
 				},
+				draft: draft !== null ? draft : false,
+				status_id,
 			},
 			orderBy: price ? { price: 'asc' } : { property_id: 'asc' },
 		})
