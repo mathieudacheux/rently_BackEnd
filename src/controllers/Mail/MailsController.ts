@@ -8,6 +8,7 @@ import i18n from '../../translations/i18n'
 import { TEMPLATES } from '../../constants'
 import * as dotenv from 'dotenv'
 import * as SibApiV3Sdk from 'sib-api-v3-typescript'
+import { PropertySerializer } from 'src/models/PropertyModel'
 
 dotenv.config()
 
@@ -106,5 +107,129 @@ export class Mails {
 		createContact.listIds = [2]
 
 		return apiInstance.createContact(createContact)
+	}
+
+	@Post('/sale_confirmation_saler/')
+	@Summary('Mail after a sale')
+	@Returns(201).Groups('read')
+	@Returns(400, String).Description('Bad request')
+	async salesConfirmationSaler(
+		@BodyParams('property') property: PropertySerializer,
+		@BodyParams('new_owner') new_owner: number
+	) {
+		const owner = await this.prisma.user.findUnique({
+			where: { user_id: property.owner_id },
+		})
+		const newOwner = await this.prisma.user.findUnique({ where: { user_id: new_owner } })
+		const propertyAddress = await this.prisma.address.findUnique({
+			where: { address_id: property.address_id },
+		})
+		const propertyType = await this.prisma.property_type.findUnique({
+			where: { property_type_id: property.property_type },
+		})
+		const agent = await this.prisma.user.findUnique({
+			where: { user_id: property.agent_id as number },
+		})
+
+		const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi()
+
+		apiInstance.setApiKey(
+			SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey,
+			process.env.API_KEY ?? ''
+		)
+
+		const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail()
+
+		sendSmtpEmail.templateId = 5
+		sendSmtpEmail.to = [
+			{
+				email: owner?.mail ?? '',
+				name: `${owner?.firstname ?? ''} ${owner?.name ?? ''}`,
+			},
+		]
+		sendSmtpEmail.params = {
+			owner: `${owner?.firstname ?? ''} ${owner?.name ?? ''}`,
+			new_owner: `${newOwner?.firstname ?? ''} ${newOwner?.name ?? ''}`,
+			property_name: property.name,
+			property_address: `${propertyAddress?.address ?? ''} ${
+				propertyAddress?.city ?? ''
+			} ${propertyAddress?.zipcode ?? ''}`,
+			property_price: property.price.toString(),
+			property_type: propertyType?.label ?? '',
+			agent_name: `${agent?.firstname ?? ''} ${agent?.name ?? ''}`,
+			property_surface: property.surface.toString(),
+			property_sale_date: new Date().toLocaleDateString(),
+		}
+
+		apiInstance.sendTransacEmail(sendSmtpEmail).then(
+			function (data) {
+				return data.response
+			},
+			function (error) {
+				return error.response
+			}
+		)
+	}
+
+	@Post('/sale_confirmation_buyer/')
+	@Summary('Mail after a sale')
+	@Returns(201).Groups('read')
+	@Returns(400, String).Description('Bad request')
+	async salesConfirmationBuyer(
+		@BodyParams('property') property: PropertySerializer,
+		@BodyParams('new_owner') new_owner: number
+	) {
+		const owner = await this.prisma.user.findUnique({
+			where: { user_id: property.owner_id },
+		})
+		const newOwner = await this.prisma.user.findUnique({ where: { user_id: new_owner } })
+		const propertyAddress = await this.prisma.address.findUnique({
+			where: { address_id: property.address_id },
+		})
+		const propertyType = await this.prisma.property_type.findUnique({
+			where: { property_type_id: property.property_type },
+		})
+		const agent = await this.prisma.user.findUnique({
+			where: { user_id: property.agent_id as number },
+		})
+
+		const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi()
+
+		apiInstance.setApiKey(
+			SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey,
+			process.env.API_KEY ?? ''
+		)
+
+		const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail()
+
+		sendSmtpEmail.templateId = 6
+		sendSmtpEmail.to = [
+			{
+				email: newOwner?.mail ?? '',
+				name: `${newOwner?.firstname ?? ''} ${newOwner?.name ?? ''}`,
+			},
+		]
+		sendSmtpEmail.params = {
+			owner: `${owner?.firstname ?? ''} ${owner?.name ?? ''}`,
+			new_owner: `${newOwner?.firstname ?? ''} ${newOwner?.name ?? ''}`,
+			property_name: property.name,
+			property_address: `${propertyAddress?.address ?? ''} ${
+				propertyAddress?.city ?? ''
+			} ${propertyAddress?.zipcode ?? ''}`,
+			property_price: property.price.toString(),
+			property_type: propertyType?.label ?? '',
+			agent_name: `${agent?.firstname ?? ''} ${agent?.name ?? ''}`,
+			property_surface: property.surface.toString(),
+			property_sale_date: new Date().toLocaleDateString(),
+		}
+
+		apiInstance.sendTransacEmail(sendSmtpEmail).then(
+			function (data) {
+				return data.response
+			},
+			function (error) {
+				return error.response
+			}
+		)
 	}
 }
