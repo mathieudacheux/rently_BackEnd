@@ -266,7 +266,7 @@ export class Mails {
 
 		const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail()
 
-		sendSmtpEmail.templateId = 6
+		sendSmtpEmail.templateId = 9
 		sendSmtpEmail.to = [
 			{
 				email: tenantFetched?.mail ?? '',
@@ -329,7 +329,7 @@ export class Mails {
 
 		const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail()
 
-		sendSmtpEmail.templateId = 6
+		sendSmtpEmail.templateId = 7
 		sendSmtpEmail.to = [
 			{
 				email: owner?.mail ?? '',
