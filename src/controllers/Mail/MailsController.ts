@@ -1,14 +1,14 @@
 import { BodyParams, Controller, Post } from '@tsed/common'
 import { Inject } from '@tsed/di'
 import { Returns, Summary } from '@tsed/schema'
+import * as SibApiV3Sdk from 'sib-api-v3-typescript'
+import * as dotenv from 'dotenv'
 import jwt from 'jsonwebtoken'
 import sendEmail from '../../helpers/sendEmail'
 import { PrismaService } from '../../services/PrismaService'
 import i18n from '../../translations/i18n'
 import { TEMPLATES } from '../../constants'
-import * as dotenv from 'dotenv'
-import * as SibApiV3Sdk from 'sib-api-v3-typescript'
-import { PropertySerializer } from 'src/models/PropertyModel'
+import { PropertySerializer } from '../../models/PropertyModel'
 
 dotenv.config()
 
