@@ -232,4 +232,130 @@ export class Mails {
 			}
 		)
 	}
+
+	@Post('/rent_confirmation_tenant/')
+	@Summary('Mail after a location')
+	@Returns(201).Groups('read')
+	@Returns(400, String).Description('Bad request')
+	async rentConfirmationTenant(
+		@BodyParams('property') property: PropertySerializer,
+		@BodyParams('tenant') tenant: number
+	) {
+		const owner = await this.prisma.user.findUnique({
+			where: { user_id: property.owner_id },
+		})
+		const tenantFetched = await this.prisma.user.findUnique({
+			where: { user_id: tenant },
+		})
+		const propertyAddress = await this.prisma.address.findUnique({
+			where: { address_id: property.address_id },
+		})
+		const propertyType = await this.prisma.property_type.findUnique({
+			where: { property_type_id: property.property_type },
+		})
+		const agent = await this.prisma.user.findUnique({
+			where: { user_id: property.agent_id as number },
+		})
+
+		const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi()
+
+		apiInstance.setApiKey(
+			SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey,
+			process.env.API_KEY ?? ''
+		)
+
+		const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail()
+
+		sendSmtpEmail.templateId = 6
+		sendSmtpEmail.to = [
+			{
+				email: tenantFetched?.mail ?? '',
+				name: `${tenantFetched?.firstname ?? ''} ${tenantFetched?.name ?? ''}`,
+			},
+		]
+		sendSmtpEmail.params = {
+			owner: `${owner?.firstname ?? ''} ${owner?.name ?? ''}`,
+			tenant: `${tenantFetched?.firstname ?? ''} ${tenantFetched?.name ?? ''}`,
+			property_name: property.name,
+			property_address: `${propertyAddress?.address ?? ''} ${
+				propertyAddress?.city ?? ''
+			} ${propertyAddress?.zipcode ?? ''}`,
+			property_type: propertyType?.label ?? '',
+			agent_name: `${agent?.firstname ?? ''} ${agent?.name ?? ''}`,
+			property_surface: property.surface.toString(),
+			property_sale_date: new Date().toLocaleDateString(),
+		}
+
+		apiInstance.sendTransacEmail(sendSmtpEmail).then(
+			function (data) {
+				return data.response
+			},
+			function (error) {
+				return error.response
+			}
+		)
+	}
+
+	@Post('/rent_confirmation_owner/')
+	@Summary('Mail after a location')
+	@Returns(201).Groups('read')
+	@Returns(400, String).Description('Bad request')
+	async rentConfirmationOwner(
+		@BodyParams('property') property: PropertySerializer,
+		@BodyParams('tenant') tenant: number
+	) {
+		const owner = await this.prisma.user.findUnique({
+			where: { user_id: property.owner_id },
+		})
+		const tenantFetched = await this.prisma.user.findUnique({
+			where: { user_id: tenant },
+		})
+		const propertyAddress = await this.prisma.address.findUnique({
+			where: { address_id: property.address_id },
+		})
+		const propertyType = await this.prisma.property_type.findUnique({
+			where: { property_type_id: property.property_type },
+		})
+		const agent = await this.prisma.user.findUnique({
+			where: { user_id: property.agent_id as number },
+		})
+
+		const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi()
+
+		apiInstance.setApiKey(
+			SibApiV3Sdk.TransactionalEmailsApiApiKeys.apiKey,
+			process.env.API_KEY ?? ''
+		)
+
+		const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail()
+
+		sendSmtpEmail.templateId = 6
+		sendSmtpEmail.to = [
+			{
+				email: owner?.mail ?? '',
+				name: `${owner?.firstname ?? ''} ${owner?.name ?? ''}`,
+			},
+		]
+		sendSmtpEmail.params = {
+			owner: `${owner?.firstname ?? ''} ${owner?.name ?? ''}`,
+			tenant: `${tenantFetched?.firstname ?? ''} ${tenantFetched?.name ?? ''}`,
+			property_name: property.name,
+			property_address: `${propertyAddress?.address ?? ''} ${
+				propertyAddress?.city ?? ''
+			} ${propertyAddress?.zipcode ?? ''}`,
+			property_type: propertyType?.label ?? '',
+			agent_name: `${agent?.firstname ?? ''} ${agent?.name ?? ''}`,
+			property_surface: property.surface.toString(),
+			property_sale_date: new Date().toLocaleDateString(),
+		}
+
+		apiInstance.sendTransacEmail(sendSmtpEmail).then(
+			function (data) {
+				return data.response
+			},
+			function (error) {
+				return error.response
+			}
+		)
+	}
 }
