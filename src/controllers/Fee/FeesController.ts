@@ -143,11 +143,11 @@ export class Fees {
 			const allFees = allProperties
 				?.filter(
 					(property) =>
-						new Date(property?.updated_at ?? property?.created_at)?.getFullYear ===
-						new Date().getFullYear
+						property?.updated_at &&
+						new Date(property?.updated_at)?.getFullYear === new Date().getFullYear
 				)
 				?.reduce((acc, property) => {
-					acc += property.price * Number(agencyFees?.rent_fee ?? 0)
+					acc += property.price / Number(agencyFees?.rent_fee ?? 0)
 					return acc
 				}, 0)
 
