@@ -96,8 +96,8 @@ export class Properties {
 		@QueryParams('agent_id') agent_id?: number,
 		@QueryParams('draft') draft?: boolean,
 		@QueryParams('status_id') status_id?: number,
-		@QueryParams('withRented') withRented = false,
-		@QueryParams('withSold') withSold = false
+		@QueryParams('withRented') withRented?: boolean,
+		@QueryParams('withSold') withSold?: boolean
 	): Promise<PropertySerializer[] | undefined> {
 		const propertyAddresses = await this.prisma.address.findMany({
 			where: {
