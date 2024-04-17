@@ -122,7 +122,7 @@ export class Fees {
 
 		const monthsTable: number[] = []
 
-		for (let i = 0; i <= 11; i++) {
+		for (let i = 0; i < 12; i++) {
 			monthsTable.push(i)
 		}
 
@@ -140,9 +140,11 @@ export class Fees {
 					(property) =>
 						!property.draft &&
 						property?.signature_date &&
-						new Date(property?.signature_date)?.getFullYear() ===
+						((new Date(property?.signature_date)?.getFullYear() ===
 							new Date().getFullYear() &&
-						new Date(property?.signature_date)?.getMonth() >= month
+							new Date(property?.signature_date)?.getMonth() < month) ||
+							new Date(property?.signature_date)?.getFullYear() <
+								new Date().getFullYear())
 				)
 				?.reduce((acc, property) => {
 					acc += property.price * (Number(agencyFees?.rent_fee ?? 0) / 100)
