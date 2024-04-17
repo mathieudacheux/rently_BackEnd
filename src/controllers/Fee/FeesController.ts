@@ -131,6 +131,10 @@ export class Fees {
 		})
 
 		const allFeesTable = monthsTable.map(async (month) => {
+			if (new Date().getMonth() > month) {
+				return 0
+			}
+
 			const allProperties = await this.prisma.property.findMany({
 				where: { agency_id, status_id: rentedStatus?.status_id },
 			})
@@ -147,9 +151,6 @@ export class Fees {
 								new Date().getFullYear())
 				)
 				?.reduce((acc, property) => {
-					if (new Date().getMonth() > month) {
-						return 0
-					}
 					acc += property.price * (Number(agencyFees?.rent_fee ?? 0) / 100)
 					return acc
 				}, 0)
