@@ -120,22 +120,17 @@ export class Fees {
 
 		const rentedStatus = await this.prisma.status.findFirst({ where: { name: 'Loué' } })
 
-		const monthsTable: string[] = []
-		const date = new Date()
+		const monthsTable: number[] = []
 
-		for (let i = 0; i < 12; i++) {
-			monthsTable.unshift(
-				date.toLocaleString('default', { month: 'long', year: 'numeric' })
-			)
-			date.setMonth(date.getMonth() - 1)
+		for (let i = 1; i <= 12; i++) {
+			monthsTable.push(i)
 		}
 
 		const agencyFees = await this.prisma.fee.findUnique({
 			where: { fee_id: selectedAgency?.fee_id },
 		})
 
-		const allFeesTable = monthsTable.map(async () => {
-			//
+		const allFeesTable = monthsTable.map(async (month) => {
 			const allProperties = await this.prisma.property.findMany({
 				where: { agency_id, status_id: rentedStatus?.status_id },
 			})
@@ -145,7 +140,9 @@ export class Fees {
 					(property) =>
 						!property.draft &&
 						property?.signature_date &&
-						new Date(property?.signature_date)?.getFullYear === new Date().getFullYear
+						new Date(property?.signature_date)?.getFullYear() ===
+							new Date().getFullYear() &&
+						new Date(property?.signature_date)?.getMonth() >= month
 				)
 				?.reduce((acc, property) => {
 					acc += property.price / Number(agencyFees?.rent_fee ?? 0)
