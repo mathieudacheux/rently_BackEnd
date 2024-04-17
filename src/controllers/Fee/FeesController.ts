@@ -120,11 +120,7 @@ export class Fees {
 
 		const rentedStatus = await this.prisma.status.findFirst({ where: { name: 'Loué' } })
 
-		const monthsTable: number[] = []
-
-		for (let i = 0; i < 12; i++) {
-			monthsTable.push(i)
-		}
+		const monthsTable = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 
 		const agencyFees = await this.prisma.fee.findUnique({
 			where: { fee_id: selectedAgency?.fee_id },
