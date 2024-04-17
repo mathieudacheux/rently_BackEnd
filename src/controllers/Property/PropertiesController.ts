@@ -95,14 +95,21 @@ export class Properties {
 		@QueryParams('zipcode') zipcode?: string,
 		@QueryParams('agent_id') agent_id?: number,
 		@QueryParams('draft') draft?: boolean,
-		@QueryParams('status_id') status_id?: number
-	): Promise<PropertySerializer[]> {
+		@QueryParams('status_id') status_id?: number,
+		@QueryParams('withRented') withRented = false,
+		@QueryParams('withSold') withSold = false
+	): Promise<PropertySerializer[] | undefined> {
 		const propertyAddresses = await this.prisma.address.findMany({
 			where: {
 				city: city !== '' ? city : undefined,
 				zipcode: zipcode !== '' ? zipcode : undefined,
 			},
 		})
+
+		const allStatus = await this.prisma.status.findMany({})
+
+		const soldStatus = allStatus.find((status) => status.name === 'Vendu')
+		const rentedStatus = allStatus.find((status) => status.name === 'Loué')
 
 		const allProperties = await this.prisma.property.findMany({
 			where: {
@@ -162,7 +169,29 @@ export class Properties {
 			})
 		)
 
-		return propertiesExpanded
+		if (withRented && withSold) {
+			return propertiesExpanded
+		}
+
+		if (withRented && !withSold) {
+			return propertiesExpanded.filter(
+				(property) => property.status_id !== soldStatus?.status_id
+			)
+		}
+
+		if (withSold && !withRented) {
+			return propertiesExpanded.filter(
+				(property) => property.status_id !== rentedStatus?.status_id
+			)
+		}
+
+		if (!withRented && !withSold) {
+			return propertiesExpanded.filter(
+				(property) =>
+					property.status_id !== soldStatus?.status_id &&
+					property.status_id !== rentedStatus?.status_id
+			)
+		}
 	}
 
 	@Get('/properties_home')
