@@ -123,7 +123,7 @@ export class Fees {
 		const monthsTable: number[] = []
 
 		for (let i = 0; i < 12; i++) {
-			monthsTable.unshift(i)
+			monthsTable.push(i)
 		}
 
 		const agencyFees = await this.prisma.fee.findUnique({
