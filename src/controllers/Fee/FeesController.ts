@@ -142,7 +142,7 @@ export class Fees {
 						property?.signature_date &&
 						((new Date(property?.signature_date)?.getFullYear() ===
 							new Date().getFullYear() &&
-							new Date(property?.signature_date)?.getMonth() < month) ||
+							new Date(property?.signature_date)?.getMonth() <= month) ||
 							new Date(property?.signature_date)?.getFullYear() <
 								new Date().getFullYear())
 				)
