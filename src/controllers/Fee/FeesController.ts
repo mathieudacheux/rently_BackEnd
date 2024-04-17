@@ -145,7 +145,7 @@ export class Fees {
 						new Date(property?.signature_date)?.getMonth() >= month
 				)
 				?.reduce((acc, property) => {
-					acc += property.price / Number(agencyFees?.rent_fee ?? 0)
+					acc += property.price / (Number(agencyFees?.rent_fee ?? 0) / 100)
 					return acc
 				}, 0)
 
