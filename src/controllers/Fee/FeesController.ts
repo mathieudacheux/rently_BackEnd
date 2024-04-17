@@ -147,6 +147,9 @@ export class Fees {
 								new Date().getFullYear())
 				)
 				?.reduce((acc, property) => {
+					if (new Date().getMonth() > month) {
+						return 0
+					}
 					acc += property.price * (Number(agencyFees?.rent_fee ?? 0) / 100)
 					return acc
 				}, 0)
