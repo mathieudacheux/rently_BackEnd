@@ -108,4 +108,63 @@ export class Fees {
 			throw errorObject
 		}
 	}
+
+	// Endpoint to get all fees of an agency
+	@Get('/agency/:agency_id')
+	@Summary('Return a list of all fees of an agency')
+	@Returns(200, Array).Of(Number).Groups('read')
+	async getAllFeesOfAgency(
+		@PathParams('agency_id') agency_id: number
+	): Promise<number[]> {
+		const selectedAgency = await this.prisma.agency.findUnique({ where: { agency_id } })
+
+		const rentedStatus = await this.prisma.status.findFirst({ where: { name: 'Loué' } })
+
+		const monthsTable: string[] = []
+		const date = new Date()
+
+		for (let i = 0; i < 12; i++) {
+			monthsTable.unshift(
+				date.toLocaleString('default', { month: 'long', year: 'numeric' })
+			)
+			date.setMonth(date.getMonth() - 1)
+		}
+
+		const agencyFees = await this.prisma.fee.findUnique({
+			where: { fee_id: selectedAgency?.fee_id },
+		})
+
+		const allFeesTable = monthsTable.map(async () => {
+			//
+			const allProperties = await this.prisma.property.findMany({
+				where: { agency_id, status_id: rentedStatus?.status_id },
+			})
+
+			const allFees = allProperties
+				?.filter(
+					(property) =>
+						new Date(property?.updated_at ?? property?.created_at)?.getFullYear ===
+						new Date().getFullYear
+				)
+				?.reduce((acc, property) => {
+					acc += property.price * Number(agencyFees?.rent_fee ?? 0)
+					return acc
+				}, 0)
+
+			return allFees
+		})
+
+		if (!allFeesTable) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('notFound'),
+			}
+
+			throw errorObject
+		}
+
+		const resolvedAllFeesTable = await Promise.all(allFeesTable)
+
+		return resolvedAllFeesTable
+	}
 }
