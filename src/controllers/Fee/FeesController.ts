@@ -127,7 +127,7 @@ export class Fees {
 		})
 
 		const allFeesTable = monthsTable.map(async (month) => {
-			if (new Date().getMonth() > month) {
+			if (new Date().getMonth() < month) {
 				return 0
 			}
 
