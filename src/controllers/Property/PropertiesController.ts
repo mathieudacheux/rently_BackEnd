@@ -146,7 +146,7 @@ export class Properties {
 				address_id: {
 					in: propertyAddresses.map((propertyAddresses) => propertyAddresses.address_id),
 				},
-				draft: draft !== null ? draft : false,
+				draft: draft ?? false,
 				status_id,
 			},
 			orderBy: price ? { price: 'asc' } : { property_id: 'asc' },
