@@ -122,7 +122,7 @@ export class Fees {
 
 		const monthsTable: number[] = []
 
-		for (let i = 1; i <= 12; i++) {
+		for (let i = 0; i <= 11; i++) {
 			monthsTable.push(i)
 		}
 
