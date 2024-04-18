@@ -167,4 +167,66 @@ export class Fees {
 
 		return resolvedAllFeesTable
 	}
+
+	// Endpoint to get all fees of an owner
+	@Get('/owner/:owner_id')
+	@Summary('Return a list of all fees of an owner')
+	@Returns(200, Array).Of(Number).Groups('read')
+	async getAllFeesOfOwner(@PathParams('owner_id') owner_id: number): Promise<number[]> {
+		const rentedStatus = await this.prisma.status.findFirst({ where: { name: 'Loué' } })
+
+		const monthsTable = Array.from({ length: 12 }, (_, i) => i)
+
+		const allFeesTable = monthsTable.map(async (month) => {
+			if (new Date().getMonth() < month) {
+				return 0
+			}
+
+			const allProperties = await this.prisma.property.findMany({
+				where: { owner_id, status_id: rentedStatus?.status_id },
+			})
+
+			const allFees = (async () => {
+				return allProperties
+					?.filter(
+						(property) =>
+							!property.draft &&
+							property?.signature_date &&
+							((new Date(property?.signature_date)?.getFullYear() ===
+								new Date().getFullYear() &&
+								new Date(property?.signature_date)?.getMonth() <= month) ||
+								new Date(property?.signature_date)?.getFullYear() <
+									new Date().getFullYear())
+					)
+					?.reduce(async (accPromise, property) => {
+						let acc = await accPromise
+						const agency = await this.prisma.agency.findUnique({
+							where: { agency_id: property.agency_id },
+						})
+						const agencyFees = await this.prisma.fee.findUnique({
+							where: { fee_id: agency?.fee_id },
+						})
+
+						acc +=
+							property.price - property.price * (Number(agencyFees?.rent_fee ?? 0) / 100)
+						return acc
+					}, Promise.resolve(0)) as unknown as number
+			})()
+
+			return allFees
+		})
+
+		if (!allFeesTable) {
+			const errorObject = {
+				status: 404,
+				errors: this.i18n.t('notFound'),
+			}
+
+			throw errorObject
+		}
+
+		const resolvedAllFeesTable = await Promise.all(allFeesTable)
+
+		return resolvedAllFeesTable
+	}
 }
