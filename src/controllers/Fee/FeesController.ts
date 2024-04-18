@@ -183,7 +183,7 @@ export class Fees {
 			where: { owner_id, status_id: rentedStatus?.status_id },
 		})
 
-		if (!allProperties) {
+		if (!allProperties.length) {
 			return null
 		}
 
