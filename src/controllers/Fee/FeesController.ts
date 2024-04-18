@@ -172,19 +172,25 @@ export class Fees {
 	@Get('/owner/:owner_id')
 	@Summary('Return a list of all fees of an owner')
 	@Returns(200, Array).Of(Number).Groups('read')
-	async getAllFeesOfOwner(@PathParams('owner_id') owner_id: number): Promise<number[]> {
+	async getAllFeesOfOwner(
+		@PathParams('owner_id') owner_id: number
+	): Promise<number[] | null> {
 		const rentedStatus = await this.prisma.status.findFirst({ where: { name: 'Loué' } })
 
 		const monthsTable = Array.from({ length: 12 }, (_, i) => i)
+
+		const allProperties = await this.prisma.property.findMany({
+			where: { owner_id, status_id: rentedStatus?.status_id },
+		})
+
+		if (!allProperties) {
+			return null
+		}
 
 		const allFeesTable = monthsTable.map(async (month) => {
 			if (new Date().getMonth() < month) {
 				return 0
 			}
-
-			const allProperties = await this.prisma.property.findMany({
-				where: { owner_id, status_id: rentedStatus?.status_id },
-			})
 
 			const allFees = (async () => {
 				return allProperties
