@@ -115,9 +115,11 @@ export class Users {
 			throw errorObject
 		}
 
-		const address = await this.prisma.address.findUnique({
-			where: { address_id: uniqueUser.address_id as number },
-		})
+		const address = uniqueUser.address_id
+			? await this.prisma.address.findUnique({
+					where: { address_id: uniqueUser.address_id },
+			  })
+			: null
 
 		if (!address) {
 			return uniqueUser
